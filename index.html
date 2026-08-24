@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#201e1d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cartera">
+<title>Cartera Apalancada</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#f3f2f2;color:#201e1d;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+input,button,textarea{font:inherit;color:inherit;border-radius:0;border:none;-webkit-appearance:none;appearance:none;background:none}
+button{cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;min-height:100vh;border-left:2px solid rgba(32,30,29,.4);border-right:2px solid rgba(32,30,29,.4);padding-bottom:60px}
+.hd{padding:16px;border-bottom:2px solid rgba(32,30,29,.4)}
+.hd-t{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hd h1{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.kick{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(32,30,29,.55);margin-top:3px}
+.maq{flex:none;min-height:38px;padding:0 10px;border:2px solid rgba(32,30,29,.4);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:left}
+.maq.on{background:#201e1d;color:#f3f2f2}
+.al{display:flex;gap:9px;align-items:flex-start;padding:7px 16px;border-bottom:2px solid rgba(32,30,29,.4)}
+.al-alta{background:#ffe0d9;color:#7c1405}
+.al-media{background:#f8f4f4;color:#ae1800}
+.al-n{flex:none;width:38px;font-size:10px;font-weight:800;letter-spacing:.06em;padding-top:2px}
+.al-t{font-size:12px;font-weight:600;line-height:1.4}
+.al-more{display:block;width:100%;min-height:38px;border-bottom:2px solid rgba(32,30,29,.4);background:#f8f4f4;color:#ae1800;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:0 16px}
+nav{display:flex;overflow-x:auto;border-bottom:2px solid rgba(32,30,29,.4);background:#fff;-webkit-overflow-scrolling:touch}
+nav button{flex:none;min-height:46px;padding:0 14px;border-right:2px solid rgba(32,30,29,.4);font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;color:rgba(32,30,29,.6)}
+nav button.on{background:#201e1d;color:#f3f2f2}
+.pane{display:none}
+.pane.on{display:block}
+.card{border-bottom:2px solid rgba(32,30,29,.4);background:#fff;padding:14px 16px}
+.card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.4;color:rgba(32,30,29,.55)}
+.fbtn{flex:none;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(32,30,29,.55);line-height:1.4}
+.big{margin-top:7px;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.big.s{font-size:22px}
+.sub{margin-top:4px;font-size:12.5px;font-weight:600;color:rgba(32,30,29,.6)}
+.fx{margin-top:9px;padding:9px 10px;background:#f8f4f4;border:2px solid rgba(32,30,29,.25);font-size:11.5px;line-height:1.5;color:rgba(32,30,29,.75);display:none}
+.fx.on{display:block}
+.card.ancla{background:#ec3013;color:#f3f2f2}
+.card.ancla .lbl,.card.ancla .fbtn{color:rgba(243,242,242,.85)}
+.card.ancla .sub{color:rgba(243,242,242,.95)}
+.card.ancla .fx{background:#7c1405;border-color:#7c1405;color:#ffe0d9}
+.cos{padding:14px 16px;border-bottom:2px solid rgba(32,30,29,.4)}
+.cos .lbl{color:rgba(32,30,29,.45)}
+.cos-v{margin-top:2px;font-size:18px;font-weight:700;color:rgba(32,30,29,.5)}
+.cos p{margin-top:6px;font-size:11px;line-height:1.5;color:rgba(32,30,29,.5)}
+.pos{border-bottom:2px solid rgba(32,30,29,.4);background:#fff}
+.pos-h{display:block;width:100%;text-align:left;padding:13px 16px}
+.pos-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.pos-tk{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 5px;background:#201e1d;color:#f3f2f2;margin-left:7px}
+.tag.esp{background:#ffe0d9;color:#ae1800}
+.pos-nm{margin-top:1px;font-size:11px;color:rgba(32,30,29,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos-r{text-align:right;white-space:nowrap}
+.pos-r b{display:block;font-size:16px;font-weight:800}
+.pos-r span{font-size:11px;font-weight:600}
+.g4{margin-top:8px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.mini{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(32,30,29,.45)}
+.mini-v{font-size:12px;font-weight:700;margin-top:1px}
+.flag{margin-top:8px;display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;background:#b3402e;color:#f3f2f2}
+.pos-b{border-top:2px solid rgba(32,30,29,.4);background:#f3f2f2;padding:13px 16px 16px;display:none}
+.pos-b.on{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(32,30,29,.4);border:2px solid rgba(32,30,29,.4)}
+.cell{background:#fff;padding:9px 11px}
+.cell .k{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(32,30,29,.5)}
+.cell .v{margin-top:2px;font-size:14px;font-weight:800}
+.cell .n{margin-top:1px;font-size:10px;color:rgba(32,30,29,.5)}
+.warn{margin-top:12px;padding:9px 11px;background:#ffe0d9;border:2px solid #ec3013}
+.warn .k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ae1800}
+.warn p{margin-top:4px;font-size:11.5px;line-height:1.5;color:#7c1405}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(32,30,29,.5)}
+input[type=text],input[type=number],input[type=date]{min-height:46px;padding:0 11px;border:2px solid rgba(32,30,29,.4);background:#fff;font-size:16px;font-weight:700;width:100%;letter-spacing:0;text-transform:none;color:#201e1d}
+input:focus{border-color:#201e1d;outline:none}
+input.key{border-color:#201e1d}
+input.red{border-color:#ec3013;background:#fff2ef}
+textarea{padding:9px 10px;border:2px solid rgba(32,30,29,.4);background:#fff;font-size:14px;line-height:1.45;resize:vertical;width:100%;letter-spacing:0;text-transform:none;font-weight:500;color:#201e1d}
+textarea.red{border-color:#ec3013}
+.seg{display:flex;border:2px solid rgba(32,30,29,.4);background:#fff;margin-top:5px}
+.seg button{flex:1;min-height:46px;border-right:2px solid rgba(32,30,29,.4);font-size:11.5px;font-weight:800;text-align:left;padding:0 9px;letter-spacing:.04em;text-transform:uppercase;color:rgba(32,30,29,.6)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:#201e1d;color:#f3f2f2}
+.seg button.on.rojo{background:#ec3013}
+.btn{display:block;width:100%;min-height:48px;background:#201e1d;color:#f3f2f2;font-size:14px;font-weight:800;text-align:left;padding:0 14px;margin-top:12px}
+.btn.o{background:transparent;color:#201e1d;border:2px solid #201e1d}
+.sec{padding:14px 16px;border-bottom:2px solid rgba(32,30,29,.4);background:#fff}
+.sec.gris{background:#f3f2f2}
+.sec h2{font-size:15px;font-weight:800;margin-bottom:4px}
+.sec p.i{font-size:12px;line-height:1.5;color:rgba(32,30,29,.6);margin-bottom:12px}
+.dark{background:#201e1d;color:#f3f2f2;padding:14px 16px;border-bottom:2px solid rgba(32,30,29,.4)}
+.dark .lbl{color:rgba(243,242,242,.7)}
+.dark .big{font-size:30px}
+.dark .sub{color:rgba(243,242,242,.85)}
+.bar{margin-top:3px;height:12px;background:rgba(32,30,29,.12)}
+.bar i{display:block;height:12px}
+.bar-r{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700}
+.trow{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:2px solid rgba(32,30,29,.4);background:#fff}
+.trow.bad{background:#ffe0d9}
+.trow i{flex:none;width:22px;font-size:14px;font-weight:800;font-style:normal}
+.trow span{flex:1;font-size:12px;font-weight:600}
+.trow b{flex:none;font-size:13px;font-weight:800;white-space:nowrap}
+.line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(32,30,29,.15);font-size:12.5px}
+.kerow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(32,30,29,.12)}
+.kerow b{flex:none;width:78px;font-size:12.5px;font-weight:800}
+.kerow em{flex:none;width:44px;font-size:11.5px;color:rgba(32,30,29,.6);font-style:normal}
+.kebar{flex:1;height:8px;background:rgba(32,30,29,.12)}
+.kebar i{display:block;height:8px;background:#201e1d}
+.ev{display:flex;gap:12px;padding:12px 16px;border-bottom:2px solid rgba(32,30,29,.4);background:#fff}
+.ev.hot{background:#201e1d;color:#f3f2f2}
+.ev-d{flex:none;width:56px}
+.ev-d b{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em}
+.ev-d span{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(32,30,29,.5)}
+.ev.hot .ev-d span{color:rgba(243,242,242,.7)}
+.ev-tag{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:2px 5px;background:rgba(32,30,29,.1);color:rgba(32,30,29,.65)}
+.ev.hot .ev-tag{background:#ec3013;color:#f3f2f2}
+.ev-w{font-size:10.5px;font-weight:700;color:rgba(32,30,29,.5);margin-left:7px}
+.ev.hot .ev-w{color:rgba(243,242,242,.7)}
+.ev-x{margin-top:3px;font-size:13px;font-weight:700}
+.ev-m{margin-top:1px;font-size:11.5px;color:rgba(32,30,29,.5)}
+.ev.hot .ev-m{color:rgba(243,242,242,.7)}
+.item{background:#fff;border:2px solid rgba(32,30,29,.4);padding:9px 11px;margin-top:2px;font-size:12px;line-height:1.5;font-weight:600}
+.nota{margin-top:11px;font-size:11.5px;line-height:1.5;color:#ae1800;font-weight:600}
+.legal{margin-top:8px;font-size:11px;line-height:1.5;color:rgba(32,30,29,.55)}
+.no{display:flex;gap:8px;padding:5px 0;font-size:12px;line-height:1.5;color:rgba(32,30,29,.65)}
+.no b{flex:none;color:#ae1800}
+.up{color:#1f7a4d}
+.dn{color:#b3402e}
+.mut{color:rgba(32,30,29,.5)}
+.acc{color:#ae1800}
+#cartolaTxt{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f3f2f2}
+@media(max-width:420px){.g4{grid-template-columns:1fr 1fr}.fr{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hd">
+<div class="hd-t">
+<div>
+<h1>CARTERA APALANCADA</h1>
+<div class="kick">Panel de asignación de capital · <span id="hoyTxt">—</span></div>
+</div>
+<button type="button" class="maq" id="bMaq">Sin maquillaje: OFF</button>
+</div>
+</div>
+
+<div id="alertas"></div>
+
+<nav id="nav"></nav>
+
+<!-- Contenido estático: se ve incluso si el visor no ejecuta JavaScript (WhatsApp en iPhone).
+     Cuando el JS corre, lo reemplaza por la versión interactiva. -->
+<div id="estatico">
+<div class="al al-alta"><span class="al-n">ALTA</span><span class="al-t">Retorno anualizado 7,15% bajo el umbral CAPM de la cartera (9,38%)</span></div>
+<div class="al al-alta"><span class="al-n">ALTA</span><span class="al-t">Fondo de contingencia cubre 0,00 cuotas. Mínimo exigido: 1</span></div>
+<div class="al al-alta"><span class="al-n">ALTA</span><span class="al-t">Sin criterio de salida definido: CHILE, ANDINA-B, COLBUN, VAPORES</span></div>
+<div class="al al-media"><span class="al-n">MEDIA</span><span class="al-t">Deuda sobre patrimonio en 157,3%, sobre el límite de 75%</span></div>
+<div class="al al-media"><span class="al-n">MEDIA</span><span class="al-t">Spread DY−TPM en +0,57 pp. Bajo +1 pp no compensa el riesgo</span></div>
+<div class="al al-media"><span class="al-n">MEDIA</span><span class="al-t">Intereses acumulados ($721.814) superan los dividendos cobrados ($0)</span></div>
+
+<div class="sec" style="background:#f8f4f4"><p class="i" style="margin-bottom:0;color:#ae1800;font-weight:600">Vista de solo lectura: este visor no ejecuta JavaScript. Para editar precios, correr el test de compra o importar la cartola, abre el archivo en Safari (Compartir → Abrir en Safari).</p></div>
+
+<div class="card"><div class="lbl">01 · Valor mercado y G/P real</div><div class="big num">$11.647.779</div><div class="sub num">+$405.551 · +3,61% sobre costo real $11.242.228</div></div>
+<div class="card ancla"><div class="lbl">02 · Retorno anualizado vs. costo del crédito</div><div class="big num s">7,15% vs 19,87%</div><div class="sub num">El apalancamiento destruye 12,72 puntos por peso invertido</div></div>
+<div class="card"><div class="lbl">03 · XIRR de los activos y de tu plata</div><div class="big num s dn">7,14% / −13,56%</div><div class="sub num">Activos real Fisher 3,02% · tu plata carga las 6 cuotas pagadas</div></div>
+<div class="card"><div class="lbl">04 · Fondo de contingencia</div><div class="big num s dn">0,00 de 6 cuotas</div><div class="sub num">Fondo $0 · cuota $199.841 · faltan $1.199.046</div></div>
+<div class="card"><div class="lbl">05 · Spread DY−TPM vs. umbral</div><div class="big num dn">+0,57 pp</div><div class="sub num">DY recurrente cartera 5,32% − TPM 4,75% · umbral +2%</div></div>
+<div class="card"><div class="lbl">06 · Próximo evento</div><div class="big num s">27/08/2026</div><div class="sub num">ANDINA-B paga $56,10 por acción serie B · $50.266 · en 5 días</div></div>
+
+<div class="sec"><div class="lbl">Posiciones</div></div>
+<div class="pos"><div class="pos-h"><div class="pos-top"><div><div><span class="pos-tk">CHILE</span><span class="tag">Core</span></div><div class="pos-nm">Banco de Chile</div></div><div class="pos-r"><b class="num dn">+3,75%</b><span class="num dn">+$168.420</span></div></div><div class="g4"><div><div class="mini">Acciones</div><div class="mini-v num">24.268</div></div><div><div class="mini">PPC real</div><div class="mini-v num">$185,07</div></div><div><div class="mini">Hoy</div><div class="mini-v num">$192,01</div></div><div><div class="mini">Peso</div><div class="mini-v num">40,0%</div></div></div></div></div>
+<div class="pos"><div class="pos-h"><div class="pos-top"><div><div><span class="pos-tk">ANDINA-B</span><span class="tag">Core</span></div><div class="pos-nm">Embotelladora Andina B</div></div><div class="pos-r"><b class="num dn">+0,57%</b><span class="num dn">+$23.466</span></div></div><div class="g4"><div><div class="mini">Acciones</div><div class="mini-v num">896</div></div><div><div class="mini">PPC real</div><div class="mini-v num">$4.602,81</div></div><div><div class="mini">Hoy</div><div class="mini-v num">$4.629,00</div></div><div><div class="mini">Peso</div><div class="mini-v num">35,6%</div></div></div></div></div>
+<div class="pos"><div class="pos-h"><div class="pos-top"><div><div><span class="pos-tk">COLBUN</span><span class="tag">Core</span></div><div class="pos-nm">Colbún</div></div><div class="pos-r"><b class="num dn">+9,37%</b><span class="num dn">+$208.121</span></div></div><div class="g4"><div><div class="mini">Acciones</div><div class="mini-v num">16.730</div></div><div><div class="mini">PPC real</div><div class="mini-v num">$132,76</div></div><div><div class="mini">Hoy</div><div class="mini-v num">$145,20</div></div><div><div class="mini">Peso</div><div class="mini-v num">20,9%</div></div></div></div></div>
+<div class="pos"><div class="pos-h"><div class="pos-top"><div><div><span class="pos-tk">VAPORES</span><span class="tag esp">Especulativa</span></div><div class="pos-nm">Cía. Sud Americana de Vapores</div></div><div class="pos-r"><b class="num dn">+1,37%</b><span class="num dn">+$5.544</span></div></div><div class="g4"><div><div class="mini">Acciones</div><div class="mini-v num">8.274</div></div><div><div class="mini">PPC real</div><div class="mini-v num">$49,04</div></div><div><div class="mini">Hoy</div><div class="mini-v num">$49,71</div></div><div><div class="mini">Peso</div><div class="mini-v num">3,5%</div></div></div></div></div>
+
+<div class="dark"><div class="lbl">Saldo insoluto</div><div class="big num">$7.092.889</div><div class="sub num">6 de 58 cuotas pagadas · vence 09/12/2030 · cuota $199.841 · débito día 9</div></div>
+<div class="grid2" style="border-left:none;border-right:none">
+<div class="cell"><div class="k">Interés devengado no pagado</div><div class="v num dn">$46.718</div><div class="n">13 días desde la cuota del 09/08/2026</div></div>
+<div class="cell"><div class="k">Intereses pagados</div><div class="v num dn">$675.096</div><div class="n">en 6 cuotas</div></div>
+<div class="cell"><div class="k">Capital amortizado</div><div class="v num">$523.950</div><div class="n">6,9% del original</div></div>
+<div class="cell"><div class="k">Costo total en intereses</div><div class="v num dn">$3.973.909</div><div class="n">52% del monto pedido</div></div>
+<div class="cell"><div class="k">Falta por pagar</div><div class="v num dn">$10.391.732</div><div class="n">52 cuotas hasta 09/12/2030</div></div>
+<div class="cell"><div class="k">Deuda / patrimonio</div><div class="v num dn">157,3%</div><div class="n">límite 75% · patrimonio $4.508.332</div></div>
+</div>
+<div class="sec"><div class="lbl">Resultado real neto</div><div style="margin-top:9px">
+<div class="line"><span style="font-weight:600">G/P posiciones vigentes</span><span class="num" style="font-weight:600">+$405.551</span></div>
+<div class="line"><span style="font-weight:600">Dividendos cobrados</span><span class="num" style="font-weight:600">$0</span></div>
+<div class="line"><span style="font-weight:600">Intereses pagados</span><span class="num dn" style="font-weight:600">−$675.096</span></div>
+<div class="line"><span style="font-weight:600">Interés devengado no pagado</span><span class="num dn" style="font-weight:600">−$46.718</span></div>
+<div class="line"><span style="font-weight:800">Resultado real neto</span><span class="num dn" style="font-weight:800">−$316.263</span></div>
+</div><p class="nota">La cartera todavía no paga su propio crédito: los intereses van $721.814 adelante de los dividendos.</p></div>
+</div>
+
+<div class="pane on" id="p-panel"><div id="cards"></div><div id="cosmetico"></div></div>
+<div class="pane" id="p-papeles"><div id="papeles"></div></div>
+<div class="pane" id="p-credito"><div id="credito"></div></div>
+<div class="pane" id="p-test"><div id="test"></div></div>
+<div class="pane" id="p-cartera"><div id="cartera"></div></div>
+<div class="pane" id="p-agenda"><div id="agenda"></div></div>
+<div class="pane" id="p-cartola"><div id="cartola"></div></div>
+<div class="pane" id="p-ajustes"><div id="ajustes"></div></div>
+
+</div>
+
+<script>
+/* ============================================================
+   CALC — módulo puro de fórmulas. Nada de esto toca el DOM.
+   ============================================================ */
+var CALC = (function () {
+  var DIA = 86400000;
+  function fecha(s) {
+    if (s instanceof Date) return s;
+    var p = String(s || '').split('-');
+    return new Date(+p[0], (+p[1] || 1) - 1, +p[2] || 1);
+  }
+  function dias(a, b) { return Math.round((fecha(b) - fecha(a)) / DIA); }
+  function anios(a, b) { return dias(a, b) / 365; }
+  function costoReal(p) { return p.acciones * p.ppc; }
+  function valorMercado(p) { return p.acciones * p.precio; }
+  function fisher(nom, inf) { return ((1 + nom / 100) / (1 + inf / 100) - 1) * 100; }
+  function anualizar(ret, a) {
+    if (!(a > 0)) return 0;
+    return (Math.pow(1 + ret / 100, 1 / a) - 1) * 100;
+  }
+  function xirr(flujos) {
+    if (!flujos || flujos.length < 2) return null;
+    var t0 = fecha(flujos[0].fecha), f = [], i;
+    for (i = 0; i < flujos.length; i++) {
+      f.push({ t: (fecha(flujos[i].fecha) - t0) / DIA / 365, m: flujos[i].monto });
+    }
+    var r = 0.1;
+    for (i = 0; i < 160; i++) {
+      var v = 0, d = 0, j;
+      for (j = 0; j < f.length; j++) {
+        var den = Math.pow(1 + r, f[j].t);
+        v += f[j].m / den;
+        d += -f[j].t * f[j].m / (den * (1 + r));
+      }
+      if (!isFinite(v) || !isFinite(d) || d === 0) return null;
+      var paso = v / d;
+      r = r - paso;
+      if (r <= -0.9999) r = -0.99;
+      if (Math.abs(paso) < 1e-10) return r * 100;
+    }
+    return isFinite(r) ? r * 100 : null;
+  }
+  function ke(rf, beta, erp) { return rf + beta * erp; }
+  function betaPonderada(pos) {
+    var v = 0, b = 0, i;
+    for (i = 0; i < pos.length; i++) v += valorMercado(pos[i]);
+    if (!v) return 0;
+    for (i = 0; i < pos.length; i++) b += pos[i].beta * valorMercado(pos[i]) / v;
+    return b;
+  }
+  function dyComputable(p) { return p.dyTipo === 'recurrente' ? p.dy : 0; }
+  function yieldOnCost(p) {
+    var d = p.precio * (dyComputable(p) / 100);
+    return p.ppc ? d / p.ppc * 100 : 0;
+  }
+  function paybackDividendos(p) {
+    var y = yieldOnCost(p);
+    return y > 0 ? 100 / y : null;
+  }
+  function cuotaFrancesa(saldo, tm, n) {
+    var i = tm / 100;
+    if (!n) return 0;
+    if (!i) return saldo / n;
+    return saldo * i / (1 - Math.pow(1 + i, -n));
+  }
+  function interesDevengado(saldo, tm, d) { return saldo * (tm / 100) / 30 * Math.max(0, d); }
+  function ahorroPrepago(saldo, tm, n, pagadas, monto) {
+    var pend = Math.max(0, n - pagadas);
+    if (pend <= 0 || monto <= 0) return 0;
+    var cuota = cuotaFrancesa(saldo, tm, pend);
+    var nuevo = Math.max(0, saldo - monto);
+    var i = tm / 100, nN;
+    if (nuevo <= 0) nN = 0;
+    else if (!i) nN = nuevo / cuota;
+    else if (cuota <= nuevo * i) nN = pend;
+    else nN = Math.log(cuota / (cuota - nuevo * i)) / Math.log(1 + i);
+    return Math.max(0, (cuota * pend - saldo) - (cuota * nN - nuevo));
+  }
+  function resultadoRealNeto(o) {
+    return o.gp + o.div + o.rot - o.intPag - o.intDev;
+  }
+  function testAsignacion(e, cfg) {
+    var t = [], i, fallas = 0;
+    t.push({ k: 'DY esperado − TPM > +' + cfg.spreadMin + ' pp', v: fmtPP(e.dy - cfg.tpm), ok: (e.dy - cfg.tpm) > cfg.spreadMin });
+    t.push({ k: 'Retorno esperado > WACC ' + cfg.wacc + '%', v: fmtPct(e.retorno), ok: e.retorno > cfg.wacc });
+    t.push({ k: 'Retorno esperado > crédito ' + cfg.costoCredito + '%', v: fmtPP(e.retorno - cfg.costoCredito), ok: e.retorno > cfg.costoCredito });
+    t.push({ k: 'Concentración post-compra < ' + cfg.topeConc + '%', v: fmtPct(e.conc, 1), ok: e.conc < cfg.topeConc });
+    t.push({ k: 'Comisión efectiva ≤ ' + cfg.comision + '%', v: fmtPct(e.comPct, 3), ok: e.comPct <= cfg.comision + 1e-9 });
+    t.push({ k: 'Fondo de contingencia ≥ 1 cuota', v: fmtDec(e.cuotasCub, 2) + ' cuotas', ok: e.cuotasCub >= 1 });
+    for (i = 0; i < t.length; i++) if (!t[i].ok) fallas++;
+    return { tests: t, fallas: fallas };
+  }
+  return {
+    fecha: fecha, dias: dias, anios: anios, costoReal: costoReal, valorMercado: valorMercado,
+    fisher: fisher, anualizar: anualizar, xirr: xirr, ke: ke, betaPonderada: betaPonderada,
+    dyComputable: dyComputable, yieldOnCost: yieldOnCost, paybackDividendos: paybackDividendos,
+    cuotaFrancesa: cuotaFrancesa, interesDevengado: interesDevengado, ahorroPrepago: ahorroPrepago,
+    resultadoRealNeto: resultadoRealNeto, testAsignacion: testAsignacion
+  };
+})();
+
+/* ============================================================
+   Formato
+   ============================================================ */
+function num(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : 0;
+  var s = String(v == null ? '' : v).replace(/[^0-9,.-]/g, '');
+  if (s.indexOf(',') > -1) s = s.replace(/\./g, '').replace(',', '.');
+  var n = parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+function miles(n) {
+  var neg = n < 0, s = String(Math.round(Math.abs(n))), out = '', i;
+  for (i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 === 0) out += '.';
+    out += s.charAt(i);
+  }
+  return (neg ? '-' : '') + out;
+}
+function clp(n) { return '$' + miles(n); }
+function clpS(n) {
+  var r = Math.round(n);
+  return (r === 0 ? '' : (r > 0 ? '+' : '−')) + '$' + miles(Math.abs(r));
+}
+function fmtDec(n, d) { return n.toFixed(d == null ? 2 : d).replace('.', ','); }
+function fmtPct(n, d) { return fmtDec(n, d == null ? 2 : d) + '%'; }
+function fmtPP(n) { return (n >= 0 ? '+' : '−') + fmtDec(Math.abs(n), 2) + ' pp'; }
+function pp(n, d) { return (n >= 0 ? '+' : '−') + fmtDec(Math.abs(n), d == null ? 2 : d) + '%'; }
+function precioTxt(n) {
+  var e = Math.round(n * 100) / 100, ent = Math.floor(Math.abs(e));
+  var dec = Math.round((Math.abs(e) - ent) * 100);
+  return (e < 0 ? '-' : '') + '$' + miles(ent) + ',' + (dec < 10 ? '0' + dec : dec);
+}
+function fFecha(s) {
+  var p = String(s || '').split('-');
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : '—';
+}
+function sumarMeses(f, m) {
+  var p = String(f || '').split('-');
+  if (p.length !== 3) return f;
+  var a = +p[0], mm = +p[1] - 1 + m, d = +p[2];
+  a += Math.floor(mm / 12);
+  mm = ((mm % 12) + 12) % 12;
+  var m2 = mm + 1;
+  return a + '-' + (m2 < 10 ? '0' + m2 : m2) + '-' + (d < 10 ? '0' + d : d);
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/* ============================================================
+   Datos maestros al 22/08/2026
+   ============================================================ */
+var KEY = 'cartera_apalancada';
+var MAESTRO = {
+  cfg: {
+    hoy: '2026-08-22', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
+    rf: 5.6, erp: 6, capmUmbral: 9.38, spreadMin: 2, comision: 0.7,
+    tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 160, twrBroker12M: 15.83
+  },
+  credito: {
+    pagare: '495192033896053178', montoOriginal: 7616839, saldo: 7092889,
+    cuotas: 58, pagadas: 6, cuotaMensual: 199841, interesesPagados: 675096,
+    capitalAmortizado: 523950, costoTotalIntereses: 3973909, fondo: 0,
+    fondoCuotas: 6, cursado: '2026-02-06', primeraCuota: '2026-03-09',
+    vencimiento: '2030-12-09', diaDebito: 9, prepagoMinPct: 10
+  },
+  posiciones: [
+    { ticker: 'CHILE', nombre: 'Banco de Chile', acciones: 24268, ppc: 185.07, pcb: 182.89, precio: 192.01, beta: 1.04, tipo: 'Core', desde: '2026-02-09', est: true, dy: 6.5, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: -41255 },
+    { ticker: 'ANDINA-B', nombre: 'Embotelladora Andina B', acciones: 896, ppc: 4602.81, pcb: 4563.65, precio: 4629.00, beta: 0.97, tipo: 'Core', desde: '2026-02-09', est: true, dy: 4.6, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: -896 },
+    { ticker: 'COLBUN', nombre: 'Colbún', acciones: 16730, ppc: 132.76, pcb: 131.98, precio: 145.20, beta: 0.55, tipo: 'Core', desde: '2026-02-09', est: true, dy: 5.2, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 103893 },
+    { ticker: 'VAPORES', nombre: 'Cía. Sud Americana de Vapores', acciones: 8274, ppc: 49.04, pcb: 48.32, precio: 49.71, beta: 0.52, tipo: 'Especulativa', desde: '2026-08-14', est: false, dy: 21, dyTipo: 'pass-through', divAcum: 0, min52: 0, criterio: '', gpPer: 5587 }
+  ],
+  eventos: [
+    { tipo: 'Dividendo', txt: 'ANDINA-B paga $56,10 por acción serie B', registro: '2026-08-22', fecha: '2026-08-27', monto: 50266 },
+    { tipo: 'Rebalanceo', txt: 'Ventana de rebalanceo MSCI', registro: '', fecha: '2026-09-01', monto: 0 }
+  ],
+  rotaciones: [], decisiones: []
+};
+var DY_TIPOS = [
+  { id: 'recurrente', label: 'Recurrente' },
+  { id: 'extraordinario', label: 'Extraord.' },
+  { id: 'pass-through', label: 'Pass-thru' }
+];
+var TABS = [
+  { id: 'panel', label: 'Panel' }, { id: 'papeles', label: 'Papeles' },
+  { id: 'credito', label: 'Crédito' }, { id: 'test', label: 'Test compra' },
+  { id: 'cartera', label: 'Cartera' }, { id: 'agenda', label: 'Agenda' },
+  { id: 'cartola', label: 'Cartola' }, { id: 'ajustes', label: 'Ajustes' }
+];
+
+function clon(o) { return JSON.parse(JSON.stringify(o)); }
+
+var S = {
+  cfg: clon(MAESTRO.cfg), credito: clon(MAESTRO.credito),
+  posiciones: clon(MAESTRO.posiciones), eventos: clon(MAESTRO.eventos),
+  rotaciones: [], decisiones: [],
+  tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
+  prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '7000' },
+  justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-08-22' },
+  cartolaTxt: '', cartolaMsg: '', cartolaDiff: [], backupMsg: ''
+};
+
+function guardar() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({
+      cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
+      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones
+    }));
+  } catch (e) {}
+}
+function cargar() {
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d || !d.posiciones) return;
+    var i;
+    for (i in MAESTRO.cfg) if (d.cfg && d.cfg[i] !== undefined) S.cfg[i] = d.cfg[i];
+    for (i in MAESTRO.credito) if (d.credito && d.credito[i] !== undefined) S.credito[i] = d.credito[i];
+    S.posiciones = d.posiciones;
+    S.eventos = d.eventos || clon(MAESTRO.eventos);
+    S.rotaciones = d.rotaciones || [];
+    S.decisiones = d.decisiones || [];
+  } catch (e) {}
+}
+
+/* ============================================================
+   Cálculo agregado
+   ============================================================ */
+function calc() {
+  var cfg = S.cfg, cr = S.credito, pos = S.posiciones, i;
+  var costo = 0, valor = 0, comOmitida = 0, div = 0;
+  for (i = 0; i < pos.length; i++) {
+    costo += CALC.costoReal(pos[i]);
+    valor += CALC.valorMercado(pos[i]);
+    comOmitida += pos[i].acciones * (num(pos[i].ppc) - num(pos[i].pcb));
+    div += num(pos[i].divAcum);
+  }
+  var aniosPond = 0, dyPond = 0;
+  for (i = 0; i < pos.length; i++) {
+    aniosPond += CALC.costoReal(pos[i]) / (costo || 1) * Math.max(CALC.anios(pos[i].desde, cfg.hoy), 0);
+    dyPond += CALC.valorMercado(pos[i]) / (valor || 1) * CALC.dyComputable(pos[i]);
+  }
+  var gp = valor - costo;
+  var gpPct = costo ? gp / costo * 100 : 0;
+  var anualizado = CALC.anualizar(gpPct, aniosPond);
+  var real = CALC.fisher(anualizado, cfg.inflacion);
+
+  var ord = pos.slice().sort(function (a, b) { return String(a.desde) < String(b.desde) ? -1 : 1; });
+  var flujos = [];
+  for (i = 0; i < ord.length; i++) flujos.push({ fecha: ord[i].desde, monto: -CALC.costoReal(ord[i]) });
+  flujos.push({ fecha: cfg.hoy, monto: valor + div });
+  var mwr = CALC.xirr(flujos);
+  if (mwr === null) mwr = anualizado;
+
+  var cuota = num(cr.cuotaMensual) || CALC.cuotaFrancesa(cr.saldo, cfg.tasaMensual, cr.cuotas);
+  var ultima = num(cr.pagadas) > 0 ? sumarMeses(cr.primeraCuota, num(cr.pagadas) - 1) : cr.cursado;
+  var diasCr = Math.max(0, CALC.dias(ultima, cfg.hoy));
+  var devengado = CALC.interesDevengado(cr.saldo, cfg.tasaMensual, diasCr);
+  var intTotal = num(cr.interesesPagados) + devengado;
+  var rot = 0;
+  for (i = 0; i < S.rotaciones.length; i++) rot += num(S.rotaciones[i].monto);
+  var neto = CALC.resultadoRealNeto({ gp: gp, div: div, rot: rot, intPag: num(cr.interesesPagados), intDev: devengado });
+
+  var patrimonio = valor + num(cfg.caja) - num(cr.saldo) - devengado;
+  var propio = costo - num(cr.montoOriginal) + num(cr.interesesPagados) + num(cr.capitalAmortizado);
+
+  var fp = [{ fecha: cr.cursado, monto: -(costo - num(cr.montoOriginal)) }];
+  for (i = 0; i < num(cr.pagadas); i++) fp.push({ fecha: sumarMeses(cr.primeraCuota, i), monto: -cuota });
+  fp.push({ fecha: cfg.hoy, monto: patrimonio });
+  var mwrPropio = CALC.xirr(fp);
+  if (mwrPropio === null) mwrPropio = 0;
+
+  var beta = CALC.betaPonderada(pos);
+  var keCartera = CALC.ke(cfg.rf, beta, cfg.erp);
+  var maxConc = 0, maxTk = '';
+  for (i = 0; i < pos.length; i++) {
+    var w = valor ? CALC.valorMercado(pos[i]) / valor * 100 : 0;
+    if (w > maxConc) { maxConc = w; maxTk = pos[i].ticker; }
+  }
+  var cuotasCub = cuota ? num(cr.fondo) / cuota : 0;
+  var dp = patrimonio > 0 ? num(cr.saldo) / patrimonio * 100 : 999;
+  var ltv = valor ? num(cr.saldo) / valor * 100 : 0;
+
+  return {
+    costo: costo, valor: valor, gp: gp, gpPct: gpPct, anualizado: anualizado, real: real,
+    aniosPond: aniosPond, mwr: mwr, mwrReal: CALC.fisher(mwr, cfg.inflacion), mwrPropio: mwrPropio,
+    cuota: cuota, devengado: devengado, diasCr: diasCr, ultima: ultima, intTotal: intTotal,
+    div: div, rot: rot, neto: neto, patrimonio: patrimonio, propio: propio,
+    beta: beta, keCartera: keCartera, maxConc: maxConc, maxTk: maxTk,
+    cuotasCub: cuotasCub, dp: dp, ltv: ltv, dyPond: dyPond,
+    spread: dyPond - cfg.tpm, gap: anualizado - cfg.costoCredito, comOmitida: comOmitida
+  };
+}
+
+/* ============================================================
+   Alertas
+   ============================================================ */
+function alertas(k) {
+  var cfg = S.cfg, out = [], i;
+  if (k.maxConc > cfg.topeConc) out.push({ n: 'ALTA', t: k.maxTk + ' concentra ' + fmtPct(k.maxConc, 1) + ', sobre el tope de ' + fmtPct(cfg.topeConc, 0) });
+  if (k.anualizado < cfg.capmUmbral) out.push({ n: 'ALTA', t: 'Retorno anualizado ' + fmtPct(k.anualizado) + ' bajo el umbral CAPM de la cartera (' + fmtPct(cfg.capmUmbral) + ')' });
+  if (k.cuotasCub < 1) out.push({ n: 'ALTA', t: 'Fondo de contingencia cubre ' + fmtDec(k.cuotasCub, 2) + ' cuotas. Mínimo exigido: 1' });
+  var sin = [];
+  for (i = 0; i < S.posiciones.length; i++) {
+    if (!String(S.posiciones[i].criterio || '').replace(/\s/g, '')) sin.push(S.posiciones[i].ticker);
+  }
+  if (sin.length) out.push({ n: 'ALTA', t: 'Sin criterio de salida definido: ' + sin.join(', ') });
+  if (k.dp > cfg.dpMax) out.push({ n: 'MEDIA', t: 'Deuda sobre patrimonio en ' + fmtPct(k.dp, 1) + ', sobre el límite de ' + fmtPct(cfg.dpMax, 0) });
+  if (k.spread < 1) out.push({ n: 'MEDIA', t: 'Spread DY−TPM en ' + fmtPP(k.spread) + '. Bajo +1 pp no compensa el riesgo' });
+  if (k.intTotal > k.div) out.push({ n: 'MEDIA', t: 'Intereses acumulados (' + clp(k.intTotal) + ') superan los dividendos cobrados (' + clp(k.div) + ')' });
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i];
+    if (num(p.min52) > 0 && p.precio <= num(p.min52)) out.push({ n: 'MEDIA', t: p.ticker + ' cotiza en o bajo su mínimo de 52 semanas' });
+  }
+  return out;
+}
+
+/* ============================================================
+   Render
+   ============================================================ */
+function fxRow(id, txt) {
+  return '<div class="fx' + (S.formulas[id] ? ' on' : '') + '" id="fx-' + id + '">' + txt + '</div>';
+}
+function card(id, n, label, valor, sub, formula, o) {
+  o = o || {};
+  return '<div class="card' + (o.ancla ? ' ancla' : '') + '">' +
+    '<div class="card-h"><div class="lbl">' + n + ' · ' + label + '</div>' +
+    '<button type="button" class="fbtn" data-fx="' + id + '">' + (S.formulas[id] ? 'cerrar' : 'fórmula') + '</button></div>' +
+    '<div class="big num' + (o.small ? ' s' : '') + (o.cls ? ' ' + o.cls : '') + '">' + valor + '</div>' +
+    '<div class="sub num' + (o.subCls ? ' ' + o.subCls : '') + '">' + sub + '</div>' +
+    fxRow(id, formula) + '</div>';
+}
+
+function renderPanel(k) {
+  var cfg = S.cfg, malo = k.gap < 0, h = '';
+  h += card('c1', '01', 'Valor mercado y G/P real', clp(k.valor),
+    clpS(k.gp) + ' · ' + pp(k.gpPct) + ' sobre costo real ' + clp(k.costo),
+    'Valor = Σ acciones × precio hoy. Costo = Σ acciones × PPC real con comisión. G/P = ' + clp(k.valor) + ' − ' + clp(k.costo) + ' = ' + clpS(k.gp) + '. Nunca se usa el precio costo del broker.');
+
+  h += card('c2', '02', 'Retorno anualizado vs. costo del crédito',
+    fmtPct(k.anualizado) + ' vs ' + fmtPct(cfg.costoCredito),
+    malo ? 'El apalancamiento destruye ' + fmtDec(Math.abs(k.gap), 2) + ' puntos por peso invertido' : 'El spread juega a favor: ' + fmtPP(k.gap),
+    'Anualizado = (1 + G/P%)^(1/años) − 1, con años ponderados por costo = ' + fmtDec(k.aniosPond, 3) + '. Gap = ' + fmtPct(k.anualizado) + ' − ' + fmtPct(cfg.costoCredito) + ' = ' + fmtPP(k.gap) + '.',
+    { ancla: malo, small: true, cls: malo ? '' : 'up' });
+
+  h += card('c3', '03', 'XIRR de los activos y de tu plata',
+    fmtPct(k.mwr) + ' / ' + fmtPct(k.mwrPropio),
+    'Activos real Fisher ' + fmtPct(k.mwrReal) + ' · tu plata carga las ' + S.credito.pagadas + ' cuotas pagadas',
+    'Activos: Σ flujo/(1+r)^t = 0 con los aportes por posición y el valor de mercado como terminal. Tu plata: aporte inicial ' + clp(k.costo - num(S.credito.montoOriginal)) + ' el ' + fFecha(S.credito.cursado) + ', menos ' + S.credito.pagadas + ' cuotas de ' + clp(k.cuota) + ', con patrimonio neto ' + clp(k.patrimonio) + ' como terminal. Real = (1+nominal)/(1+inflación) − 1, nunca resta simple.',
+    { small: true, cls: k.mwrPropio < 0 ? 'dn' : (k.mwr < cfg.capmUmbral ? 'dn' : 'up') });
+
+  h += card('c4', '04', 'Fondo de contingencia',
+    fmtDec(k.cuotasCub, 2) + ' de ' + S.credito.fondoCuotas + ' cuotas',
+    'Fondo ' + clp(num(S.credito.fondo)) + ' · cuota ' + clp(k.cuota) + ' · faltan ' + clp(Math.max(0, k.cuota * S.credito.fondoCuotas - num(S.credito.fondo))),
+    'Cuotas cubiertas = fondo ÷ cuota mensual. Es plata líquida aparte de la cartera, para pagar cuotas sin verte forzado a vender acciones. No es lo que falta del crédito: eso son ' + (num(S.credito.cuotas) - num(S.credito.pagadas)) + ' cuotas por ' + clp((num(S.credito.cuotas) - num(S.credito.pagadas)) * k.cuota) + ' hasta el ' + fFecha(S.credito.vencimiento) + '.',
+    { small: true, cls: k.cuotasCub < 1 ? 'dn' : 'up' });
+
+  h += card('c5', '05', 'Spread DY−TPM vs. umbral', fmtPP(k.spread),
+    'DY recurrente cartera ' + fmtPct(k.dyPond) + ' − TPM ' + fmtPct(cfg.tpm) + ' · umbral +' + fmtPct(cfg.spreadMin, 0),
+    'El DY de cartera pondera por valor de mercado y solo cuenta dividendos marcados como recurrentes. Los pass-through se fuerzan a 0.',
+    { cls: k.spread > cfg.spreadMin ? 'up' : 'dn' });
+
+  var ev = eventos(true)[0];
+  h += card('c6', '06', 'Próximo evento', fFecha(ev.fecha),
+    ev.txt + (ev.monto ? ' · ' + clp(ev.monto) : '') + ' · en ' + CALC.dias(cfg.hoy, ev.fecha) + ' días',
+    'Se ordenan dividendos, cuotas del crédito y ventanas de rebalanceo por fecha. Para dividendos manda la fecha límite de registro, no la de pago.',
+    { small: true });
+  document.getElementById('cards').innerHTML = h;
+
+  var c = '';
+  if (!S.sinMaq) {
+    c = '<div class="cos"><div class="lbl">Retorno sobre capital propio (cifra cosmética)</div>' +
+      '<div class="cos-v num">' + pp(k.propio ? k.gp / k.propio * 100 : 0) + '</div>' +
+      '<p>G/P nominal ' + clpS(k.gp) + ' sobre capital propio ' + clp(k.propio) + ', sin descontar intereses. Así se construye el número que infla: excluye la deuda del denominador y el costo del crédito del numerador. Tu resultado real neto es ' + clpS(k.neto) + ' y la cifra que manda es la tarjeta 02.</p></div>';
+  }
+  document.getElementById('cosmetico').innerHTML = c;
+}
+
+function renderPapeles(k) {
+  var cfg = S.cfg, h = '', i, j;
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i];
+    var costo = CALC.costoReal(p), valor = CALC.valorMercado(p), gp = valor - costo;
+    var gpPct = costo ? gp / costo * 100 : 0;
+    var peso = k.valor ? valor / k.valor * 100 : 0;
+    var yoc = CALC.yieldOnCost(p), payback = CALC.paybackDividendos(p);
+    var kep = CALC.ke(cfg.rf, p.beta, cfg.erp);
+    var realP = CALC.fisher(CALC.anualizar(gpPct, Math.max(CALC.anios(p.desde, cfg.hoy), 0.0001)), cfg.inflacion);
+    var sinCrit = !String(p.criterio || '').replace(/\s/g, '');
+    var cls = gpPct > cfg.costoCredito ? 'up' : 'dn';
+    var ab = S.abiertas[p.ticker];
+
+    h += '<div class="pos"><button type="button" class="pos-h" data-open="' + esc(p.ticker) + '">' +
+      '<div class="pos-top"><div style="min-width:0"><div><span class="pos-tk">' + esc(p.ticker) + '</span>' +
+      '<span class="tag' + (p.tipo === 'Core' ? '' : ' esp') + '">' + esc(p.tipo) + '</span></div>' +
+      '<div class="pos-nm">' + esc(p.nombre) + '</div></div>' +
+      '<div class="pos-r"><b class="num ' + cls + '">' + pp(gpPct) + '</b><span class="num ' + cls + '">' + clpS(gp) + '</span></div></div>' +
+      '<div class="g4">' +
+      '<div><div class="mini">Acciones</div><div class="mini-v num">' + miles(p.acciones) + '</div></div>' +
+      '<div><div class="mini">PPC real</div><div class="mini-v num">' + precioTxt(p.ppc) + '</div></div>' +
+      '<div><div class="mini">Hoy</div><div class="mini-v num">' + precioTxt(p.precio) + '</div></div>' +
+      '<div><div class="mini">Peso</div><div class="mini-v num">' + fmtPct(peso, 1) + '</div></div></div>' +
+      (sinCrit ? '<div class="flag">Sin criterio de salida definido</div>' : '') +
+      '</button>';
+
+    h += '<div class="pos-b' + (ab ? ' on' : '') + '" id="body-' + esc(p.ticker) + '">';
+    var cells = [
+      ['Costo real', clp(costo), 'con comisión', ''],
+      ['Valor hoy', clp(valor), 'mercado', ''],
+      ['G/P real', clpS(gp), 'nominal', gp >= 0 ? '' : 'dn'],
+      ['G/P real Fisher', fmtPct(realP), 'anualizado, sin inflación', realP > cfg.costoCredito ? 'up' : 'dn'],
+      ['Yield on cost', fmtPct(yoc), 'dividendo ÷ PPC real', yoc > cfg.tpm ? 'up' : 'dn'],
+      ['Ke CAPM', fmtPct(kep), 'Rf + β ' + fmtDec(p.beta, 2) + ' × ERP', ''],
+      ['Payback dividendos', payback ? fmtDec(payback, 1) + ' años' : 'sin DY recurrente', 'al DY actual', payback && payback < 15 ? '' : 'dn'],
+      ['Distancia al tope', fmtPP(cfg.topeConc - peso), 'tope ' + fmtPct(cfg.topeConc, 0), peso > cfg.topeConc ? 'dn' : ''],
+      ['Dividendos cobrados', clp(num(p.divAcum)), 'acumulado histórico', ''],
+      ['Desde', fFecha(p.desde), p.est ? 'fecha estimada, editable' : 'fecha real', ''],
+      ['G/P que muestra el broker', clpS(valor - p.acciones * num(p.pcb)), 'precio costo ' + precioTxt(num(p.pcb)) + ', sin comisión', 'mut'],
+      ['Sobrestimación del broker', clpS(p.acciones * (num(p.ppc) - num(p.pcb))), 'lo que te infla la ganancia', 'acc'],
+      ['G/P del período', clpS(num(p.gpPer)), 'según cartola', num(p.gpPer) < 0 ? 'dn' : '']
+    ];
+    h += '<div class="grid2">';
+    for (j = 0; j < cells.length; j++) {
+      h += '<div class="cell"><div class="k">' + cells[j][0] + '</div>' +
+        '<div class="v num ' + cells[j][3] + '">' + cells[j][1] + '</div>' +
+        '<div class="n">' + cells[j][2] + '</div></div>';
+    }
+    if (cells.length % 2) h += '<div class="cell"></div>';
+    h += '</div>';
+
+    if (p.dyTipo !== 'recurrente' && p.dy > 0) {
+      h += '<div class="warn"><div class="k">No es ingreso recurrente</div><p>El DY de ' + fmtPct(p.dy, 1) +
+        ' del portal es traspaso irregular, no ingreso recurrente. Se fuerza a 0 en el spread y en el test de asignación.</p></div>';
+    }
+
+    h += '<div class="fr">' +
+      inputF('Precio hoy', p.precio, p.ticker, 'precio', 'key') +
+      inputF('PPC real', p.ppc, p.ticker, 'ppc', '') +
+      inputF('Acciones', p.acciones, p.ticker, 'acciones', '') +
+      inputF('Dividendos cobrados', p.divAcum, p.ticker, 'divAcum', '') +
+      inputF('DY anual %', p.dy, p.ticker, 'dy', '') +
+      inputF('Mínimo 52 semanas', p.min52, p.ticker, 'min52', '') +
+      '</div>';
+
+    h += '<div style="margin-top:12px"><div class="lbl">Clasificación del dividendo</div><div class="seg">';
+    for (j = 0; j < DY_TIPOS.length; j++) {
+      h += '<button type="button" class="' + (p.dyTipo === DY_TIPOS[j].id ? 'on' : '') + '" data-dyt="' + esc(p.ticker) + '|' + DY_TIPOS[j].id + '">' + DY_TIPOS[j].label + '</button>';
+    }
+    h += '</div></div>';
+
+    h += '<label style="margin-top:12px;' + (sinCrit ? 'color:#ae1800' : '') + '">Criterio de salida (obligatorio)' +
+      '<textarea rows="2" class="' + (sinCrit ? 'red' : '') + '" data-t="' + esc(p.ticker) + '" data-f="criterio" placeholder="Ej: vendo si el DY recurrente baja de 5% o si el precio supera 1,3× valor libro">' + esc(p.criterio) + '</textarea></label>';
+    h += '</div></div>';
+  }
+  h += '<div class="sec"><div class="lbl">Ajuste por comisión no reconocida por el broker</div>' +
+    '<div class="big num acc" style="font-size:20px">' + clp(k.comOmitida) + '</div>' +
+    '<p class="i" style="margin-top:5px;margin-bottom:0">Es lo que el portal te suma de más al usar precio costo sin comisión. Toda cifra de esta app usa PPC real.</p></div>';
+  document.getElementById('papeles').innerHTML = h;
+}
+
+function inputF(label, val, t, f, cls) {
+  return '<label>' + label + '<input type="number" step="any" inputmode="decimal" class="' + cls +
+    '" data-t="' + esc(t) + '" data-f="' + f + '" value="' + (num(val) ? num(val) : '') + '"></label>';
+}
+function inputK(label, val, f, cls, tipo) {
+  return '<label>' + label + '<input type="' + (tipo || 'number') + '" step="any" inputmode="decimal" class="' + (cls || '') +
+    '" data-k="' + f + '" value="' + esc(val) + '"></label>';
+}
+
+function renderCredito(k) {
+  var cr = S.credito, cfg = S.cfg;
+  var ahorro = CALC.ahorroPrepago(num(cr.saldo), cfg.tasaMensual, num(cr.cuotas), num(cr.pagadas), num(S.prepago));
+  var renta = num(S.prepago) * k.keCartera / 100;
+  var minimo = num(cr.saldo) * num(cr.prepagoMinPct) / 100;
+  var h = '';
+
+  h += '<div class="dark"><div class="lbl">Saldo insoluto</div><div class="big num">' + clp(num(cr.saldo)) + '</div>' +
+    '<div class="sub num">' + cr.pagadas + ' de ' + cr.cuotas + ' cuotas pagadas · vence ' + fFecha(cr.vencimiento) +
+    ' · cuota ' + clp(k.cuota) + ' · débito día ' + cr.diaDebito + '</div></div>';
+
+  var cel = [
+    ['Interés devengado no pagado', clp(k.devengado), k.diasCr + ' días desde la cuota del ' + fFecha(k.ultima), 'dn'],
+    ['Intereses pagados', clp(num(cr.interesesPagados)), 'en ' + cr.pagadas + ' cuotas', 'dn'],
+    ['Capital amortizado', clp(num(cr.capitalAmortizado)), fmtPct(num(cr.capitalAmortizado) / num(cr.montoOriginal) * 100, 1) + ' del original', ''],
+    ['Costo total en intereses', clp(num(cr.costoTotalIntereses)), fmtPct(num(cr.costoTotalIntereses) / num(cr.montoOriginal) * 100, 0) + ' del monto pedido', 'dn'],
+    ['Falta por pagar', clp((num(cr.cuotas) - num(cr.pagadas)) * k.cuota), (num(cr.cuotas) - num(cr.pagadas)) + ' cuotas hasta ' + fFecha(cr.vencimiento), 'dn'],
+    ['Deuda / patrimonio', fmtPct(k.dp, 1), 'límite ' + fmtPct(cfg.dpMax, 0) + ' · patrimonio ' + clp(k.patrimonio), k.dp > cfg.dpMax ? 'dn' : 'up'],
+    ['Deuda / valor cartera', fmtPct(k.ltv, 1), 'financia ' + fmtPct(num(cr.montoOriginal) / k.costo * 100, 1) + ' del costo', ''],
+    ['Fondo de contingencia', clp(num(cr.fondo)), 'objetivo ' + clp(k.cuota * num(cr.fondoCuotas)) + ' = ' + cr.fondoCuotas + ' cuotas', num(cr.fondo) < k.cuota ? 'dn' : 'up']
+  ];
+  h += '<div class="grid2" style="border-left:none;border-right:none">';
+  for (var i = 0; i < cel.length; i++) {
+    h += '<div class="cell"><div class="k">' + cel[i][0] + '</div><div class="v num ' + cel[i][3] + '">' + cel[i][1] + '</div><div class="n">' + cel[i][2] + '</div></div>';
+  }
+  h += '</div>';
+
+  var maxB = Math.max(k.intTotal, k.div) || 1;
+  h += '<div class="sec"><div class="lbl">Intereses acumulados vs. dividendos cobrados</div>' +
+    '<div style="margin-top:10px"><div class="bar-r"><span>Intereses (pagados + devengados)</span><span class="num">' + clp(k.intTotal) + '</span></div>' +
+    '<div class="bar"><i style="width:' + (k.intTotal / maxB * 100).toFixed(1) + '%;background:#b3402e"></i></div></div>' +
+    '<div style="margin-top:8px"><div class="bar-r"><span>Dividendos cobrados</span><span class="num">' + clp(k.div) + '</span></div>' +
+    '<div class="bar"><i style="width:' + (k.div / maxB * 100).toFixed(1) + '%;background:#1f7a4d"></i></div></div>' +
+    '<p class="nota" style="color:' + (k.intTotal > k.div ? '#b3402e' : '#1f7a4d') + '">' +
+    (k.intTotal > k.div
+      ? 'Los intereses van ' + clp(k.intTotal - k.div) + ' adelante de los dividendos. La cartera todavía no paga su propio crédito.'
+      : 'Los dividendos cubren los intereses con ' + clp(k.div - k.intTotal) + ' de holgura.') + '</p></div>';
+
+  h += '<div class="sec"><div class="lbl">Simulador de prepago</div>' +
+    '<div style="margin-top:10px">' + inputK('Monto a prepagar', S.prepago, 'prepago', 'key') + '</div>' +
+    '<div class="grid2" style="margin-top:12px">' +
+    '<div class="cell"><div class="k">Ahorro en intereses</div><div class="v num">' + clp(ahorro) + '</div></div>' +
+    '<div class="cell"><div class="k">Si lo inviertes al Ke cartera</div><div class="v num">' + clp(renta) + '</div></div></div>' +
+    '<p class="nota" style="color:' + (ahorro > renta ? '#b3402e' : '#1f7a4d') + '">' +
+    (ahorro > renta
+      ? 'Conviene prepagar: ahorras ' + clp(ahorro - renta) + ' más que lo que rendiría ese peso invertido al Ke de la cartera.'
+      : 'Conviene invertir: el peso invertido rinde ' + clp(renta - ahorro) + ' más que el ahorro de intereses.') + '</p>' +
+    (num(S.prepago) > 0 && num(S.prepago) < minimo
+      ? '<div class="warn"><p style="font-weight:600">Ese monto está bajo el mínimo de prepago del pagaré: el banco puede rechazarlo.</p></div>' : '') +
+    '<p class="legal">Mínimo por cláusula del pagaré: ' + fmtPct(num(cr.prepagoMinPct), 0) + ' del saldo = ' + clp(minimo) +
+    '. La Ley 18.010 Art. 10 solo hace irrenunciable el prepago sobre el 20% del saldo, así que bajo eso manda la cláusula. Confirma con el banco antes de comprometer el monto.</p></div>';
+
+  h += '<div class="sec gris"><div class="lbl">Parámetros del crédito</div><div class="fr">' +
+    inputK('Saldo insoluto', cr.saldo, 'cr.saldo') +
+    inputK('Cuota mensual', cr.cuotaMensual, 'cr.cuotaMensual') +
+    inputK('Cuotas totales', cr.cuotas, 'cr.cuotas') +
+    inputK('Cuotas pagadas', cr.pagadas, 'cr.pagadas') +
+    inputK('Intereses pagados', cr.interesesPagados, 'cr.interesesPagados') +
+    inputK('Capital amortizado', cr.capitalAmortizado, 'cr.capitalAmortizado') +
+    inputK('Fondo contingencia', cr.fondo, 'cr.fondo') +
+    inputK('Día de débito', cr.diaDebito, 'cr.diaDebito') +
+    '</div></div>';
+  document.getElementById('credito').innerHTML = h;
+}
+
+function tickerValor(t) {
+  var i, tk = String(t || '').toUpperCase();
+  for (i = 0; i < S.posiciones.length; i++) if (S.posiciones[i].ticker === tk) return CALC.valorMercado(S.posiciones[i]);
+  return 0;
+}
+
+function renderTest(k) {
+  var cfg = S.cfg, t = S.test, i;
+  var monto = num(t.monto);
+  var e = {
+    dy: num(t.dy), retorno: num(t.retorno),
+    conc: (k.valor + monto) ? (monto + tickerValor(t.ticker)) / (k.valor + monto) * 100 : 0,
+    comPct: monto ? num(t.comision) / monto * 100 : 0,
+    cuotasCub: k.cuotasCub
+  };
+  var res = CALC.testAsignacion(e, cfg);
+  var h = '';
+  h += '<div class="sec"><h2>Test de asignación de capital</h2>' +
+    '<p class="i">Antes de registrar una compra nueva. La app no bloquea, pero si fallan dos o más test exige justificación escrita, que queda guardada con fecha para auditarla después.</p>' +
+    '<div class="fr" style="margin-top:0">' +
+    '<label>Papel<input type="text" data-k="test.ticker" value="' + esc(t.ticker) + '" autocapitalize="characters" autocomplete="off"></label>' +
+    inputK('Monto a invertir', t.monto, 'test.monto') +
+    inputK('DY esperado %', t.dy, 'test.dy') +
+    inputK('Retorno esperado %', t.retorno, 'test.retorno') +
+    inputK('Comisión del monto', t.comision, 'test.comision') +
+    '</div></div>';
+  for (i = 0; i < res.tests.length; i++) {
+    var r = res.tests[i];
+    h += '<div class="trow' + (r.ok ? '' : ' bad') + '"><i class="' + (r.ok ? 'up' : 'dn') + '">' + (r.ok ? '✓' : '✕') + '</i>' +
+      '<span>' + r.k + '</span><b class="num ' + (r.ok ? 'up' : 'dn') + '">' + r.v + '</b></div>';
+  }
+  h += '<div class="sec"' + (res.fallas >= 2 ? ' style="background:#ffe0d9"' : '') + '>' +
+    '<div class="num" style="font-size:15px;font-weight:800;color:' + (res.fallas >= 2 ? '#7c1405' : '#201e1d') + '">' +
+    (res.fallas === 0 ? 'Pasa los 6 test. Puedes desplegar capital.'
+      : res.fallas + (res.fallas === 1 ? ' test falla. Registra la tesis igual.' : ' test fallan. Se exige justificación escrita.')) + '</div>';
+  if (res.fallas >= 2) {
+    h += '<label style="margin-top:12px;color:#7c1405">Justificación obligatoria' +
+      '<textarea rows="3" data-k="justificacion" placeholder="Por qué despliego capital igual, y qué tendría que pasar para reconocer que me equivoqué">' + esc(S.justificacion) + '</textarea></label>';
+  }
+  h += '<button type="button" class="btn" data-act="tesis">Guardar tesis con fecha</button></div>';
+
+  if (S.decisiones.length) {
+    h += '<div class="sec gris"><div class="lbl">Histórico de tesis (no se borra)</div>';
+    for (i = S.decisiones.length - 1; i >= 0; i--) {
+      var d = S.decisiones[i];
+      h += '<div class="item"><div style="display:flex;justify-content:space-between;gap:10px">' +
+        '<span class="num">' + fFecha(d.fecha) + ' · ' + esc(d.ticker || 'sin papel') + ' · ' + clp(d.monto) + '</span>' +
+        '<span class="num ' + (d.fallas === 0 ? 'up' : 'dn') + '">' + (d.fallas === 0 ? 'pasó todo' : d.fallas + ' fallas') + '</span></div>' +
+        '<p style="margin-top:5px;font-weight:400;color:rgba(32,30,29,.7)">' + esc(d.texto || 'Sin justificación escrita.') + '</p></div>';
+    }
+    h += '</div>';
+  }
+  document.getElementById('test').innerHTML = h;
+  S.testRes = res;
+}
+
+function renderCartera(k) {
+  var cfg = S.cfg, i, h = '';
+  var cel = [
+    ['Beta ponderada', fmtDec(k.beta, 2), 'por valor de mercado', ''],
+    ['Ke CAPM cartera', fmtPct(k.keCartera), 'umbral exigido', ''],
+    ['Concentración máx.', fmtPct(k.maxConc, 1), k.maxTk + ' · tope ' + fmtPct(cfg.topeConc, 0), k.maxConc > cfg.topeConc ? 'dn' : 'up'],
+    ['Nº posiciones', String(S.posiciones.length), 'papeles vigentes', '']
+  ];
+  h += '<div class="grid2" style="border-left:none;border-right:none">';
+  for (i = 0; i < cel.length; i++) {
+    h += '<div class="cell" style="padding:12px 13px"><div class="k">' + cel[i][0] + '</div><div class="v num ' + cel[i][3] + '" style="font-size:18px">' + cel[i][1] + '</div><div class="n">' + cel[i][2] + '</div></div>';
+  }
+  h += '</div>';
+
+  h += '<div class="sec"><div class="lbl">Ke CAPM por papel · Rf ' + fmtPct(cfg.rf) + ' + β × ERP ' + fmtPct(cfg.erp, 0) + '</div><div style="margin-top:9px">';
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i], kep = CALC.ke(cfg.rf, p.beta, cfg.erp);
+    h += '<div class="kerow"><b>' + esc(p.ticker) + '</b><em class="num">β ' + fmtDec(p.beta, 2) + '</em>' +
+      '<div class="kebar"><i style="width:' + (kep / 15 * 100).toFixed(1) + '%"></i></div>' +
+      '<b class="num" style="width:auto">' + fmtPct(kep) + '</b></div>';
+  }
+  h += '</div><p class="nota">Betas bajas en papeles ilíquidos con propiedad concentrada subestiman el riesgo real. No leerlas como activo seguro.</p></div>';
+
+  var des = [
+    ['G/P posiciones vigentes', clpS(k.gp), k.gp >= 0 ? '' : 'dn', '600'],
+    ['Dividendos cobrados', clpS(k.div), '', '600'],
+    ['Rotaciones cerradas', clpS(k.rot), '', '600'],
+    ['Intereses pagados', clpS(-num(S.credito.interesesPagados)), num(S.credito.interesesPagados) ? 'dn' : '', '600'],
+    ['Interés devengado no pagado', clpS(-k.devengado), k.devengado ? 'dn' : '', '600'],
+    ['Resultado real neto', clpS(k.neto), k.neto >= 0 ? 'up' : 'dn', '800']
+  ];
+  h += '<div class="sec gris"><div class="lbl">Resultado real neto (regla 4)</div><div style="margin-top:9px">';
+  for (i = 0; i < des.length; i++) {
+    h += '<div class="line"><span style="font-weight:' + des[i][3] + '">' + des[i][0] + '</span>' +
+      '<span class="num ' + des[i][2] + '" style="font-weight:' + des[i][3] + '">' + des[i][1] + '</span></div>';
+  }
+  h += '</div></div>';
+  document.getElementById('cartera').innerHTML = h;
+}
+
+function eventos(futuros) {
+  var cfg = S.cfg, lista = S.eventos.slice(), i;
+  var d = CALC.fecha(cfg.hoy), dia = d.getDate(), m = d.getMonth() + 1, a = d.getFullYear();
+  var dd = num(S.credito.diaDebito);
+  var mm = dia >= dd ? m + 1 : m, aa = a;
+  if (mm > 12) { mm = 1; aa++; }
+  var k = calcCache || calc();
+  lista.push({
+    tipo: 'Cuota', txt: 'Débito cuota del crédito', registro: '', monto: k.cuota,
+    fecha: aa + '-' + (mm < 10 ? '0' + mm : mm) + '-' + (dd < 10 ? '0' + dd : dd)
+  });
+  lista.sort(function (x, y) { return String(x.fecha) < String(y.fecha) ? -1 : 1; });
+  if (!futuros) return lista;
+  var out = [];
+  for (i = 0; i < lista.length; i++) if (CALC.dias(cfg.hoy, lista[i].fecha) >= 0) out.push(lista[i]);
+  return out.length ? out : lista;
+}
+
+function renderAgenda() {
+  var MES = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+  var lista = eventos(true), h = '', i;
+  for (i = 0; i < lista.length; i++) {
+    var e = lista[i], d = CALC.fecha(e.fecha), n = CALC.dias(S.cfg.hoy, e.fecha);
+    h += '<div class="ev' + (n <= 5 ? ' hot' : '') + '">' +
+      '<div class="ev-d"><b class="num">' + d.getDate() + '</b><span>' + MES[d.getMonth()] + '</span></div>' +
+      '<div style="flex:1;min-width:0"><div><span class="ev-tag">' + esc(e.tipo) + '</span>' +
+      '<span class="ev-w num">' + (n === 0 ? 'hoy' : 'en ' + n + ' días') + '</span></div>' +
+      '<div class="ev-x">' + esc(e.txt) + '</div>' +
+      '<div class="ev-m num">' + (e.monto ? clp(e.monto) : '') + (e.registro ? (e.monto ? ' · ' : '') + 'registro hasta ' + fFecha(e.registro) : '') + '</div></div></div>';
+  }
+  h += '<div class="sec"><p class="i" style="margin-bottom:0">Los dividendos exigen tener la acción al cierre de la fecha límite de registro, no a la fecha de pago.</p></div>';
+  document.getElementById('agenda').innerHTML = h;
+}
+
+/* ---------- M7 parser de cartola ---------- */
+function parseCL(s) {
+  var t = String(s == null ? '' : s).replace(/\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+  var n = parseFloat(t);
+  return isFinite(n) ? n : 0;
+}
+function parseCartola(txt) {
+  var lineas = String(txt || '').split(/\n/), i, j;
+  var posiciones = [], compras = [], corte = '', caja = 0;
+  var reNum = /-?\$?\s?-?[\d.]+(?:,\d+)?/g;
+  for (i = 0; i < lineas.length; i++) {
+    var L = lineas[i];
+    var mc0 = L.match(/al\s+(\d{2})\/(\d{2})\/(\d{4})/);
+    if (mc0 && !corte) corte = mc0[3] + '-' + mc0[2] + '-' + mc0[1];
+    var esMov = /Compra\s+de\s+Acciones|Venta\s+de\s+Acciones|A\s+Caja/i.test(L);
+    if (!esMov && !/\d{2}\/\d{2}\/\d{4}/.test(L) && /\d,\d{4}/.test(L) && /\$/.test(L)) {
+      var mt = L.match(/\b([A-Z]{4,}(?:-[A-Z])?)\b/);
+      var tk = mt ? mt[1] : '';
+      if (tk && tk !== 'CLP' && tk !== 'ACCIONES' && tk !== 'TOTAL') {
+        var v = (L.match(reNum) || []).map(parseCL);
+        if (v.length >= 7) {
+          posiciones.push({
+            ticker: tk, acciones: v[0], pcb: v[1], montoCosto: v[2],
+            precio: v[3], gpHist: v[4], gpPer: v[5], montoMercado: v[6]
+          });
+        }
+      }
+    }
+    var mc = L.match(/Por\s+Compra\s+de\s+Acciones:\s*([A-Z-]+)/i);
+    if (mc) {
+      var f = L.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      var limpia = L.replace(/\d{2}\/\d{2}\/\d{4}/g, ' ');
+      var v2 = (limpia.match(reNum) || []).map(parseCL), vals = [];
+      for (j = 0; j < v2.length; j++) if (v2[j] !== 0) vals.push(Math.abs(v2[j]));
+      compras.push({
+        ticker: mc[1], fecha: f ? f[3] + '-' + f[2] + '-' + f[1] : '',
+        precioBolsa: vals.length > 0 ? vals[0] : 0,
+        cantidad: vals.length > 1 ? vals[1] : 0,
+        monto: vals.length > 2 ? vals[2] : 0
+      });
+    }
+    if (/Caja\s+Internet/i.test(L)) {
+      var cn = (L.match(reNum) || []).map(parseCL);
+      for (j = 0; j < cn.length; j++) if (cn[j] > caja) caja = cn[j];
+    }
+  }
+  return { corte: corte, posiciones: posiciones, compras: compras, caja: caja };
+}
+
+function procesarCartola() {
+  var r = parseCartola(S.cartolaTxt), diff = [], i, j;
+  if (!r.posiciones.length && !r.compras.length) {
+    S.cartolaMsg = 'No encontré el bloque de posiciones. Copia el texto completo del PDF, incluido DETALLE DE POSICIONES.';
+    S.cartolaDiff = [];
+    render();
+    return;
+  }
+  for (i = 0; i < r.posiciones.length; i++) {
+    var q = r.posiciones[i], enc = null;
+    for (j = 0; j < S.posiciones.length; j++) if (S.posiciones[j].ticker === q.ticker) enc = S.posiciones[j];
+    if (!enc) {
+      S.posiciones.push({
+        ticker: q.ticker, nombre: q.ticker, acciones: q.acciones,
+        ppc: q.acciones ? q.montoCosto / q.acciones : 0, pcb: q.pcb, precio: q.precio,
+        beta: 1, tipo: 'En revisión', desde: r.corte || S.cfg.hoy, est: true,
+        dy: 0, dyTipo: 'extraordinario', divAcum: 0, min52: 0, criterio: '', gpPer: q.gpPer
+      });
+      diff.push({ t: q.ticker + ' nueva posición detectada, agregada como En revisión. Su PPC viene del monto costo del broker: corrígelo con el cargo real.', c: 'acc' });
+      continue;
+    }
+    if (Math.abs(enc.precio - q.precio) > 0.005) {
+      diff.push({ t: q.ticker + ' precio ' + precioTxt(enc.precio) + ' → ' + precioTxt(q.precio), c: '' });
+      enc.precio = q.precio;
+    }
+    if (Math.abs(enc.acciones - q.acciones) > 0.5) {
+      diff.push({ t: q.ticker + ' acciones ' + miles(enc.acciones) + ' → ' + miles(q.acciones), c: 'acc' });
+      enc.acciones = q.acciones;
+    }
+    enc.pcb = q.pcb;
+    enc.gpPer = q.gpPer;
+    var omit = num(enc.ppc) * q.acciones - q.montoCosto;
+    if (Math.abs(omit) > 2000) {
+      diff.push({ t: q.ticker + ': la cartola informa monto costo ' + clp(q.montoCosto) + '; con tu PPC real es ' + clp(num(enc.ppc) * q.acciones) + ', ' + clp(Math.abs(omit)) + ' de diferencia por revisar.', c: 'acc' });
+    }
+    var infla = q.acciones * (num(enc.ppc) - q.pcb);
+    if (infla > 1000) {
+      diff.push({ t: q.ticker + ': el G/P histórico de la cartola (' + clpS(q.gpHist) + ') usa precio costo ' + precioTxt(q.pcb) + ' e infla ' + clp(infla) + '. El real es ' + clpS(q.montoMercado - num(enc.ppc) * q.acciones) + '.', c: 'dn' });
+    }
+  }
+  for (i = 0; i < r.compras.length; i++) {
+    var cp = r.compras[i];
+    if (!cp.cantidad || !cp.monto) continue;
+    var bruto = cp.cantidad * cp.precioBolsa;
+    var com = cp.monto - bruto;
+    var comPct = bruto ? com / bruto * 100 : 0;
+    diff.push({ t: 'Compra ' + cp.ticker + ' del ' + fFecha(cp.fecha) + ': cargo real ' + clp(cp.monto) + ' ÷ ' + miles(cp.cantidad) + ' = PPC real ' + precioTxt(cp.monto / cp.cantidad) + '. Bolsa ' + precioTxt(cp.precioBolsa) + ', comisión ' + clp(com) + ' = ' + fmtPct(comPct) + '.', c: 'up' });
+    if (comPct > S.cfg.comision) {
+      diff.push({ t: 'Esa comisión de ' + fmtPct(comPct) + ' está sobre tu tope de ' + fmtPct(S.cfg.comision) + '. Te cobraron ' + clp(com - bruto * S.cfg.comision / 100) + ' más que la tarifa que asumes.', c: 'dn' });
+    }
+    for (j = 0; j < S.posiciones.length; j++) {
+      if (S.posiciones[j].ticker === cp.ticker && S.posiciones[j].est !== false) {
+        S.posiciones[j].desde = cp.fecha;
+        S.posiciones[j].est = false;
+      }
+    }
+  }
+  if (r.corte) S.cfg.hoy = r.corte;
+  if (r.caja) S.cfg.caja = r.caja;
+  S.cartolaMsg = 'Cartola leída al ' + fFecha(r.corte || S.cfg.hoy) + ': ' + r.posiciones.length + ' posiciones y ' + r.compras.length + ' compras. Precios y cantidades actualizados; el PPC real nunca se sobrescribe solo.';
+  S.cartolaDiff = diff;
+  guardar();
+  render();
+}
+
+function renderCartola(k) {
+  var h = '', i;
+  h += '<div class="sec"><h2>Importar cartola Banchile</h2>' +
+    '<p class="i">' + (S.cartolaMsg || 'Pega el texto del PDF de Banchile. Leo posiciones, precios de mercado, el precio costo del broker y las compras con su cargo real a caja.') + '</p>' +
+    '<textarea id="cartolaTxt" rows="7" data-k="cartolaTxt" placeholder="Abre el PDF, selecciona todo el texto, cópialo y pégalo aquí">' + esc(S.cartolaTxt) + '</textarea>' +
+    '<button type="button" class="btn" data-act="cartola">Leer cartola y comparar</button></div>';
+  if (S.cartolaDiff.length) {
+    h += '<div class="sec gris"><div class="lbl">Diferencias contra tus datos</div>';
+    for (i = 0; i < S.cartolaDiff.length; i++) {
+      h += '<div class="item ' + S.cartolaDiff[i].c + '">' + esc(S.cartolaDiff[i].t) + '</div>';
+    }
+    h += '</div>';
+  }
+  var costoBroker = k.costo - k.comOmitida;
+  var filas = [
+    ['G/P histórico según cartola', clpS(k.valor - costoBroker), 'mut', '600'],
+    ['Ajuste por comisión no reconocida', clpS(-k.comOmitida), 'acc', '600'],
+    ['G/P real con PPC real', clpS(k.gp), '', '800'],
+    ['Rentabilidad que muestra el broker', pp(costoBroker ? (k.valor - costoBroker) / costoBroker * 100 : 0), 'mut', '600'],
+    ['Rentabilidad real', pp(k.gpPct), '', '800'],
+    ['TWR 12M que informa el broker', pp(num(S.cfg.twrBroker12M)), 'mut', '600'],
+    ['Menos costo del crédito', fmtPP(num(S.cfg.twrBroker12M) - S.cfg.costoCredito), 'dn', '800']
+  ];
+  h += '<div class="sec"><div class="lbl">Lo que el broker te dice vs. lo que es</div><div style="margin-top:9px">';
+  for (i = 0; i < filas.length; i++) {
+    h += '<div class="line"><span style="font-weight:' + filas[i][3] + '">' + filas[i][0] + '</span>' +
+      '<span class="num ' + filas[i][2] + '" style="font-weight:' + filas[i][3] + '">' + filas[i][1] + '</span></div>';
+  }
+  h += '</div><p class="nota">La cartola define precio costo como promedio de compra que no descuenta comisión. Por eso su rentabilidad histórica siempre va arriba de la real.</p></div>';
+  document.getElementById('cartola').innerHTML = h;
+}
+
+function renderAjustes() {
+  var cfg = S.cfg, h = '', i;
+  var campos = [
+    ['hoy', 'Fecha de corte', 'text'], ['costoCredito', 'Costo crédito anual %', 'number'],
+    ['tasaMensual', 'Tasa mensual %', 'number'], ['wacc', 'WACC personal %', 'number'],
+    ['rf', 'Rf bono 10 años %', 'number'], ['erp', 'ERP %', 'number'],
+    ['capmUmbral', 'CAPM umbral real %', 'number'], ['tpm', 'TPM %', 'number'],
+    ['inflacion', 'Inflación 12M %', 'number'], ['spreadMin', 'Spread mínimo pp', 'number'],
+    ['comision', 'Comisión corretaje %', 'number'], ['topeConc', 'Tope concentración %', 'number'],
+    ['dpMax', 'Máx deuda/patrimonio %', 'number'], ['caja', 'Saldo en caja', 'number'],
+    ['twrBroker12M', 'TWR 12M broker %', 'number']
+  ];
+  h += '<div class="sec"><div class="lbl">Parámetros financieros</div><div class="fr">';
+  for (i = 0; i < campos.length; i++) {
+    h += '<label>' + campos[i][1] + '<input type="' + campos[i][2] + '" step="any" inputmode="decimal" data-k="cfg.' + campos[i][0] + '" value="' + esc(cfg[campos[i][0]]) + '"></label>';
+  }
+  h += '</div></div>';
+
+  h += '<div class="sec gris"><div class="lbl">Rotaciones cerradas</div>' +
+    '<p class="i" style="margin-top:5px">Van en línea aparte, nunca sumadas al G/P de posiciones vigentes.</p>' +
+    '<div class="fr" style="grid-template-columns:1fr 1fr">' +
+    '<label>Papel<input type="text" data-k="rot.ticker" value="' + esc(S.rot.ticker) + '" autocapitalize="characters"></label>' +
+    inputK('Resultado', S.rot.monto, 'rot.monto') +
+    '<label>Fecha<input type="date" data-k="rot.fecha" value="' + esc(S.rot.fecha) + '"></label>' +
+    '</div><button type="button" class="btn o" data-act="rot">Registrar rotación</button>';
+  for (i = 0; i < S.rotaciones.length; i++) {
+    h += '<div class="item" style="display:flex;justify-content:space-between;align-items:center;gap:10px">' +
+      '<span class="num">' + fFecha(S.rotaciones[i].fecha) + ' · ' + esc(S.rotaciones[i].ticker) + ' · ' + clpS(num(S.rotaciones[i].monto)) + '</span>' +
+      '<button type="button" class="acc" style="font-size:11px;font-weight:800;text-transform:uppercase" data-delrot="' + i + '">Quitar</button></div>';
+  }
+  h += '</div>';
+
+  h += '<div class="sec"><div class="lbl">Respaldo</div>' +
+    '<p class="i" style="margin-top:5px">' + (S.backupMsg || 'El respaldo es un JSON que solo abre esta app. Incluye posiciones, crédito, rotaciones y el histórico de tesis.') + '</p>' +
+    '<div class="fr" style="margin-top:0"><button type="button" class="btn o" style="margin-top:0" data-act="export">Exportar JSON</button>' +
+    '<label style="justify-content:center;border:2px solid rgba(32,30,29,.4);min-height:48px;padding:0 12px;font-size:13px;font-weight:800;letter-spacing:0;text-transform:none;color:#201e1d">Importar JSON' +
+    '<input type="file" accept="application/json,.json" id="fileIn" style="display:none"></label></div>' +
+    '<button type="button" class="acc" style="margin-top:12px;font-size:12px;font-weight:800;text-transform:uppercase" data-act="reset">Restaurar datos maestros</button></div>';
+
+  var no = [
+    'No muestra recomendaciones automáticas de compra o venta.',
+    'No usa el precio costo del broker en ningún cálculo.',
+    'No suma dividendos pass-through al ingreso recurrente.',
+    'No celebra ganancias nominales sin contrastarlas con inflación y crédito.',
+    'No borra el histórico de tesis: las decisiones pasadas quedan auditables.'
+  ];
+  h += '<div class="sec" style="border-bottom:none"><div class="lbl">Lo que esta app no hace</div><div style="margin-top:8px">';
+  for (i = 0; i < no.length; i++) h += '<div class="no"><b>—</b><span>' + no[i] + '</span></div>';
+  h += '</div></div>';
+  document.getElementById('ajustes').innerHTML = h;
+}
+
+/* ============================================================
+   Render maestro
+   ============================================================ */
+var calcCache = null;
+function render() {
+  calcCache = null;
+  var k = calc();
+  calcCache = k;
+  document.getElementById('hoyTxt').textContent = fFecha(S.cfg.hoy);
+
+  var al = alertas(k), h = '', i;
+  var lista = S.verAlertas ? al : al.slice(0, 3);
+  for (i = 0; i < lista.length; i++) {
+    h += '<div class="al al-' + (lista[i].n === 'ALTA' ? 'alta' : 'media') + '">' +
+      '<span class="al-n">' + lista[i].n + '</span><span class="al-t">' + esc(lista[i].t) + '</span></div>';
+  }
+  if (al.length > 3) {
+    h += '<button type="button" class="al-more" data-act="alertas">' +
+      (S.verAlertas ? 'Ocultar alertas' : 'Ver ' + (al.length - 3) + ' alertas más') + '</button>';
+  }
+  document.getElementById('alertas').innerHTML = h;
+
+  var nv = '';
+  for (i = 0; i < TABS.length; i++) {
+    nv += '<button type="button" class="' + (S.tab === TABS[i].id ? 'on' : '') + '" data-tab="' + TABS[i].id + '">' + TABS[i].label + '</button>';
+  }
+  document.getElementById('nav').innerHTML = nv;
+  for (i = 0; i < TABS.length; i++) {
+    document.getElementById('p-' + TABS[i].id).className = 'pane' + (S.tab === TABS[i].id ? ' on' : '');
+  }
+  document.getElementById('bMaq').className = 'maq' + (S.sinMaq ? ' on' : '');
+  document.getElementById('bMaq').textContent = 'Sin maquillaje: ' + (S.sinMaq ? 'ON' : 'OFF');
+
+  if (S.tab === 'panel') renderPanel(k);
+  else if (S.tab === 'papeles') renderPapeles(k);
+  else if (S.tab === 'credito') renderCredito(k);
+  else if (S.tab === 'test') renderTest(k);
+  else if (S.tab === 'cartera') renderCartera(k);
+  else if (S.tab === 'agenda') renderAgenda();
+  else if (S.tab === 'cartola') renderCartola(k);
+  else if (S.tab === 'ajustes') renderAjustes();
+}
+
+/* ============================================================
+   Eventos
+   ============================================================ */
+function setPath(path, val) {
+  var p = path.split('.');
+  if (p.length === 1) { S[p[0]] = val; return; }
+  var base = p[0] === 'cr' ? S.credito : S[p[0]];
+  if (base) base[p[1]] = val;
+}
+
+document.addEventListener('click', function (ev) {
+  var n = ev.target, a;
+  while (n && n !== document) {
+    if (n.getAttribute) {
+      if ((a = n.getAttribute('data-tab'))) { S.tab = a; render(); window.scrollTo(0, 0); return; }
+      if ((a = n.getAttribute('data-fx'))) { S.formulas[a] = !S.formulas[a]; render(); return; }
+      if ((a = n.getAttribute('data-open'))) {
+        S.abiertas[a] = !S.abiertas[a];
+        var b = document.getElementById('body-' + a);
+        if (b) b.className = 'pos-b' + (S.abiertas[a] ? ' on' : '');
+        return;
+      }
+      if ((a = n.getAttribute('data-dyt'))) {
+        var pr = a.split('|'), i;
+        for (i = 0; i < S.posiciones.length; i++) if (S.posiciones[i].ticker === pr[0]) S.posiciones[i].dyTipo = pr[1];
+        guardar(); render(); return;
+      }
+      if ((a = n.getAttribute('data-delrot'))) {
+        S.rotaciones.splice(+a, 1); guardar(); render(); return;
+      }
+      if ((a = n.getAttribute('data-act'))) { acciones(a); return; }
+      if (n.id === 'bMaq') { S.sinMaq = !S.sinMaq; render(); return; }
+    }
+    n = n.parentNode;
+  }
+});
+
+function acciones(a) {
+  if (a === 'alertas') { S.verAlertas = !S.verAlertas; render(); return; }
+  if (a === 'cartola') { procesarCartola(); return; }
+  if (a === 'tesis') {
+    var res = S.testRes || { fallas: 0, tests: [] };
+    S.decisiones.push({
+      fecha: S.cfg.hoy, ticker: S.test.ticker, monto: num(S.test.monto),
+      fallas: res.fallas, texto: S.justificacion
+    });
+    S.justificacion = '';
+    guardar(); render(); return;
+  }
+  if (a === 'rot') {
+    if (!S.rot.ticker || !num(S.rot.monto)) return;
+    S.rotaciones.push({ ticker: S.rot.ticker, monto: num(S.rot.monto), fecha: S.rot.fecha });
+    S.rot = { ticker: '', monto: '', fecha: S.cfg.hoy };
+    guardar(); render(); return;
+  }
+  if (a === 'export') {
+    try {
+      var blob = new Blob([JSON.stringify({
+        app: 'cartera-apalancada', v: 1, cfg: S.cfg, credito: S.credito,
+        posiciones: S.posiciones, eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones
+      }, null, 2)], { type: 'application/json' });
+      var el = document.createElement('a');
+      el.href = URL.createObjectURL(blob);
+      el.download = 'cartera-' + S.cfg.hoy + '.json';
+      document.body.appendChild(el);
+      el.click();
+      document.body.removeChild(el);
+      S.backupMsg = 'Respaldo descargado.';
+    } catch (e) { S.backupMsg = 'No pude generar el archivo en este navegador.'; }
+    render(); return;
+  }
+  if (a === 'reset') {
+    if (confirm('Restaurar los datos maestros al 22/08/2026? Se pierde lo editado.')) {
+      S.cfg = clon(MAESTRO.cfg); S.credito = clon(MAESTRO.credito);
+      S.posiciones = clon(MAESTRO.posiciones); S.eventos = clon(MAESTRO.eventos);
+      S.rotaciones = []; S.decisiones = [];
+      guardar(); render();
+    }
+  }
+}
+
+document.addEventListener('change', function (ev) {
+  var el = ev.target;
+  if (!el || !el.getAttribute) return;
+  if (el.id === 'fileIn') { importar(el); return; }
+  var t = el.getAttribute('data-t'), f = el.getAttribute('data-f'), kk = el.getAttribute('data-k');
+  if (t && f) {
+    var i;
+    for (i = 0; i < S.posiciones.length; i++) {
+      if (S.posiciones[i].ticker === t) S.posiciones[i][f] = (f === 'criterio') ? el.value : num(el.value);
+    }
+    guardar(); render(); return;
+  }
+  if (kk) {
+    var esTexto = kk === 'cfg.hoy' || kk === 'test.ticker' || kk === 'rot.ticker' || kk === 'rot.fecha' || kk === 'justificacion' || kk === 'cartolaTxt';
+    var val = esTexto ? el.value : num(el.value);
+    if (kk === 'test.ticker' || kk === 'rot.ticker') val = String(el.value).toUpperCase();
+    setPath(kk, val);
+    if (kk.indexOf('cfg.') === 0 || kk.indexOf('cr.') === 0) guardar();
+    if (kk === 'cartolaTxt' || kk === 'justificacion') return;
+    render();
+  }
+});
+
+function importar(el) {
+  var file = el.files && el.files[0];
+  if (!file) return;
+  var r = new FileReader();
+  r.onload = function () {
+    try {
+      var d = JSON.parse(r.result);
+      if (!d || !d.posiciones) throw new Error('formato');
+      var i;
+      S.cfg = clon(MAESTRO.cfg);
+      for (i in MAESTRO.cfg) if (d.cfg && d.cfg[i] !== undefined) S.cfg[i] = d.cfg[i];
+      S.credito = clon(MAESTRO.credito);
+      for (i in MAESTRO.credito) if (d.credito && d.credito[i] !== undefined) S.credito[i] = d.credito[i];
+      S.posiciones = d.posiciones;
+      S.eventos = d.eventos || clon(MAESTRO.eventos);
+      S.rotaciones = d.rotaciones || [];
+      S.decisiones = d.decisiones || [];
+      S.backupMsg = 'Respaldo cargado: ' + d.posiciones.length + ' posiciones.';
+      guardar(); render();
+    } catch (e) {
+      S.backupMsg = 'Ese archivo no es un respaldo válido.';
+      render();
+    }
+  };
+  r.readAsText(file);
+  el.value = '';
+}
+
+var estatico = document.getElementById('estatico');
+if (estatico && estatico.parentNode) estatico.parentNode.removeChild(estatico);
+cargar();
+render();
+</script>
+</body>
+</html>
