@@ -587,6 +587,33 @@ function renderPanel(k) {
   document.getElementById('cosmetico').innerHTML = c;
 }
 
+function varDia(p) {
+  var d = p.dia;
+  if (!d || !(d.ant > 0)) return null;
+  return { abs: p.precio - d.ant, pct: (p.precio / d.ant - 1) * 100 };
+}
+function varDiaTxt(p) {
+  var v = varDia(p);
+  if (!v) return '';
+  var c = v.abs > 0.0001 ? 'up' : (v.abs < -0.0001 ? 'dn' : '');
+  return '<div class="num ' + c + '" style="font-size:11px;font-weight:700">' + (v.abs > 0.0001 ? '▲ ' : v.abs < -0.0001 ? '▼ ' : '= ') + pp(v.pct) + ' día</div>';
+}
+function movDiaHtml(p) {
+  var d = p.dia, v = varDia(p), h = '<div class="sec gris" style="margin:0 0 10px"><div class="lbl">Movimiento del día' + (d && d.fecha ? ' · ' + fFecha(d.fecha) : '') + '</div>';
+  if (v) {
+    h += '<div class="num" style="font-size:13px;line-height:1.7">' +
+      'Cierre anterior ' + precioTxt(d.ant) + ' → hoy ' + precioTxt(p.precio) +
+      ' <b class="' + (v.abs >= 0 ? 'up' : 'dn') + '">' + (v.abs >= 0 ? '+' : '−') + precioTxt(Math.abs(v.abs)) + ' (' + pp(v.pct) + ')</b><br>' +
+      (d.max > 0 ? 'Rango del día ' + precioTxt(d.min) + ' – ' + precioTxt(d.max) + '<br>' : '') +
+      (d.vol > 0 ? 'Acciones transadas ' + miles(d.vol) + ' · monto aprox. ' + clp(d.vol * p.precio) : '') + '</div>';
+  } else {
+    h += '<p class="i" style="margin:0">Sin datos del día todavía. Toca “Actualizar precios ahora”.</p>';
+  }
+  h += '<a class="i" style="display:block;margin-top:8px;font-weight:700;color:inherit" target="_blank" rel="noopener" href="https://www.bolsadesantiago.com/resumen_instrumento/' +
+    encodeURIComponent(p.ticker) + '">Ver puntas y últimas transacciones en Bolsa de Santiago →</a></div>';
+  return h;
+}
+
 function renderPapeles(k) {
   var cfg = S.cfg, h = '', i, j;
   h += '<div class="sec"><p class="i" style="margin-bottom:0">' + esc(S.preciosMsg || 'Los precios se actualizan solos al abrir la app.') + '</p>' +
@@ -611,12 +638,13 @@ function renderPapeles(k) {
       '<div class="g4">' +
       '<div><div class="mini">Acciones</div><div class="mini-v num">' + miles(p.acciones) + '</div></div>' +
       '<div><div class="mini">PPC real</div><div class="mini-v num">' + precioTxt(p.ppc) + '</div></div>' +
-      '<div><div class="mini">Hoy</div><div class="mini-v num">' + precioTxt(p.precio) + '</div></div>' +
+      '<div><div class="mini">Hoy</div><div class="mini-v num">' + precioTxt(p.precio) + '</div>' + varDiaTxt(p) + '</div>' +
       '<div><div class="mini">Peso</div><div class="mini-v num">' + fmtPct(peso, 1) + '</div></div></div>' +
       (sinCrit ? '<div class="flag">Sin criterio de salida definido</div>' : '') +
       '</button>';
 
     h += '<div class="pos-b' + (ab ? ' on' : '') + '" id="body-' + esc(p.ticker) + '">';
+    h += movDiaHtml(p);
     var cells = [
       ['Costo real', clp(costo), 'con comisión', ''],
       ['Valor hoy', clp(valor), 'mercado', ''],
@@ -949,6 +977,7 @@ function procesarCartola() {
       diff.push({ t: q.ticker + ' precio ' + precioTxt(enc.precio) + ' → ' + precioTxt(q.precio), c: '' });
       enc.precio = q.precio;
       enc.precioTs = tsCorte(r.corte);
+      enc.dia = null;
     }
     if (Math.abs(enc.acciones - q.acciones) > 0.5) {
       diff.push({ t: q.ticker + ' acciones ' + miles(enc.acciones) + ' → ' + miles(q.acciones), c: 'acc' });
@@ -1209,7 +1238,7 @@ document.addEventListener('change', function (ev) {
     for (i = 0; i < S.posiciones.length; i++) {
       if (S.posiciones[i].ticker === t) {
         S.posiciones[i][f] = (f === 'criterio') ? el.value : num(el.value);
-        if (f === 'precio') S.posiciones[i].precioTs = Date.now();
+        if (f === 'precio') { S.posiciones[i].precioTs = Date.now(); S.posiciones[i].dia = null; }
       }
     }
     guardar(); render(); return;
@@ -1293,8 +1322,14 @@ function yahooProxy(tk) {
       if (!(m.regularMarketPrice > 0)) throw new Error('sin precio');
       var ts = (m.regularMarketTime || Date.now() / 1000) * 1000;
       var lows = ((res.indicators && res.indicators.quote && res.indicators.quote[0].low) || []).filter(function (x) { return x > 0; });
+      var cl = ((res.indicators && res.indicators.quote && res.indicators.quote[0].close) || []).filter(function (x) { return x > 0; });
+      var fechaQ = new Date(ts - 3 * 3600000).toISOString().slice(0, 10);
+      var tsl = res.timestamp ? res.timestamp[res.timestamp.length - 1] * 1000 : 0;
+      var hoyBar = tsl && new Date(tsl - 3 * 3600000).toISOString().slice(0, 10) === fechaQ;
       return {
         precio: m.regularMarketPrice, ts: ts,
+        ant: hoyBar && cl.length > 1 ? cl[cl.length - 2] : (cl.length ? cl[cl.length - 1] : 0),
+        max: m.regularMarketDayHigh || 0, min: m.regularMarketDayLow || 0, vol: m.regularMarketVolume || 0,
         min52: m.fiftyTwoWeekLow || (lows.length ? Math.min.apply(null, lows) : 0),
         fecha: new Date(ts - 3 * 3600000).toISOString().slice(0, 10)
       };
@@ -1312,6 +1347,7 @@ function aplicarPrecios(q, fuente, manual) {
     if (Math.abs(p.precio - x.precio) > 0.005) n++;
     p.precio = Math.round(x.precio * 100) / 100;
     if (x.min52 > 0) p.min52 = Math.round(x.min52 * 100) / 100;
+    p.dia = { ant: num(x.ant), max: num(x.max), min: num(x.min), vol: num(x.vol), fecha: x.fecha || '' };
     p.precioTs = ts;
     if (ts > ult) ult = ts;
     if (x.fecha && x.fecha > S.cfg.hoy) S.cfg.hoy = x.fecha;

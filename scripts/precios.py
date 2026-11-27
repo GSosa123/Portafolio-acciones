@@ -39,7 +39,13 @@ def cotizar(tk):
     min52 = m.get("fiftyTwoWeekLow") or (min(lows) if lows else 0)
     ts = m.get("regularMarketTime") or int(time.time())
     fecha = datetime.fromtimestamp(ts, timezone(timedelta(hours=-3))).strftime("%Y-%m-%d")
-    return {"precio": round(float(precio), 4), "min52": round(float(min52), 4), "fecha": fecha, "ts": int(ts)}
+    closes = [x for x in (res.get("indicators", {}).get("quote", [{}])[0].get("close") or []) if x]
+    hoy_bar = res.get("timestamp") and datetime.fromtimestamp(res["timestamp"][-1], timezone(timedelta(hours=-3))).strftime("%Y-%m-%d") == fecha
+    ant = closes[-2] if hoy_bar and len(closes) > 1 else (closes[-1] if closes else 0)
+    r2 = lambda v: round(float(v or 0), 4)
+    return {"precio": r2(precio), "min52": r2(min52), "fecha": fecha, "ts": int(ts),
+            "ant": r2(ant), "max": r2(m.get("regularMarketDayHigh")), "min": r2(m.get("regularMarketDayLow")),
+            "vol": int(m.get("regularMarketVolume") or 0)}
 
 
 def main():
