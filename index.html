@@ -407,7 +407,7 @@ var S = {
   tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
   prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '7000' },
   justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-08-22' },
-  cartolaTxt: '', cartolaMsg: '', cartolaDiff: [], backupMsg: ''
+  cartolaTxt: '', cartolaMsg: '', cartolaDiff: [], backupMsg: '', preciosMsg: ''
 };
 
 function guardar() {
@@ -589,6 +589,8 @@ function renderPanel(k) {
 
 function renderPapeles(k) {
   var cfg = S.cfg, h = '', i, j;
+  h += '<div class="sec"><p class="i" style="margin-bottom:0">' + esc(S.preciosMsg || 'Los precios se actualizan solos al abrir la app.') + '</p>' +
+    '<button type="button" class="btn o" data-act="precios">Actualizar precios ahora</button></div>';
   for (i = 0; i < S.posiciones.length; i++) {
     var p = S.posiciones[i];
     var costo = CALC.costoReal(p), valor = CALC.valorMercado(p), gp = valor - costo;
@@ -946,6 +948,7 @@ function procesarCartola() {
     if (Math.abs(enc.precio - q.precio) > 0.005) {
       diff.push({ t: q.ticker + ' precio ' + precioTxt(enc.precio) + ' → ' + precioTxt(q.precio), c: '' });
       enc.precio = q.precio;
+      enc.precioTs = tsCorte(r.corte);
     }
     if (Math.abs(enc.acciones - q.acciones) > 0.5) {
       diff.push({ t: q.ticker + ' acciones ' + miles(enc.acciones) + ' → ' + miles(q.acciones), c: 'acc' });
@@ -1154,6 +1157,7 @@ document.addEventListener('click', function (ev) {
 function acciones(a) {
   if (a === 'alertas') { S.verAlertas = !S.verAlertas; render(); return; }
   if (a === 'cartola') { procesarCartola(); return; }
+  if (a === 'precios') { actualizarPrecios(true); return; }
   if (a === 'tesis') {
     var res = S.testRes || { fallas: 0, tests: [] };
     S.decisiones.push({
@@ -1203,7 +1207,10 @@ document.addEventListener('change', function (ev) {
   if (t && f) {
     var i;
     for (i = 0; i < S.posiciones.length; i++) {
-      if (S.posiciones[i].ticker === t) S.posiciones[i][f] = (f === 'criterio') ? el.value : num(el.value);
+      if (S.posiciones[i].ticker === t) {
+        S.posiciones[i][f] = (f === 'criterio') ? el.value : num(el.value);
+        if (f === 'precio') S.posiciones[i].precioTs = Date.now();
+      }
     }
     guardar(); render(); return;
   }
@@ -1246,10 +1253,111 @@ function importar(el) {
   el.value = '';
 }
 
+/* ============================================================
+   Precios automáticos
+   1) precios.json del repo (lo genera un GitHub Action cada 30 min en rueda).
+   2) Respaldo: si está viejo o falta un papel, consulta Yahoo vía proxy CORS.
+   Nunca pisa un precio ingresado a mano o por cartola más reciente (precioTs).
+   ============================================================ */
+var PRECIOS_URL = 'https://raw.githubusercontent.com/GSosa123/Portafolio-acciones/main/precios.json';
+var PROXIES = [
+  function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+  function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }
+];
+var PRECIOS_MAX_EDAD = 60 * 60 * 1000;
+
+function getJSON(url, ms) {
+  return new Promise(function (ok, ko) {
+    var ctl = window.AbortController ? new AbortController() : null;
+    var tm = setTimeout(function () { if (ctl) ctl.abort(); ko(new Error('timeout')); }, ms || 10000);
+    fetch(url, { cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { clearTimeout(tm); ok(j); }, function (e) { clearTimeout(tm); ko(e); });
+  });
+}
+function tsCorte(f) { var t = Date.parse(String(f || '') + 'T16:00:00-03:00'); return isNaN(t) ? Date.now() : t; }
+function enRueda() {
+  try {
+    var d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Santiago' }));
+    var m = d.getHours() * 60 + d.getMinutes(), w = d.getDay();
+    return w >= 1 && w <= 5 && m >= 9 * 60 + 30 && m <= 16 * 60 + 15;
+  } catch (e) { return true; }
+}
+function yahooProxy(tk) {
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(tk + '.SN') + '?range=1y&interval=1d';
+  var i = 0;
+  function intento() {
+    if (i >= PROXIES.length) return Promise.reject(new Error('proxies caídos'));
+    return getJSON(PROXIES[i++](url), 10000).then(function (d) {
+      var res = d.chart.result[0], m = res.meta;
+      if (!(m.regularMarketPrice > 0)) throw new Error('sin precio');
+      var ts = (m.regularMarketTime || Date.now() / 1000) * 1000;
+      var lows = ((res.indicators && res.indicators.quote && res.indicators.quote[0].low) || []).filter(function (x) { return x > 0; });
+      return {
+        precio: m.regularMarketPrice, ts: ts,
+        min52: m.fiftyTwoWeekLow || (lows.length ? Math.min.apply(null, lows) : 0),
+        fecha: new Date(ts - 3 * 3600000).toISOString().slice(0, 10)
+      };
+    }).catch(intento);
+  }
+  return intento();
+}
+function aplicarPrecios(q, fuente, manual) {
+  var n = 0, i, ult = 0;
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i], x = q[p.ticker];
+    if (!x || !(x.precio > 0)) continue;
+    var ts = x.ts ? (x.ts < 1e12 ? x.ts * 1000 : x.ts) : tsCorte(x.fecha);
+    if (!manual && ts <= num(p.precioTs)) continue;
+    if (Math.abs(p.precio - x.precio) > 0.005) n++;
+    p.precio = Math.round(x.precio * 100) / 100;
+    if (x.min52 > 0) p.min52 = Math.round(x.min52 * 100) / 100;
+    p.precioTs = ts;
+    if (ts > ult) ult = ts;
+    if (x.fecha && x.fecha > S.cfg.hoy) S.cfg.hoy = x.fecha;
+  }
+  if (ult) {
+    var d = new Date(ult);
+    S.preciosMsg = 'Precios al ' + fFecha(S.cfg.hoy) + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) +
+      ' (' + fuente + '). ' + n + ' cambiaron.';
+  }
+  return n;
+}
+var preciosEnCurso = false;
+function actualizarPrecios(manual) {
+  if (preciosEnCurso) return;
+  preciosEnCurso = true;
+  if (manual) { S.preciosMsg = 'Consultando precios…'; render(); }
+  getJSON(PRECIOS_URL + '?t=' + Date.now(), 8000).catch(function () { return null; }).then(function (j) {
+    var q = (j && j.precios) || {}, fuente = 'Yahoo vía GitHub';
+    var viejo = !j || (Date.now() - Date.parse(j.actualizado) > PRECIOS_MAX_EDAD && enRueda());
+    var pedir = [], i;
+    for (i = 0; i < S.posiciones.length; i++) {
+      var tk = S.posiciones[i].ticker;
+      if (viejo || !q[tk]) pedir.push(tk);
+    }
+    if (!pedir.length) return { q: q, fuente: fuente, fallas: [] };
+    var fallas = [];
+    return Promise.all(pedir.map(function (tk) {
+      return yahooProxy(tk).then(function (x) { if (!q[tk] || x.ts > num(q[tk].ts) * (q[tk].ts < 1e12 ? 1000 : 1)) q[tk] = x; fuente = 'Yahoo directo'; },
+        function () { if (!q[tk]) fallas.push(tk); });
+    })).then(function () { return { q: q, fuente: fuente, fallas: fallas }; });
+  }).then(function (r) {
+    aplicarPrecios(r.q, r.fuente, manual);
+    if (r.fallas.length) S.preciosMsg = (S.preciosMsg ? S.preciosMsg + ' ' : '') + 'Sin precio para: ' + r.fallas.join(', ') + '.';
+    if (!S.preciosMsg || S.preciosMsg === 'Consultando precios…') S.preciosMsg = 'No pude obtener precios. Revisa la conexión o ingrésalos a mano.';
+    guardar(); render();
+  }).catch(function () {
+    S.preciosMsg = 'No pude obtener precios. Revisa la conexión o ingrésalos a mano.';
+    render();
+  }).then(function () { preciosEnCurso = false; });
+}
+
 var estatico = document.getElementById('estatico');
 if (estatico && estatico.parentNode) estatico.parentNode.removeChild(estatico);
 cargar();
 render();
+if (window.fetch && window.Promise) actualizarPrecios(false);
 </script>
 </body>
 </html>
