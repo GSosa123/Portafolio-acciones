@@ -11,11 +11,14 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 UA = {"User-Agent": "Mozilla/5.0 (precios-cartera)"}
+# Yahoo no publica la serie del índice ^IPSA; se usa el ETF It Now S&P IPSA (réplica del IPSA en CLP).
+SIMBOLOS = {"^IPSA": "CFMITNIPSA.SN"}
 
 
 def tickers():
     html = (RAIZ / "index.html").read_text(encoding="utf-8")
-    tk = re.findall(r"\{\s*ticker:\s*'([A-Z0-9.\-]+)'", html)
+    bloque = html.split("posiciones: [", 1)[1].split("]", 1)[0]  # solo las posiciones de MAESTRO
+    tk = re.findall(r"\{\s*ticker:\s*'([A-Z0-9.\-]+)'", bloque)
     extra = RAIZ / "tickers.txt"
     if extra.exists():
         for l in extra.read_text(encoding="utf-8").splitlines():
@@ -26,7 +29,7 @@ def tickers():
 
 
 def cotizar(tk):
-    sym = tk if tk.startswith("^") else tk + ".SN"
+    sym = SIMBOLOS.get(tk) or (tk if tk.startswith("^") else tk + ".SN")
     url = ("https://query1.finance.yahoo.com/v8/finance/chart/"
            + urllib.parse.quote(sym) + "?range=1y&interval=1d")
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:

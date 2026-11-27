@@ -974,7 +974,7 @@ function renderDash(k) {
     '<div><div class="k">TIR de tu plata</div><div class="v num ' + (k.mwrPropio >= 0 ? 'up' : 'dn') + '">' + fmtPct(k.mwrPropio) + '</div><div class="n">incluye cuotas pagadas</div></div>' +
     '<div><div class="k">Dividendo esperado</div><div class="v num">' + fmtPct(k.dyPond) + '</div><div class="n">vs TPM ' + fmtPct(cfg.tpm) + ' (' + fmtPP(k.spread) + ')</div></div>' +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
-    '</div><p class="expl" style="font-size:11px">Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
+    '</div><p class="expl" style="font-size:11px">IPSA medido con el ETF It Now S&amp;P IPSA (réplica del índice). Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
   h += '</div>';
   var el = document.getElementById('dash');
   el.innerHTML = h;
@@ -1755,7 +1755,7 @@ function enRueda() {
   } catch (e) { return true; }
 }
 function yahooProxy(tk) {
-  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(tk.charAt(0) === '^' ? tk : tk + '.SN') + '?range=1y&interval=1d';
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(tk === '^IPSA' ? 'CFMITNIPSA.SN' : tk.charAt(0) === '^' ? tk : tk + '.SN') + '?range=1y&interval=1d';
   var i = 0;
   function intento() {
     if (i >= PROXIES.length) return Promise.reject(new Error('proxies caídos'));
