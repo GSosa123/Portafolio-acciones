@@ -11,8 +11,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 UA = {"User-Agent": "Mozilla/5.0 (precios-cartera)"}
-# Yahoo no publica la serie del índice ^IPSA; se usa el ETF It Now S&P IPSA (réplica del IPSA en CLP).
-SIMBOLOS = {"^IPSA": "CFMITNIPSA.SN"}
+SIMBOLOS = {}
 
 
 def tickers():
@@ -29,7 +28,7 @@ def tickers():
 
 
 def cotizar(tk):
-    sym = SIMBOLOS.get(tk) or (tk if tk.startswith("^") else tk + ".SN")
+    sym = {"ECH_": "ECH", "CLP_": "CLP=X"}.get(tk) or (tk if tk.startswith("^") else tk + ".SN")
     url = ("https://query1.finance.yahoo.com/v8/finance/chart/"
            + urllib.parse.quote(sym) + "?range=1y&interval=1d")
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:
@@ -64,11 +63,28 @@ def historia(res):
     return {"t": t, "c": c}
 
 
+def mercado_chile():
+    """Referencia de mercado chileno: Yahoo no publica la historia del IPSA (^IPSA da 404 y el ETF local
+    casi no transa). Se usa el ETF MSCI Chile (ECH, en USD) convertido a pesos con el dólar del día."""
+    ech, fx = cotizar("ECH_"), cotizar("CLP_")
+    m = dict(zip(fx["t"], fx["c"]))
+    t, c, ult = [], [], None
+    for f, v in zip(ech["t"], ech["c"]):
+        ult = m.get(f, ult)
+        if ult:
+            t.append(f)
+            c.append(round(v * ult, 2))
+    return {"precio": c[-1], "ant": c[-2] if len(c) > 1 else 0, "min52": 0, "fecha": t[-1],
+            "ts": ech["ts"], "max": 0, "min": 0, "vol": 0, "t": t, "c": c,
+            "nombre": "MSCI Chile en pesos (ECH × dólar)"}
+
+
 def main():
     out, err = {}, []
-    for tk in tickers():
+    lista = tickers()
+    for tk in lista:
         try:
-            out[tk] = cotizar(tk)
+            out[tk] = mercado_chile() if tk == "^IPSA" else cotizar(tk)
         except Exception as e:  # noqa: BLE001
             err.append(f"{tk}: {e}")
         time.sleep(1)
@@ -84,7 +100,8 @@ def main():
             pass
     # conserva el último precio conocido de los que fallaron
     for tk, v in previo.items():
-        out.setdefault(tk, v)
+        if tk in lista:
+            out.setdefault(tk, v)
     if out == previo:
         print("Sin cambios.")
         return 0
