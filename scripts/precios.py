@@ -22,12 +22,13 @@ def tickers():
             l = l.split("#")[0].strip().upper()
             if l:
                 tk.append(l)
-    return sorted(set(tk))
+    return sorted(set(tk)) + ["^IPSA"]  # IPSA como referencia
 
 
 def cotizar(tk):
+    sym = tk if tk.startswith("^") else tk + ".SN"
     url = ("https://query1.finance.yahoo.com/v8/finance/chart/"
-           + urllib.parse.quote(tk + ".SN") + "?range=1y&interval=1d")
+           + urllib.parse.quote(sym) + "?range=1y&interval=1d")
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:
         d = json.load(r)
     res = d["chart"]["result"][0]
@@ -45,7 +46,19 @@ def cotizar(tk):
     r2 = lambda v: round(float(v or 0), 4)
     return {"precio": r2(precio), "min52": r2(min52), "fecha": fecha, "ts": int(ts),
             "ant": r2(ant), "max": r2(m.get("regularMarketDayHigh")), "min": r2(m.get("regularMarketDayLow")),
-            "vol": int(m.get("regularMarketVolume") or 0)}
+            "vol": int(m.get("regularMarketVolume") or 0), **historia(res)}
+
+
+def historia(res):
+    """Cierres diarios del último año: {"t": [fechas], "c": [cierres]} (para IPSA, Sharpe, caída máxima)."""
+    ts = res.get("timestamp") or []
+    cl = (res.get("indicators", {}).get("quote", [{}])[0].get("close") or [])
+    t, c = [], []
+    for x, v in zip(ts, cl):
+        if v:
+            t.append(datetime.fromtimestamp(x, timezone(timedelta(hours=-3))).strftime("%Y-%m-%d"))
+            c.append(round(float(v), 4))
+    return {"t": t, "c": c}
 
 
 def main():
