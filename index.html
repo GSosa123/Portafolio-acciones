@@ -443,14 +443,15 @@ function esc(s) {
 }
 
 /* ============================================================
-   Datos maestros al 22/08/2026
+   Datos maestros: cartolas Banchile oct–nov 2026, corte 26/11/2026
    ============================================================ */
 var KEY = 'cartera_apalancada';
 var MAESTRO = {
+  version: '2026-11-26',
   cfg: {
-    hoy: '2026-08-22', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
+    hoy: '2026-11-26', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
     rf: 5.6, erp: 6, capmUmbral: 9.38, spreadMin: 2, comision: 0.7,
-    tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 160, twrBroker12M: 15.83
+    tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 291, twrBroker12M: 15.83
   },
   credito: {
     pagare: '495192033896053178', montoOriginal: 7616839, saldo: 7092889,
@@ -460,16 +461,21 @@ var MAESTRO = {
     vencimiento: '2030-12-09', diaDebito: 9, prepagoMinPct: 10
   },
   posiciones: [
-    { ticker: 'CHILE', nombre: 'Banco de Chile', acciones: 24268, ppc: 185.07, pcb: 182.89, precio: 192.01, beta: 1.04, tipo: 'Core', desde: '2026-02-09', est: true, dy: 6.5, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: -41255 },
-    { ticker: 'ANDINA-B', nombre: 'Embotelladora Andina B', acciones: 896, ppc: 4602.81, pcb: 4563.65, precio: 4629.00, beta: 0.97, tipo: 'Core', desde: '2026-02-09', est: true, dy: 4.6, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: -896 },
-    { ticker: 'COLBUN', nombre: 'Colbún', acciones: 16730, ppc: 132.76, pcb: 131.98, precio: 145.20, beta: 0.55, tipo: 'Core', desde: '2026-02-09', est: true, dy: 5.2, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 103893 },
-    { ticker: 'VAPORES', nombre: 'Cía. Sud Americana de Vapores', acciones: 8274, ppc: 49.04, pcb: 48.32, precio: 49.71, beta: 0.52, tipo: 'Especulativa', desde: '2026-08-14', est: false, dy: 21, dyTipo: 'pass-through', divAcum: 0, min52: 0, criterio: '', gpPer: 5587 }
+    { ticker: 'CHILE', nombre: 'Banco de Chile', acciones: 24268, ppc: 185.07, pcb: 182.89, precio: 190.60, beta: 1.04, tipo: 'Core', desde: '2026-02-09', est: true, dy: 6.5, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 184437 },
+    { ticker: 'ANDINA-B', nombre: 'Embotelladora Andina B', acciones: 896, ppc: 4602.81, pcb: 4563.65, precio: 4610.10, beta: 0.97, tipo: 'Core', desde: '2026-02-09', est: true, dy: 4.6, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: -44710 },
+    { ticker: 'COLBUN', nombre: 'Colbún', acciones: 16730, ppc: 132.76, pcb: 131.98, precio: 154.40, beta: 0.55, tipo: 'Core', desde: '2026-02-09', est: true, dy: 5.2, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 56882 },
+    { ticker: 'LTM', nombre: 'LATAM Airlines Group', acciones: 32497, ppc: 21.7185, pcb: 21.59, precio: 24.34, beta: 1, tipo: 'En revisión', desde: '2026-10-26', est: false, dy: 0, dyTipo: 'extraordinario', divAcum: 0, min52: 0, criterio: '', gpPer: 124464 },
+    { ticker: 'SCHWAGER', nombre: 'Schwager', acciones: 219047, ppc: 5.2813, pcb: 5.25, precio: 4.59, beta: 1, tipo: 'En revisión', desde: '2026-09-30', est: true, dy: 0, dyTipo: 'extraordinario', divAcum: 6571, min52: 0, criterio: '', gpPer: 92000 }
   ],
   eventos: [
     { tipo: 'Dividendo', txt: 'ANDINA-B paga $56,10 por acción serie B', registro: '2026-08-22', fecha: '2026-08-27', monto: 50266 },
     { tipo: 'Rebalanceo', txt: 'Ventana de rebalanceo MSCI', registro: '', fecha: '2026-09-01', monto: 0 }
   ],
-  rotaciones: [], decisiones: []
+  rotaciones: [
+    { ticker: 'VAPORES', monto: 4561, fecha: '2026-10-01' },
+    { ticker: 'AGUAS-A', monto: -19131, fecha: '2026-11-24' }
+  ],
+  decisiones: []
 };
 var DY_TIPOS = [
   { id: 'recurrente', label: 'Recurrente' },
@@ -488,17 +494,17 @@ function clon(o) { return JSON.parse(JSON.stringify(o)); }
 var S = {
   cfg: clon(MAESTRO.cfg), credito: clon(MAESTRO.credito),
   posiciones: clon(MAESTRO.posiciones), eventos: clon(MAESTRO.eventos),
-  rotaciones: [], decisiones: [],
+  rotaciones: clon(MAESTRO.rotaciones), decisiones: [],
   tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
   prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '7000' },
-  justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-08-22' },
+  justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-11-26' },
   cartolaTxt: '', cartolaMsg: '', cartolaDiff: [], backupMsg: '', preciosMsg: ''
 };
 
 function guardar() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
-      cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
+      version: S.version || MAESTRO.version, cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
       eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}
     }));
   } catch (e) {}
@@ -517,7 +523,34 @@ function cargar() {
     S.rotaciones = d.rotaciones || [];
     S.decisiones = d.decisiones || [];
     S.hist = d.hist || {};
+    if (String(d.version || '') < MAESTRO.version) migrarCartola(d);
+    S.version = MAESTRO.version;
   } catch (e) {}
+}
+/* Datos guardados de antes de la cartola del 26/11/2026: toma cantidades, PPC y precios de la cartola,
+   conserva lo que el usuario escribió (criterio, beta, DY, tipo, dividendos) y agrega las rotaciones cerradas. */
+function migrarCartola(d) {
+  var viejas = {}, i, nuevas = [];
+  for (i = 0; i < (d.posiciones || []).length; i++) viejas[d.posiciones[i].ticker] = d.posiciones[i];
+  for (i = 0; i < MAESTRO.posiciones.length; i++) {
+    var m = clon(MAESTRO.posiciones[i]), v = viejas[m.ticker];
+    if (v) {
+      ['criterio', 'beta', 'dy', 'dyTipo', 'tipo', 'nombre', 'min52', 'desde', 'est', 'hist'].forEach(function (f) { if (v[f] !== undefined && v[f] !== '') m[f] = v[f]; });
+      m.divAcum = Math.max(num(v.divAcum), num(m.divAcum));
+      if (num(v.ppc) > 0 && Math.abs(v.acciones - m.acciones) < 0.5) m.ppc = v.ppc;
+    }
+    nuevas.push(m);
+  }
+  S.posiciones = nuevas;
+  var tiene = {};
+  for (i = 0; i < S.rotaciones.length; i++) tiene[S.rotaciones[i].ticker + S.rotaciones[i].fecha] = 1;
+  for (i = 0; i < MAESTRO.rotaciones.length; i++) {
+    var r = MAESTRO.rotaciones[i];
+    if (!tiene[r.ticker + r.fecha]) S.rotaciones.push(clon(r));
+  }
+  if (String(S.cfg.hoy) < MAESTRO.cfg.hoy) S.cfg.hoy = MAESTRO.cfg.hoy;
+  S.cfg.caja = MAESTRO.cfg.caja;
+  S.migrado = true;
 }
 
 /* ============================================================
@@ -1605,10 +1638,10 @@ function acciones(a) {
     render(); return;
   }
   if (a === 'reset') {
-    if (confirm('Restaurar los datos maestros al 22/08/2026? Se pierde lo editado.')) {
+    if (confirm('Restaurar los datos maestros al 26/11/2026? Se pierde lo editado.')) {
       S.cfg = clon(MAESTRO.cfg); S.credito = clon(MAESTRO.credito);
       S.posiciones = clon(MAESTRO.posiciones); S.eventos = clon(MAESTRO.eventos);
-      S.rotaciones = []; S.decisiones = [];
+      S.rotaciones = clon(MAESTRO.rotaciones); S.decisiones = [];
       guardar(); render();
     }
   }
@@ -1783,6 +1816,7 @@ function actualizarPrecios(manual) {
 var estatico = document.getElementById('estatico');
 if (estatico && estatico.parentNode) estatico.parentNode.removeChild(estatico);
 cargar();
+if (S.migrado) guardar();
 render();
 if (window.fetch && window.Promise) actualizarPrecios(false);
 </script>
