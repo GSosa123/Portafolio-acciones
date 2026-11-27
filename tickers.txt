@@ -1,0 +1,3 @@
+# Tickers extra a cotizar (además de los de index.html), uno por línea, sin ".SN".
+# Ejemplo:
+# SQM-B
