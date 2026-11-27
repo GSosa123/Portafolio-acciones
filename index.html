@@ -204,6 +204,33 @@ svg .fadein{opacity:0;animation:fi .8s .9s ease forwards}
 .minis .k{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mut2)}
 .minis .v{margin-top:3px;font-size:17px;font-weight:800}
 .minis .n{margin-top:2px;font-size:10.5px;color:var(--mut2);line-height:1.35}
+.w.rojo{border-color:rgba(255,107,107,.55);box-shadow:0 0 0 1px rgba(255,107,107,.25),var(--sh)}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin-top:12px}
+.vs .k{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mut2)}
+.vs .v{margin-top:4px;font-size:22px;font-weight:900;letter-spacing:-.02em}
+.vs .n{margin-top:3px;font-size:10.5px;line-height:1.4;color:var(--mut2)}
+.vsx{align-self:center;font-size:12px;font-weight:800;color:var(--gold)}
+.banda{margin-top:12px;padding:10px 12px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.45}
+.banda.ok{background:var(--up-bg);color:var(--up)}.banda.ko{background:var(--dn-bg);color:var(--dn)}.banda.md{background:var(--acc-bg);color:var(--acc);font-weight:600;font-size:12.5px}
+.tb{overflow-x:auto;margin-top:10px}.tb table{width:100%;border-collapse:collapse;font-size:12.5px}
+.tb th{text-align:right;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut2);padding:6px 6px;border-bottom:1px solid var(--line2);white-space:nowrap}
+.tb td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}.tb th:first-child,.tb td:first-child{text-align:left}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#0b0b0b}
+.tag.ok{background:var(--up)}.tag.md{background:var(--acc)}.tag.ko{background:var(--dn)}.tag.nd{background:#5a5a5a;color:#eee}
+.chk-r .ic.nd{background:#5a5a5a;color:#eee}
+.lim-res{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.lim{padding:12px 0;border-bottom:1px solid var(--line)}.lim:last-of-type{border-bottom:none}
+.lim-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}.lim-h b{flex:1;min-width:140px}
+.lim-v{font-weight:800;font-size:13px}.lim-v small{font-weight:600;color:var(--mut2);font-size:11px}
+.lim-b{position:relative;height:10px;border-radius:999px;background:rgba(148,163,198,.12);margin-top:8px;overflow:hidden}
+.lim-b i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;transform-origin:left;animation:grow 1s cubic-bezier(.2,.8,.2,1) both}
+.lim-b i.ok{background:var(--up)}.lim-b i.md{background:var(--acc)}.lim-b i.ko{background:var(--dn)}
+.lim-b em{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.35)}
+.lim-e{margin-top:5px;font-size:11.5px;line-height:1.45;color:var(--mut)}
+.emp-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.emp a{color:var(--gold)}
+.emp .chk-r .vv{max-width:42%;white-space:normal;font-size:12.5px;line-height:1.35}
+.emp .chk-r .tx{min-width:0}
 details.tech{margin-top:4px}
 details.tech summary{cursor:pointer;list-style:none;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:12px 4px}
 details.tech summary::-webkit-details-marker{display:none}
@@ -283,6 +310,7 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 
 <div class="pane on" id="p-panel"><div id="dash"></div><details class="tech"><summary>Detalle técnico y fórmulas ▾</summary><div><div id="cards"></div><div id="cosmetico"></div></div></details></div>
 <div class="pane" id="p-papeles"><div id="papeles"></div></div>
+<div class="pane" id="p-empresas"><div id="empresas"></div></div>
 <div class="pane" id="p-credito"><div id="credito"></div></div>
 <div class="pane" id="p-test"><div id="test"></div></div>
 <div class="pane" id="p-cartera"><div id="cartera"></div></div>
@@ -451,7 +479,8 @@ var MAESTRO = {
   cfg: {
     hoy: '2026-11-26', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
     rf: 5.6, erp: 6, capmUmbral: 9.38, spreadMin: 2, comision: 0.7,
-    tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 291, twrBroker12M: 15.83
+    tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 291, twrBroker12M: 15.83,
+    comFija: 5640, limPerdida: 1000000, limVaR: 800000, limDD: 15, ltvMax: 60
   },
   credito: {
     pagare: '495192033896053178', montoOriginal: 7616839, saldo: 7092889,
@@ -484,7 +513,7 @@ var DY_TIPOS = [
 ];
 var TABS = [
   { id: 'panel', label: 'Panel' }, { id: 'papeles', label: 'Papeles' },
-  { id: 'credito', label: 'Crédito' }, { id: 'test', label: 'Test compra' },
+  { id: 'empresas', label: 'Empresas' }, { id: 'credito', label: 'Crédito' }, { id: 'test', label: 'Test compra' },
   { id: 'cartera', label: 'Cartera' }, { id: 'agenda', label: 'Agenda' },
   { id: 'cartola', label: 'Cartola' }, { id: 'ajustes', label: 'Ajustes' }
 ];
@@ -496,7 +525,7 @@ var S = {
   posiciones: clon(MAESTRO.posiciones), eventos: clon(MAESTRO.eventos),
   rotaciones: clon(MAESTRO.rotaciones), decisiones: [],
   tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
-  prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '7000' },
+  prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '5640' },
   justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-11-26' },
   cartolaTxt: '', cartolaMsg: '', cartolaDiff: [], backupMsg: '', preciosMsg: ''
 };
@@ -658,6 +687,8 @@ function alertas(k) {
     if (!String(S.posiciones[i].criterio || '').replace(/\s/g, '')) sin.push(S.posiciones[i].ticker);
   }
   if (sin.length) out.push({ n: 'ALTA', t: 'Sin criterio de salida definido: ' + sin.join(', ') });
+  var caras = S.posiciones.filter(function (p) { return comPagada(p) > num(cfg.comision); });
+  if (caras.length) out.push({ n: 'MEDIA', t: 'Comisión alta en ' + caras.map(function (p) { return p.ticker + ' (' + fmtPct(comPagada(p), 2) + ')'; }).join(', ') + '. Compras bajo ' + clp(montoMinCom()) + ' pagan más de ' + fmtPct(cfg.comision, 1) });
   if (k.dp > cfg.dpMax) out.push({ n: 'MEDIA', t: 'Deuda sobre patrimonio en ' + fmtPct(k.dp, 1) + ', sobre el límite de ' + fmtPct(cfg.dpMax, 0) });
   if (k.spread < 1) out.push({ n: 'MEDIA', t: 'Spread DY−TPM en ' + fmtPP(k.spread) + '. Bajo +1 pp no compensa el riesgo' });
   if (k.intTotal > k.div) out.push({ n: 'MEDIA', t: 'Intereses acumulados (' + clp(k.intTotal) + ') superan los dividendos cobrados (' + clp(k.div) + ')' });
@@ -733,11 +764,19 @@ function metricas() {
   var pico = 100, mdd = 0;
   for (j = 0; j < idx.length; j++) { if (idx[j] > pico) pico = idx[j]; var dd = (idx[j] / pico - 1) * 100; if (dd < mdd) mdd = dd; }
   var actualDD = (idx[idx.length - 1] / pico - 1) * 100;
+  var rfD = S.cfg.rf / 100 / 252, dn = 0, te = 0;
+  for (j = 0; j < n; j++) { var x = Math.min(rs[j] - rfD, 0); dn += x * x; te += Math.pow((rs[j] - ri[j]) - (mu - muI), 2); }
+  var dnAn = Math.sqrt(dn / n) * Math.sqrt(252) * 100, teAn = Math.sqrt(te / (n - 1)) * Math.sqrt(252) * 100;
+  var betaR = vI ? cov / vI : 0, sdM = Math.sqrt(v) * Math.sqrt(21) * 100, muM = mu * 21 * 100;
   return {
     fechas: fechas, idx: idx, ipx: ipx, dias: n, retTot: retTot, retI: retI, alfa: retTot - retI,
     retAn: retAn, retAnI: retAnI, vol: vol, volI: volI,
     sharpe: vol ? (retAn - S.cfg.rf) / vol : 0, sharpeI: volI ? (retAnI - S.cfg.rf) / volI : 0,
-    beta: vI ? cov / vI : 0, corr: (v && vI) ? cov / Math.sqrt(v * vI) : 0, mdd: mdd, ddHoy: actualDD
+    beta: betaR, corr: (v && vI) ? cov / Math.sqrt(v * vI) : 0, mdd: mdd, ddHoy: actualDD,
+    sortino: dnAn ? (retAn - S.cfg.rf) / dnAn : 0, treynor: betaR ? (retAn - S.cfg.rf) / betaR : 0,
+    jensen: retAn - (S.cfg.rf + betaR * (retAnI - S.cfg.rf)), calmar: mdd ? retAn / Math.abs(mdd) : 0,
+    te: teAn, ir: teAn ? (retAn - retAnI) / teAn : 0,
+    varM: Math.max(0, 1.645 * sdM - muM), cvarM: Math.max(0, 2.0627 * sdM - muM)
   };
 }
 
@@ -865,6 +904,195 @@ function animarPanel(root) {
 /* ============================================================
    Panel tipo dashboard
    ============================================================ */
+/* ============================================================
+   Fichas por empresa: ratios públicos del último reporte.
+   s = ok (verde) / md (amarillo) / ko (rojo) / nd (sin dato).
+   Cada valor viene de la fuente indicada; no se inventan cifras.
+   ============================================================ */
+var FUND = {
+  'CHILE': {
+    periodo: '3T 2026 (enero–septiembre)', tipo: 'Banco: se mide con rentabilidad, margen, riesgo de crédito y capital (no con EBITDA).',
+    ratios: [
+      { k: 'Rentabilidad sobre capital (ROAC)', v: '21,5%', s: 'ok', r: 'Verde ≥ 15%. Guía del banco ~22%.' },
+      { k: 'Margen de intereses (NIM)', v: '4,37%', s: 'ok', r: 'Verde ≥ 4%.' },
+      { k: 'Eficiencia (gastos / ingresos)', v: '39,1%', s: 'ok', r: 'Verde ≤ 45%; amarillo ≤ 55%. Más bajo es mejor.' },
+      { k: 'Costo de riesgo', v: '0,96%', s: 'ok', r: 'Verde ≤ 1,2%; amarillo ≤ 1,8%.' },
+      { k: 'Morosidad 90+ días', v: '1,70% (sube desde 1,56%)', s: 'md', r: 'Verde ≤ 1,5%; amarillo ≤ 2,5%. Va al alza.' },
+      { k: 'Cobertura de cartera morosa', v: '122,5% (baja desde 132,4%)', s: 'md', r: 'Verde ≥ 130%; amarillo ≥ 100%.' },
+      { k: 'Capital básico (CET1)', v: '14,1% vs mínimo 8,75%', s: 'ok', r: 'Verde si supera el mínimo por ≥ 3 puntos.' },
+      { k: 'Utilidad 9 meses', v: 'US$ 976 MM (+2,2%)', s: 'ok', r: 'Verde si crece.' }
+    ],
+    vigilar: 'La morosidad sube y la cobertura baja: la calidad de la cartera de préstamos se está deteriorando de a poco.',
+    fuentes: [['CNN Chile / Finsee, resultados 3T26', 'https://www.cnnchile.com/'], ['CMF, estados financieros bancos', 'https://www.cmfchile.cl/']]
+  },
+  'ANDINA-B': {
+    periodo: 'Estados financieros anuales 2025 (último informe completo revisado)', tipo: 'Embotelladora: se mide con márgenes, deuda y caja.',
+    ratios: [
+      { k: 'Ventas', v: '$3.344.836 MM (+3,7%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Utilidad', v: '$270.477 MM (+15,3%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Margen EBITDA', v: '17,5%', s: 'ok', r: 'Verde ≥ 15%; amarillo ≥ 10%.' },
+      { k: 'Rentabilidad sobre patrimonio (ROE)', v: '24,5%', s: 'ok', r: 'Verde ≥ 15%.' },
+      { k: 'Deuda neta / EBITDA', v: '1,32 veces (máx. permitido 3,5)', s: 'ok', r: 'Verde ≤ 2,5x; amarillo ≤ 3,5x.' },
+      { k: 'Cobertura de intereses', v: '11,5 veces (mín. 3)', s: 'ok', r: 'Verde ≥ 5x; amarillo ≥ 3x.' },
+      { k: 'Liquidez corriente', v: '1,41 veces', s: 'ok', r: 'Verde ≥ 1,2x; amarillo ≥ 1x.' },
+      { k: 'Dividendos / flujo de caja libre', v: '107% ($195.890 vs $183.305 MM)', s: 'md', r: 'Verde ≤ 80%; amarillo ≤ 110%. Sobre 100% paga más de lo que genera.' }
+    ],
+    vigilar: 'Paga más dividendos que la caja que genera, y depende en parte de Argentina.',
+    fuentes: [['CMF, EEFF Embotelladora Andina 2025', 'https://www.cmfchile.cl/'], ['Andina, inversionistas', 'https://www.koandina.com/']]
+  },
+  'COLBUN': {
+    periodo: '3T 2026 (julio–septiembre)', tipo: 'Eléctrica: se mide con EBITDA, márgenes y deuda.',
+    ratios: [
+      { k: 'EBITDA del trimestre', v: 'US$ 196,6 MM (+55%)', s: 'ok', r: 'Verde si crece vs. igual trimestre del año anterior.' },
+      { k: 'Margen EBITDA', v: '42,0% (196,6 / 468,4)', s: 'ok', r: 'Verde ≥ 30%; amarillo ≥ 20%.' },
+      { k: 'Utilidad del trimestre', v: 'US$ 72,4 MM (vs 25,3)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'EBITDA 9 meses', v: 'US$ 486,1 MM (+9%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Deuda neta / EBITDA', v: 'sin dato público en las fuentes', s: 'nd', r: 'Se toma del análisis razonado en la CMF.' }
+    ],
+    vigilar: 'Depende de la lluvia (hidrología) y del precio de la energía.',
+    fuentes: [['Reporte Minero, 28/10/2026', 'https://www.reporteminero.cl/noticia/noticias/2026/10/colbun-ebitda-196-millones-tercer-trimestre-2026'], ['Colbún, resultados trimestrales', 'https://www.colbun.cl/']]
+  },
+  'LTM': {
+    periodo: '3T 2026 (julio–septiembre)', tipo: 'Aerolínea: se mide con márgenes, caja y deuda.',
+    ratios: [
+      { k: 'Ingresos', v: 'US$ 4.567 MM (+18,4%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Utilidad', v: 'US$ 441 MM (+16,3%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Margen operacional ajustado', v: '12,5% (vs 18,1%)', s: 'md', r: 'Verde ≥ 12% sin caer más de 3 puntos; cayó 5,6.' },
+      { k: 'EBITDA ajustado', v: 'US$ 1.095 MM (−4,7%)', s: 'md', r: 'Amarillo si cae.' },
+      { k: 'Caja disponible', v: 'US$ 4.446 MM (26,4% de ventas)', s: 'ok', r: 'Verde ≥ 20% de las ventas anuales.' },
+      { k: 'Deuda neta ajustada / EBITDA', v: '1,5 veces', s: 'ok', r: 'Verde ≤ 2,5x; amarillo ≤ 3,5x.' },
+      { k: 'Ocupación de aviones', v: '83,7% (vs 85,4%)', s: 'ok', r: 'Verde ≥ 80%.' },
+      { k: 'Guía EBITDA 2026', v: 'US$ 3.900–4.050 MM (antes 4.100–4.400)', s: 'md', r: 'Amarillo si la empresa recorta su guía.' }
+    ],
+    vigilar: 'El combustible caro le costó US$ 520 MM en el trimestre y recortó su guía de EBITDA.',
+    fuentes: [['CNN Chile, resultados 3T26', 'https://www.cnnchile.com/negocios/latam-eleva-163-utilidad-tercer-trimestre-golpe-us520-millones-alza-combustible/'], ['Aviación al Día, 04/11/2026', 'https://aviacionaldia.com/2026/11/latam-airlines-reporta-ganancias-de-us-441-millones-en-el-tercer-trimestre-de-2026-y-eleva-sus-proyecciones-anuales.html']]
+  },
+  'SCHWAGER': {
+    periodo: '9 meses 2026 (enero–septiembre)', tipo: 'Servicios a la minería: se mide con crecimiento, márgenes y contratos firmados.',
+    ratios: [
+      { k: 'Ingresos', v: '$104.086 MM (+36,7%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'EBITDA', v: '$12.276 MM (+49,7%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Margen EBITDA', v: '11,8% (vs 10,8%)', s: 'ok', r: 'Verde ≥ 10%; amarillo ≥ 6%.' },
+      { k: 'Utilidad', v: '$4.532 MM (+29,9%)', s: 'ok', r: 'Verde si crece.' },
+      { k: 'Margen neto', v: '4,4%', s: 'md', r: 'Verde ≥ 6%; amarillo ≥ 3%.' },
+      { k: 'Contratos firmados (backlog)', v: '$395.779 MM ≈ 37 meses', s: 'ok', r: 'Verde ≥ 24 meses de ventas.' },
+      { k: 'Clasificación de riesgo', v: 'A− estable (Feller Rate, sep-2026)', s: 'ok', r: 'Verde desde A−.' },
+      { k: 'Deuda / EBITDA', v: 'sin dato público en las fuentes', s: 'nd', r: 'Se toma de los EEFF en la CMF.' }
+    ],
+    vigilar: 'Margen neto delgado y contratos concentrados en pocas faenas mineras. Tu precio está bajo tu costo.',
+    fuentes: [['CNN Chile, 9M26', 'https://www.cnnchile.com/presentados/schwager-multiplica-por-85-sus-ingresos-desde-2015-y-mantiene-contratos-mineros-hasta-2032/'], ['Reporte Minero, 1S26', 'https://www.reporteminero.cl/noticia/noticias/2026/08/schwager-crece-58-porciento-ebitda-mineria-primer-semestre-2026']]
+  }
+};
+
+/* Comisión pagada al comprar: (PPC real − precio broker) / precio broker. */
+function comPagada(p) { return num(p.pcb) > 0 ? (num(p.ppc) / num(p.pcb) - 1) * 100 : 0; }
+function montoMinCom() { var c = num(S.cfg.comision); return c > 0 ? num(S.cfg.comFija) / (c / 100) : 0; }
+
+/* ¿Le gano al crédito? Ganancia total real vs intereses, y precio de equilibrio por acción. */
+function ganoCredito(k) {
+  var cfg = S.cfg, pos = S.posiciones, i;
+  var comVenta = k.valor * num(cfg.comision) / 100;
+  var total = k.gp + k.div + k.rot - comVenta;
+  var filas = [];
+  for (i = 0; i < pos.length; i++) {
+    var p = pos[i], c = CALC.costoReal(p), parte = k.costo ? k.intTotal * c / k.costo : 0;
+    var be = p.acciones ? (c + parte - num(p.divAcum)) / p.acciones / (1 - num(cfg.comision) / 100) : 0;
+    filas.push({ p: p, int: parte, be: be, dist: p.precio ? (be / p.precio - 1) * 100 : 0, com: comPagada(p) });
+  }
+  return { total: total, comVenta: comVenta, int: k.intTotal, gana: total >= k.intTotal, falta: k.intTotal - total, filas: filas };
+}
+function htmlGanoCredito(k) {
+  var cfg = S.cfg, g = ganoCredito(k), h = '', i;
+  var mx = Math.max(Math.abs(g.total), g.int, 1);
+  h += '<div class="w' + (g.gana ? '' : ' rojo') + '"><h3>¿Le gano al crédito? <small>desde que pediste el préstamo</small></h3>';
+  h += '<div class="vs"><div><div class="k">Ganancia total real</div><div class="v num ' + (g.total >= 0 ? 'up' : 'dn') + '">' + clpS(g.total) + '</div>' +
+    '<div class="n">precio ' + clpS(k.gp) + ' + dividendos ' + clp(k.div) + ' + ventas cerradas ' + clpS(k.rot) + ' − comisión de venta ' + clp(g.comVenta) + '</div></div>' +
+    '<div class="vsx">vs</div><div><div class="k">Intereses del préstamo</div><div class="v num dn">' + clp(g.int) + '</div><div class="n">pagados ' + clp(num(S.credito.interesesPagados)) + ' + por pagar ' + clp(k.devengado) + '</div></div></div>';
+  h += '<div class="hb" style="margin-top:12px">' +
+    '<div class="hb-r"><span>Ganancia</span><div class="t"><i style="left:0;width:' + (Math.max(0, g.total) / mx * 100).toFixed(1) + '%;background:' + (g.gana ? '#5fd39a' : '#e9b949') + '"></i></div><b class="num">' + fmtDec(g.total / 1e6, 2) + ' M</b></div>' +
+    '<div class="hb-r"><span>Intereses</span><div class="t"><i style="left:0;width:' + (g.int / mx * 100).toFixed(1) + '%;background:#ff6b6b"></i></div><b class="num">' + fmtDec(g.int / 1e6, 2) + ' M</b></div></div>';
+  h += g.gana
+    ? '<div class="banda ok">Sí. Tu ganancia cubre los intereses y te sobran ' + clp(-g.falta) + '.</div>'
+    : '<div class="banda ko">No. Te faltan ' + clp(g.falta) + ' para cubrir los intereses: la cartera tendría que subir ' + fmtPct(k.valor ? g.falta / k.valor * 100 : 0, 1) + ' más.</div>';
+  h += '<div class="minis" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">' +
+    '<div><div class="k">Rentabilidad anual</div><div class="v num ' + (k.anualizado >= cfg.costoCredito ? 'up' : 'dn') + '">' + fmtPct(k.anualizado, 1) + '</div><div class="n">lo que rinde hoy</div></div>' +
+    '<div><div class="k">Esperada por riesgo (CAPM)</div><div class="v num ' + (k.keCartera >= cfg.costoCredito ? 'up' : 'dn') + '">' + fmtPct(k.keCartera, 1) + '</div><div class="n">' + fmtPct(cfg.rf, 1) + ' + beta ' + fmtDec(k.beta, 2) + ' × ' + fmtPct(cfg.erp, 0) + '</div></div>' +
+    '<div><div class="k">Costo del crédito</div><div class="v num dn">' + fmtPct(cfg.costoCredito, 2) + '</div><div class="n">anual</div></div></div>';
+  h += '<p class="expl">' + (k.keCartera < cfg.costoCredito
+    ? 'Ojo: incluso en un año normal, el mercado le paga a acciones con este riesgo ' + fmtPct(k.keCartera, 1) + ', menos que el ' + fmtPct(cfg.costoCredito, 2) + ' del crédito. Para ganarle al préstamo necesitas que tus acciones lo hagan mucho mejor que el promedio.'
+    : 'Lo que el mercado paga por este riesgo alcanza a cubrir el crédito.') + '</p>';
+  h += '<h3 style="margin-top:16px">Precio de equilibrio por acción <small>cubre compra + comisiones + su parte de intereses</small></h3><div class="tb"><table><thead><tr><th>Acción</th><th>Precio hoy</th><th>Equilibrio</th><th>Distancia</th><th>Comisión pagada</th></tr></thead><tbody>';
+  for (i = 0; i < g.filas.length; i++) {
+    var f = g.filas[i];
+    h += '<tr><td><b>' + esc(f.p.ticker) + '</b></td><td class="num">' + precioTxt(f.p.precio) + '</td><td class="num">' + precioTxt(f.be) + '</td>' +
+      '<td class="num ' + (f.dist <= 0 ? 'up' : 'dn') + '">' + (f.dist <= 0 ? 'sobre ✓' : 'falta ' + pp(f.dist, 1)) + '</td>' +
+      '<td class="num ' + (f.com > num(cfg.comision) ? 'dn' : '') + '">' + fmtPct(f.com, 2) + (f.com > num(cfg.comision) ? ' ⚠' : '') + '</td></tr>';
+  }
+  h += '</tbody></table></div><p class="expl">Equilibrio = (costo con comisión + intereses asignados por peso − dividendos cobrados) ÷ acciones, más la comisión de venta de ' + fmtPct(cfg.comision, 1) + '. Si el precio de hoy está bajo el equilibrio, vender hoy no cubre lo que te costó esa acción con el préstamo.</p></div>';
+  return h;
+}
+
+/* Límites de riesgo: Holgado < 70% del límite, Alerta 70–100%, Peligro > 100%. */
+function limites(k, m) {
+  var cfg = S.cfg, L = [];
+  function add(t, e, val, lim, uso) { L.push({ t: t, e: e, val: val, lim: lim, uso: uso, s: uso == null ? 'nd' : uso < 0.7 ? 'ok' : uso <= 1 ? 'md' : 'ko' }); }
+  var perd = Math.max(0, -k.neto);
+  add('Pérdida de la cartera', 'Resultado después de intereses. Hoy ' + (perd ? 'pierdes ' + clp(perd) : 'no hay pérdida (' + clpS(k.neto) + ')') + '.',
+    clp(perd), clp(num(cfg.limPerdida)), num(cfg.limPerdida) ? perd / num(cfg.limPerdida) : null);
+  add('Peso de la acción más grande', k.maxTk + ' es la que más pesa.', fmtPct(k.maxConc, 1), fmtPct(cfg.topeConc, 0), num(cfg.topeConc) ? k.maxConc / num(cfg.topeConc) : null);
+  if (m) {
+    add('Caída desde el máximo', 'Cuánto estás bajo tu mejor momento. La peor caída fue ' + fmtPct(m.mdd, 1) + '.', fmtPct(Math.abs(m.ddHoy), 1), fmtPct(cfg.limDD, 0), num(cfg.limDD) ? Math.abs(m.ddHoy) / num(cfg.limDD) : null);
+    add('Pérdida probable en un mes malo (VaR 95%)', '1 de cada 20 meses podrías perder esto o más. Si pasa, la pérdida promedio sería ' + clp(m.cvarM * k.valor / 100) + ' (CVaR).',
+      clp(m.varM * k.valor / 100), clp(num(cfg.limVaR)), num(cfg.limVaR) ? m.varM * k.valor / 100 / num(cfg.limVaR) : null);
+  } else {
+    add('Caída desde el máximo', 'Faltan precios históricos.', '—', fmtPct(cfg.limDD, 0), null);
+    add('Pérdida probable en un mes malo (VaR 95%)', 'Faltan precios históricos.', '—', clp(num(cfg.limVaR)), null);
+  }
+  var cob = num(S.credito.saldo) ? k.valor / num(S.credito.saldo) : 99;
+  add('Cobertura del préstamo', 'Tu cartera vale ' + fmtDec(cob, 2) + ' veces lo que debes. Deuda / cartera: ' + fmtPct(k.ltv, 0) + '.', fmtPct(k.ltv, 0), fmtPct(cfg.ltvMax, 0), num(cfg.ltvMax) ? k.ltv / num(cfg.ltvMax) : null);
+  add('Deuda sobre patrimonio', 'Lo que debes comparado con lo que es tuyo de verdad.', fmtPct(k.dp, 0), fmtPct(cfg.dpMax, 0), num(cfg.dpMax) ? k.dp / num(cfg.dpMax) : null);
+  return L;
+}
+function htmlLimites(k, m) {
+  var L = limites(k, m), h = '', NOM = { ok: 'Holgado', md: 'Alerta', ko: 'Peligro', nd: 'Sin datos' };
+  var n = { ok: 0, md: 0, ko: 0 };
+  L.forEach(function (x) { if (n[x.s] != null) n[x.s]++; });
+  h += '<div class="w"><h3>Tablero de riesgo <small>Holgado &lt; 70% del límite · Alerta 70–100% · Peligro &gt; 100%</small></h3>' +
+    '<div class="lim-res"><span class="chip up">' + n.ok + ' holgado</span><span class="chip acc">' + n.md + ' alerta</span><span class="chip dn">' + n.ko + ' peligro</span></div>';
+  L.forEach(function (x) {
+    var w = x.uso == null ? 0 : Math.min(x.uso, 1.5) / 1.5 * 100;
+    h += '<div class="lim"><div class="lim-h"><span class="tag ' + x.s + '">' + NOM[x.s] + '</span><b>' + esc(x.t) + '</b><span class="num lim-v">' + esc(x.val) + ' <small>de ' + esc(x.lim) + '</small></span></div>' +
+      '<div class="lim-b"><i class="' + x.s + '" style="width:' + w.toFixed(1) + '%"></i><em style="left:46.67%"></em><em style="left:66.67%"></em></div>' +
+      '<div class="lim-e">' + esc(x.e) + (x.uso != null ? ' Usas el ' + fmtPct(x.uso * 100, 0) + ' del límite.' : '') + '</div></div>';
+  });
+  h += '<p class="expl">Los límites se cambian en Ajustes. Las marcas de la barra son el 70% y el 100% del límite.</p></div>';
+  return h;
+}
+
+/* Pestaña Empresas */
+function renderEmpresas(k) {
+  var h = '', i, NOM = { ok: 'bien', md: 'atención', ko: 'mal', nd: 'sin dato' };
+  h += '<div class="dash"><div class="w"><h3>Salud de cada empresa <small>últimos datos públicos</small></h3><p class="expl" style="margin-top:6px">Ratios del último reporte trimestral de cada empresa, cada uno con su propio semáforo y la regla usada. Verde bien, amarillo atención, rojo mal, gris sin dato público.</p></div>';
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i], f = FUND[p.ticker];
+    if (!f) { h += '<div class="w s6"><h3>' + esc(p.ticker) + '</h3><p class="expl">Sin ficha cargada.</p></div>'; continue; }
+    var c = { ok: 0, md: 0, ko: 0, nd: 0 };
+    f.ratios.forEach(function (r) { c[r.s]++; });
+    var est = c.ko ? 'ko' : c.md ? 'md' : 'ok';
+    var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
+    h += '<div class="w s6 emp"><h3>' + esc(p.nombre || p.ticker) + ' <small>' + esc(p.ticker) + ' · pesa ' + fmtPct(w, 1) + '</small></h3>' +
+      '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
+      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p><div class="chk">';
+    f.ratios.forEach(function (r) {
+      h += '<div class="chk-r"><div class="ic ' + r.s + '" title="' + NOM[r.s] + '">' + (r.s === 'ok' ? '✓' : r.s === 'md' ? '!' : r.s === 'ko' ? '✕' : '–') + '</div><div class="tx">' + esc(r.k) + '<span>' + esc(r.r) + '</span></div><div class="vv num">' + esc(r.v) + '</div></div>';
+    });
+    h += '</div><div class="banda md" style="margin-top:10px">Vigilar: ' + esc(f.vigilar) + '</div><p class="expl" style="font-size:11px">Fuentes: ' +
+      f.fuentes.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p></div>';
+  }
+  h += '</div>';
+  document.getElementById('empresas').innerHTML = h;
+}
+
 function renderDash(k) {
   var cfg = S.cfg, cr = S.credito, m = metricas(), sem = semaforo(k, m), h = '', i;
   var HC = { ok: '#5fd39a', md: '#e9b949', ko: '#ff6b6b' };
@@ -899,6 +1127,8 @@ function renderDash(k) {
   h += kpi('Hoy', vdBase ? '<span class="' + (vd >= 0 ? 'up' : 'dn') + '">' + (vd >= 0 ? '▲ ' : '▼ ') + cuenta(vdPct, 'pp') + '</span>' : '<span class="mut">—</span>',
     vdBase ? '<span class="chip ' + (vd >= 0 ? 'up' : 'dn') + '">' + clpS(vd) + '</span>' : '<span class="mut">sin datos del día</span>');
   h += kpi('Resultado neto', '<span class="' + (k.neto >= 0 ? 'up' : 'dn') + '">' + cuenta(k.neto, 'clpS') + '</span>', '<span class="mut">después de intereses</span>');
+  h += htmlGanoCredito(k);
+  h += htmlLimites(k, m);
   // Cartera vs IPSA
   if (m) {
     h += '<div class="w s8"><h3>Tu cartera vs. el mercado chileno <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
@@ -973,6 +1203,13 @@ function renderDash(k) {
     '<div><div class="k">TIR de los activos</div><div class="v num">' + fmtPct(k.mwr) + '</div><div class="n">XIRR por flujos</div></div>' +
     '<div><div class="k">TIR de tu plata</div><div class="v num ' + (k.mwrPropio >= 0 ? 'up' : 'dn') + '">' + fmtPct(k.mwrPropio) + '</div><div class="n">incluye cuotas pagadas</div></div>' +
     '<div><div class="k">Dividendo esperado</div><div class="v num">' + fmtPct(k.dyPond) + '</div><div class="n">vs TPM ' + fmtPct(cfg.tpm) + ' (' + fmtPP(k.spread) + ')</div></div>' +
+    (m ? '<div><div class="k">Sortino</div><div class="v num">' + fmtDec(m.sortino, 2) + '</div><div class="n">solo castiga las bajas</div></div>' +
+      '<div><div class="k">Treynor</div><div class="v num">' + fmtPct(m.treynor, 1) + '</div><div class="n">premio por unidad de beta</div></div>' +
+      '<div><div class="k">Alfa de Jensen</div><div class="v num ' + (m.jensen >= 0 ? 'up' : 'dn') + '">' + fmtPP(m.jensen) + '</div><div class="n">sobre lo que exige el CAPM</div></div>' +
+      '<div><div class="k">Calmar</div><div class="v num">' + fmtDec(m.calmar, 2) + '</div><div class="n">retorno ÷ caída máxima</div></div>' +
+      '<div><div class="k">Tracking error</div><div class="v num">' + fmtPct(m.te, 1) + '</div><div class="n">desvío vs mercado</div></div>' +
+      '<div><div class="k">Information ratio</div><div class="v num ' + (m.ir >= 0 ? 'up' : 'dn') + '">' + fmtDec(m.ir, 2) + '</div><div class="n">exceso ÷ tracking error</div></div>' +
+      '<div><div class="k">VaR 95% · 1 mes</div><div class="v num dn">' + clp(m.varM * k.valor / 100) + '</div><div class="n">' + fmtPct(m.varM, 1) + ' · CVaR ' + clp(m.cvarM * k.valor / 100) + '</div></div>' : '') +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
     '</div><p class="expl" style="font-size:11px">Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA. Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
   h += '</div>';
@@ -1241,6 +1478,9 @@ function renderTest(k) {
     inputK('Retorno esperado %', t.retorno, 'test.retorno') +
     inputK('Comisión del monto', t.comision, 'test.comision') +
     '</div></div>';
+  if (monto > 0 && e.comPct > num(cfg.comision)) {
+    h += '<div class="banda ko" style="margin:0 0 10px">Compra chica: la comisión de ' + clp(num(t.comision)) + ' es el ' + fmtPct(e.comPct, 2) + ' de lo que inviertes. Para que no pase de ' + fmtPct(cfg.comision, 1) + ' compra al menos ' + clp(montoMinCom()) + ', o junta varias compras en una.</div>';
+  }
   for (i = 0; i < res.tests.length; i++) {
     var r = res.tests[i];
     h += '<div class="trow' + (r.ok ? '' : ' bad') + '"><i class="' + (r.ok ? 'up' : 'dn') + '">' + (r.ok ? '✓' : '✕') + '</i>' +
@@ -1503,7 +1743,9 @@ function renderAjustes() {
     ['inflacion', 'Inflación 12M %', 'number'], ['spreadMin', 'Spread mínimo pp', 'number'],
     ['comision', 'Comisión corretaje %', 'number'], ['topeConc', 'Tope concentración %', 'number'],
     ['dpMax', 'Máx deuda/patrimonio %', 'number'], ['caja', 'Saldo en caja', 'number'],
-    ['twrBroker12M', 'TWR 12M broker %', 'number']
+    ['twrBroker12M', 'TWR 12M broker %', 'number'], ['comFija', 'Comisión fija por compra $', 'number'],
+    ['limPerdida', 'Límite pérdida cartera $', 'number'], ['limVaR', 'Límite VaR mensual $', 'number'],
+    ['limDD', 'Límite caída desde máximo %', 'number'], ['ltvMax', 'Máx deuda / cartera %', 'number']
   ];
   h += '<div class="sec"><div class="lbl">Parámetros financieros</div><div class="fr">';
   for (i = 0; i < campos.length; i++) {
@@ -1580,6 +1822,7 @@ function render() {
 
   if (S.tab === 'panel') renderPanel(k);
   else if (S.tab === 'papeles') renderPapeles(k);
+  else if (S.tab === 'empresas') renderEmpresas(k);
   else if (S.tab === 'credito') renderCredito(k);
   else if (S.tab === 'test') renderTest(k);
   else if (S.tab === 'cartera') renderCartera(k);
