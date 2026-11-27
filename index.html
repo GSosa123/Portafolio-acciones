@@ -88,7 +88,7 @@ nav button.on{background:linear-gradient(135deg,#f3d48a,#c9952f);color:#1a1408;b
 .warn p{margin-top:4px;font-size:11.5px;line-height:1.5;color:#ffd2d6}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 label{display:flex;flex-direction:column;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
-input[type=text],input[type=number],input[type=date]{min-height:46px;padding:0 12px;border:1px solid var(--line2);border-radius:10px;background:var(--bg);font-size:16px;font-weight:700;width:100%;letter-spacing:0;text-transform:none;color:var(--tx);color-scheme:dark}
+input[type=text],input[type=number],input[type=date],input[type=password]{min-height:46px;padding:0 12px;border:1px solid var(--line2);border-radius:10px;background:var(--bg);font-size:16px;font-weight:700;width:100%;letter-spacing:0;text-transform:none;color:var(--tx);color-scheme:dark}
 input:focus,textarea:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(214,169,74,.2)}
 input.key{border-color:rgba(214,169,74,.6)}
 input.red{border-color:var(--dn);background:var(--dn-bg)}
@@ -229,6 +229,10 @@ svg .fadein{opacity:0;animation:fi .8s .9s ease forwards}
 .lim-e{margin-top:5px;font-size:11.5px;line-height:1.45;color:var(--mut)}
 .emp-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
 .emp a{color:var(--gold)}
+.btn.subir{display:flex;align-items:center;justify-content:center;cursor:pointer}
+.subir-bar{text-transform:none;letter-spacing:0;font-weight:500;flex-direction:row;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:12px 16px;font-size:13px;line-height:1.4;color:var(--mut)}
+.subir-bar b{color:var(--tx);font-weight:800}
+.subir-bar .btn{flex:none;width:auto;margin-top:0;min-height:40px;padding:0 16px;display:flex;align-items:center}
 .emp .chk-r .vv{max-width:42%;white-space:normal;font-size:12.5px;line-height:1.35}
 .emp .chk-r .tx{min-width:0}
 details.tech{margin-top:4px}
@@ -480,7 +484,7 @@ var MAESTRO = {
     hoy: '2026-11-26', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
     rf: 5.6, erp: 6, capmUmbral: 9.38, spreadMin: 2, comision: 0.7,
     tpm: 4.75, inflacion: 4.0, topeConc: 45, dpMax: 75, caja: 291, twrBroker12M: 15.83,
-    comFija: 5640, limPerdida: 1000000, limVaR: 800000, limDD: 15, ltvMax: 60
+    cartolaCorte: '2026-11-26', comFija: 5640, limPerdida: 1000000, limVaR: 800000, limDD: 15, ltvMax: 60
   },
   credito: {
     pagare: '495192033896053178', montoOriginal: 7616839, saldo: 7092889,
@@ -579,7 +583,7 @@ function guardar() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
       version: S.version || MAESTRO.version, cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
-      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}
+      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}, dividendos: S.dividendos
     }));
   } catch (e) {}
 }
@@ -597,6 +601,11 @@ function cargar() {
     S.rotaciones = d.rotaciones || [];
     S.decisiones = d.decisiones || [];
     S.hist = d.hist || {};
+    if (d.dividendos && d.dividendos.length) {
+      var yd = {};
+      S.dividendos.forEach(function (x) { yd[x.ticker + x.fecha] = 1; });
+      d.dividendos.forEach(function (x) { if (!yd[x.ticker + x.fecha]) { S.dividendos.push(x); yd[x.ticker + x.fecha] = 1; } });
+    }
     if (String(d.version || '') < MAESTRO.version) migrarCartola(d);
     S.version = MAESTRO.version;
   } catch (e) {}
@@ -1192,6 +1201,7 @@ function renderDash(k) {
     '<div class="ver-s">' + VER[sem.est][1] + (malos.length ? ' En rojo: ' + esc(malos.slice(0, 3).join(', ')) + '.' : '') + '</div>' +
     '<div class="score">' + sem.lista.map(function (x) { return '<i class="' + x.s + '" title="' + esc(x.t) + '"></i>'; }).join('') + '</div>' +
     '<div class="ver-s" style="margin-top:6px;font-size:12px">' + sem.ok + ' de ' + sem.lista.length + ' indicadores en verde</div></div></div>';
+  h += '<label class="w subir-bar"><span><b>¿Llegó tu cartola nueva?</b> Súbela y la cartera se actualiza al instante.</span><span class="btn">Subir PDF</span><input type="file" accept="application/pdf,.pdf" id="pdfIn2" style="display:none"></label>';
   // KPIs
   var vd = 0, vdBase = 0;
   for (i = 0; i < S.posiciones.length; i++) {
@@ -1670,9 +1680,94 @@ function parseCL(s) {
   var n = parseFloat(t);
   return isFinite(n) ? n : 0;
 }
+
+/* ---------- Cartola en PDF: se lee en el teléfono, nada sale del aparato ---------- */
+var PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+var PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+var CLAVE_KEY = 'cartola_clave';
+var pdfPend = null;
+function claveGuardada() { try { return localStorage.getItem(CLAVE_KEY) || ''; } catch (e) { return ''; } }
+function cargarPdfjs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return new Promise(function (ok, ko) {
+    var s = document.createElement('script');
+    s.src = PDFJS_URL;
+    s.onload = function () {
+      if (!window.pdfjsLib) { ko(new Error('pdfjs')); return; }
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+      ok(window.pdfjsLib);
+    };
+    s.onerror = function () { ko(new Error('pdfjs')); };
+    document.head.appendChild(s);
+  });
+}
+/* Rearma las filas de la tabla: agrupa por renglón y ordena de izquierda a derecha (las páginas de Banchile vienen giradas). */
+function lineasPdf(items) {
+  var filas = [], i, j;
+  for (i = 0; i < items.length; i++) {
+    var it = items[i];
+    if (!it.str || !it.str.replace(/\s/g, '')) continue;
+    var t = it.transform, rot = Math.abs(t[0]) < 0.01 && Math.abs(t[1]) > 0.01;
+    var y = rot ? t[4] : -t[5], x = rot ? t[5] : t[4], f = null;
+    for (j = 0; j < filas.length; j++) if (Math.abs(filas[j].y - y) < 3) { f = filas[j]; break; }
+    if (!f) { f = { y: y, it: [] }; filas.push(f); }
+    f.it.push({ x: x, s: it.str, w: it.width || 0 });
+  }
+  filas.sort(function (a, b) { return a.y - b.y; });
+  return filas.map(function (f) {
+    f.it.sort(function (a, b) { return a.x - b.x; });
+    var l = '', fin = null;
+    f.it.forEach(function (c) { if (fin !== null) l += (c.x - fin > 4 ? '   ' : ' '); l += c.s; fin = c.x + c.w; });
+    return l;
+  });
+}
+function textoPdf(buf, clave) {
+  return cargarPdfjs().then(function (lib) {
+    var o = { data: new Uint8Array(buf) };
+    if (clave) o.password = clave;
+    return lib.getDocument(o).promise;
+  }).then(function (doc) {
+    var paginas = [], n;
+    for (n = 1; n <= doc.numPages; n++) paginas.push(doc.getPage(n).then(function (pg) { return pg.getTextContent(); }));
+    return Promise.all(paginas).then(function (tcs) {
+      var out = [];
+      tcs.forEach(function (tc) { out = out.concat(lineasPdf(tc.items)); });
+      return out.join('\n');
+    });
+  });
+}
+function leerPdf(buf, clave) {
+  S.cartolaMsg = 'Leyendo la cartola…'; S.cartolaDiff = []; S.tab = 'cartola'; render();
+  textoPdf(buf.slice(0), clave).then(function (txt) {
+    pdfPend = null;
+    if (clave) { try { localStorage.setItem(CLAVE_KEY, clave); } catch (e) {} }
+    S.cartolaTxt = txt;
+    procesarCartola();
+  }, function (e) {
+    if (e && (e.name === 'PasswordException' || /password/i.test(e.message || ''))) {
+      pdfPend = buf;
+      S.cartolaMsg = clave ? 'La clave no es correcta. Escríbela de nuevo y toca "Abrir con esta clave".' : 'Este PDF tiene clave. Escríbela abajo y toca "Abrir con esta clave".';
+      S.pideClave = true;
+    } else if (e && e.message === 'pdfjs') {
+      S.cartolaMsg = 'No pude cargar el lector de PDF. Revisa que tengas internet y vuelve a intentarlo.';
+    } else {
+      S.cartolaMsg = 'No pude leer ese archivo. ¿Es la cartola en PDF de Banchile?';
+    }
+    render();
+  });
+}
+function subirPdf(el) {
+  var file = el.files && el.files[0];
+  if (!file) return;
+  var r = new FileReader();
+  r.onload = function () { leerPdf(r.result, claveGuardada()); };
+  r.readAsArrayBuffer(file);
+  el.value = '';
+}
+
 function parseCartola(txt) {
   var lineas = String(txt || '').split(/\n/), i, j;
-  var posiciones = [], compras = [], corte = '', caja = 0;
+  var posiciones = [], compras = [], ventas = [], dividendos = [], corte = '', caja = 0;
   var reNum = /-?\$?\s?-?[\d.]+(?:,\d+)?/g;
   for (i = 0; i < lineas.length; i++) {
     var L = lineas[i];
@@ -1680,14 +1775,17 @@ function parseCartola(txt) {
     if (mc0 && !corte) corte = mc0[3] + '-' + mc0[2] + '-' + mc0[1];
     var esMov = /Compra\s+de\s+Acciones|Venta\s+de\s+Acciones|A\s+Caja/i.test(L);
     if (!esMov && !/\d{2}\/\d{2}\/\d{4}/.test(L) && /\d,\d{4}/.test(L) && /\$/.test(L)) {
-      var mt = L.match(/\b([A-Z]{4,}(?:-[A-Z])?)\b/);
+      var mt = L.match(/^\s*([A-Z][A-Z0-9]{1,}(?:-[A-Z])?)\s/) || L.match(/\b([A-Z]{4,}(?:-[A-Z])?)\b/);
       var tk = mt ? mt[1] : '';
       if (tk && tk !== 'CLP' && tk !== 'ACCIONES' && tk !== 'TOTAL') {
-        var v = (L.match(reNum) || []).map(parseCL);
+        var v = (L.replace(tk, ' ').match(reNum) || []).map(parseCL);
         if (v.length >= 7) {
+          var im = 4, ref = v[0] * v[3], ix;
+          for (ix = 4; ix <= 6; ix++) if (Math.abs(v[ix] - ref) < Math.abs(v[im] - ref)) im = ix;
+          var resto = [4, 5, 6].filter(function (x) { return x !== im; });
           posiciones.push({
             ticker: tk, acciones: v[0], pcb: v[1], montoCosto: v[2],
-            precio: v[3], gpHist: v[4], gpPer: v[5], montoMercado: v[6]
+            precio: v[3], montoMercado: v[im], gpHist: v[resto[0]], gpPer: v[resto[1]]
           });
         }
       }
@@ -1705,22 +1803,32 @@ function parseCartola(txt) {
         monto: vals.length > 2 ? vals[2] : 0
       });
     }
+    var mv = L.match(/Por\s+Venta\s+de\s+Acciones:\s*([A-Z0-9-]+)/i) || L.match(/Pago\s+de\s+Dividendos\s+de\s+Acciones:\s*([A-Z0-9-]+)/i);
+    if (mv) {
+      var fs = L.match(/(\d{2})\/(\d{2})\/(\d{4})/g) || [];
+      var fm = fs.length > 1 ? fs[1] : fs[0];
+      var vv = (L.replace(/\d{2}\/\d{2}\/\d{4}/g, ' ').replace(mv[1], ' ').match(reNum) || []).map(parseCL).filter(function (x) { return x !== 0; }).map(Math.abs);
+      var reg = { ticker: mv[1], fecha: fm ? fm.slice(6) + '-' + fm.slice(3, 5) + '-' + fm.slice(0, 2) : '', precio: vv[0] || 0, cantidad: vv[1] || 0, monto: vv[2] || 0 };
+      if (reg.monto) (/Venta/i.test(L) ? ventas : dividendos).push(reg);
+    }
     if (/Caja\s+Internet/i.test(L)) {
       var cn = (L.match(reNum) || []).map(parseCL);
       for (j = 0; j < cn.length; j++) if (cn[j] > caja) caja = cn[j];
     }
   }
-  return { corte: corte, posiciones: posiciones, compras: compras, caja: caja };
+  return { corte: corte, posiciones: posiciones, compras: compras, ventas: ventas, dividendos: dividendos, caja: caja };
 }
 
 function procesarCartola() {
   var r = parseCartola(S.cartolaTxt), diff = [], i, j;
-  if (!r.posiciones.length && !r.compras.length) {
-    S.cartolaMsg = 'No encontré el bloque de posiciones. Copia el texto completo del PDF, incluido DETALLE DE POSICIONES.';
+  if (!r.posiciones.length && !r.compras.length && !r.dividendos.length) {
+    S.cartolaMsg = 'No encontré el detalle de posiciones. Revisa que sea la cartola mensual de Banchile.';
     S.cartolaDiff = [];
     render();
     return;
   }
+  var antigua = r.corte && S.cfg.cartolaCorte && r.corte < String(S.cfg.cartolaCorte);
+  if (antigua) { r.posiciones = []; r.compras = []; }
   for (i = 0; i < r.posiciones.length; i++) {
     var q = r.posiciones[i], enc = null;
     for (j = 0; j < S.posiciones.length; j++) if (S.posiciones[j].ticker === q.ticker) enc = S.posiciones[j];
@@ -1734,7 +1842,7 @@ function procesarCartola() {
       diff.push({ t: q.ticker + ' nueva posición detectada, agregada como En revisión. Su PPC viene del monto costo del broker: corrígelo con el cargo real.', c: 'acc' });
       continue;
     }
-    if (Math.abs(enc.precio - q.precio) > 0.005) {
+    if (Math.abs(enc.precio - q.precio) > 0.005 && tsCorte(r.corte) > num(enc.precioTs)) {
       diff.push({ t: q.ticker + ' precio ' + precioTxt(enc.precio) + ' → ' + precioTxt(q.precio), c: '' });
       enc.precio = q.precio;
       enc.precioTs = tsCorte(r.corte);
@@ -1772,9 +1880,44 @@ function procesarCartola() {
       }
     }
   }
-  if (r.corte) S.cfg.hoy = r.corte;
-  if (r.caja) S.cfg.caja = r.caja;
-  S.cartolaMsg = 'Cartola leída al ' + fFecha(r.corte || S.cfg.hoy) + ': ' + r.posiciones.length + ' posiciones y ' + r.compras.length + ' compras. Precios y cantidades actualizados; el PPC real nunca se sobrescribe solo.';
+  var tiene = {};
+  S.rotaciones.forEach(function (x) { tiene[x.ticker + x.fecha] = 1; });
+  for (i = 0; i < r.ventas.length; i++) {
+    var vt = r.ventas[i], pv = null;
+    for (j = 0; j < S.posiciones.length; j++) if (S.posiciones[j].ticker === vt.ticker) pv = S.posiciones[j];
+    if (!pv || tiene[vt.ticker + vt.fecha]) continue;
+    var res = Math.round(vt.monto - num(pv.ppc) * vt.cantidad);
+    S.rotaciones.push({ ticker: vt.ticker, monto: res, fecha: vt.fecha });
+    tiene[vt.ticker + vt.fecha] = 1; nVen++;
+    diff.push({ t: 'Venta ' + vt.ticker + ' del ' + fFecha(vt.fecha) + ': recibiste ' + clp(vt.monto) + ' por ' + miles(vt.cantidad) + ' acciones. Resultado contra tu costo real: ' + clpS(res) + '.', c: res >= 0 ? 'up' : 'dn' });
+  }
+  S.dividendos = S.dividendos || [];
+  var yaDiv = {}, nDiv = 0, nVen = 0;
+  S.dividendos.forEach(function (x) { yaDiv[x.ticker + x.fecha] = 1; });
+  for (i = 0; i < r.dividendos.length; i++) {
+    var dv = r.dividendos[i];
+    if (yaDiv[dv.ticker + dv.fecha]) continue;
+    S.dividendos.push({ fecha: dv.fecha, ticker: dv.ticker, monto: dv.monto, acciones: dv.cantidad });
+    yaDiv[dv.ticker + dv.fecha] = 1; nDiv++;
+    for (j = 0; j < S.posiciones.length; j++) if (S.posiciones[j].ticker === dv.ticker) S.posiciones[j].divAcum = num(S.posiciones[j].divAcum) + dv.monto;
+    diff.push({ t: 'Dividendo nuevo de ' + dv.ticker + ' el ' + fFecha(dv.fecha) + ': ' + clp(dv.monto) + '. Sumado a tu ganancia.', c: 'up' });
+  }
+  if (r.posiciones.length) {
+    var enCartola = {};
+    r.posiciones.forEach(function (x) { enCartola[x.ticker] = 1; });
+    S.posiciones = S.posiciones.filter(function (p) {
+      if (enCartola[p.ticker]) return true;
+      diff.push({ t: p.ticker + ' ya no está en la cartola: la saqué de la cartera.', c: 'acc' });
+      return false;
+    });
+  }
+  if (r.corte && r.corte > String(S.cfg.hoy)) S.cfg.hoy = r.corte;
+  if (!antigua && r.corte) S.cfg.cartolaCorte = r.corte;
+  if (r.caja && !antigua) S.cfg.caja = r.caja;
+  S.cartolaMsg = antigua
+    ? 'Esta cartola (al ' + fFecha(r.corte) + ') es más antigua que la última que cargaste (' + fFecha(S.cfg.cartolaCorte) + '), así que no toqué tus acciones ni precios. ' + (nDiv + nVen ? 'Agregué ' + nDiv + ' dividendos y ' + nVen + ' ventas que faltaban.' : 'Sus dividendos y ventas ya estaban cargados.')
+    : 'Listo: cartola al ' + fFecha(r.corte || S.cfg.hoy) + ' cargada. Revisé ' + r.posiciones.length + ' acciones' + (nDiv ? ', ' + nDiv + (nDiv === 1 ? ' dividendo nuevo' : ' dividendos nuevos') : '') + (nVen ? ', ' + nVen + (nVen === 1 ? ' venta nueva' : ' ventas nuevas') : '') + '. Tu cartera quedó al día.';
+  S.pideClave = false;
   S.cartolaDiff = diff;
   guardar();
   render();
@@ -1782,10 +1925,16 @@ function procesarCartola() {
 
 function renderCartola(k) {
   var h = '', i;
-  h += '<div class="sec"><h2>Importar cartola Banchile</h2>' +
-    '<p class="i">' + (S.cartolaMsg || 'Pega el texto del PDF de Banchile. Leo posiciones, precios de mercado, el precio costo del broker y las compras con su cargo real a caja.') + '</p>' +
+  h += '<div class="sec"><h2>Subir cartola Banchile</h2>' +
+    '<p class="i">' + esc(S.cartolaMsg || 'Elige el PDF de la cartola (desde Archivos o Mail). Lo leo aquí mismo en tu teléfono y actualizo acciones, precios, compras, ventas y dividendos.') + '</p>' +
+    '<label class="btn subir">Subir cartola PDF<input type="file" accept="application/pdf,.pdf" id="pdfIn" style="display:none"></label>' +
+    (S.pideClave || claveGuardada() ? '<div class="fr" style="grid-template-columns:1fr auto;align-items:end"><label>Clave del PDF<input type="password" id="pdfClave" autocomplete="off" inputmode="numeric" value="' + esc(claveGuardada()) + '" placeholder="clave"></label>' +
+      '<button type="button" class="btn o" style="margin-top:0" data-act="pdfclave">Abrir con esta clave</button></div><p class="i" style="font-size:11px">La clave queda guardada solo en este teléfono.</p>' : '') +
+    '</div>';
+  h += '<details class="tech"><summary>Pegar el texto a mano ▾</summary><div class="sec">' +
+    '<p class="i">Si prefieres, copia el texto del PDF y pégalo aquí.</p>' +
     '<textarea id="cartolaTxt" rows="7" data-k="cartolaTxt" placeholder="Abre el PDF, selecciona todo el texto, cópialo y pégalo aquí">' + esc(S.cartolaTxt) + '</textarea>' +
-    '<button type="button" class="btn" data-act="cartola">Leer cartola y comparar</button></div>';
+    '<button type="button" class="btn" data-act="cartola">Leer cartola y comparar</button></div></details>';
   if (S.cartolaDiff.length) {
     h += '<div class="sec gris"><div class="lbl">Diferencias contra tus datos</div>';
     for (i = 0; i < S.cartolaDiff.length; i++) {
@@ -1950,6 +2099,12 @@ document.addEventListener('click', function (ev) {
 function acciones(a) {
   if (a === 'alertas') { S.verAlertas = !S.verAlertas; render(); return; }
   if (a === 'cartola') { procesarCartola(); return; }
+  if (a === 'pdfclave') {
+    var cv = (document.getElementById('pdfClave') || {}).value || '';
+    if (pdfPend) leerPdf(pdfPend, cv);
+    else { try { localStorage.setItem(CLAVE_KEY, cv); } catch (e) {} S.cartolaMsg = 'Clave guardada. Ahora sube la cartola.'; render(); }
+    return;
+  }
   if (a === 'precios') { actualizarPrecios(true); return; }
   if (a === 'tesis') {
     var res = S.testRes || { fallas: 0, tests: [] };
@@ -1996,6 +2151,7 @@ document.addEventListener('change', function (ev) {
   var el = ev.target;
   if (!el || !el.getAttribute) return;
   if (el.id === 'fileIn') { importar(el); return; }
+  if (el.id === 'pdfIn' || el.id === 'pdfIn2') { subirPdf(el); return; }
   var t = el.getAttribute('data-t'), f = el.getAttribute('data-f'), kk = el.getAttribute('data-k');
   if (t && f) {
     var i;
