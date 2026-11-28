@@ -155,6 +155,19 @@ textarea.red{border-color:var(--dn)}
 .w h3{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .w h3 small{font-size:10.5px;letter-spacing:.02em;text-transform:none;font-weight:600;color:var(--mut2)}
 .w .expl{margin-top:10px;font-size:12px;line-height:1.5;color:var(--mut)}
+.hz{padding:18px 18px 14px}
+.hz-top{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.hz-top.a{justify-content:flex-start}
+.hz-ring{width:84px;height:84px;flex:none}
+.hz-v{font-size:28px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.hz-s{font-size:13px;line-height:1.45;color:var(--mut);margin-top:10px}
+.hz-n{display:flex;align-items:center;gap:8px;flex:none}.hz-n b{font-size:34px;font-weight:900;line-height:1}.hz-n span{font-size:11px;line-height:1.25;color:var(--mut);font-weight:700}
+.hz-bar{display:flex;gap:4px;margin-top:14px}.hz-bar i{flex:1;height:8px;border-radius:999px}
+.hz-lt{margin-top:14px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.hz-l{margin-top:6px}
+.hz-r{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.hz-r:first-child{border-top:0}.hz-r i{width:8px;height:8px;border-radius:50%}.hz-r span{min-width:0}.hz-r b{font-weight:800;white-space:nowrap}
+.hz-mas{font-size:12px;color:var(--mut);margin-top:4px}
 .hero{display:flex;gap:16px;align-items:center;padding:20px;position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;inset:auto -60px -90px auto;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(214,169,74,.25),transparent 65%)}
 .luz{position:relative;z-index:1;flex:none;width:64px;height:64px;border-radius:50%;background:var(--hc);box-shadow:0 0 0 8px color-mix(in srgb,var(--hc) 18%,transparent),0 0 40px var(--hc);display:grid;place-items:center;font-size:26px;font-weight:900;color:#0b0b0b;animation:pulse 2.4s ease-in-out infinite}
@@ -276,6 +289,8 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 
 .hd-b{display:flex;gap:6px;flex:none;align-items:center}
 .maq.tema{letter-spacing:.02em;text-transform:none;font-size:12px;padding:0 11px}
+.dd-n{position:relative;display:inline-flex;align-items:center;gap:6px}.dd-n:after{content:'';width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.dd-n select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;-webkit-appearance:none;appearance:none;cursor:pointer}
 @media(max-width:420px){.hd .kick .lg{display:none}.hd h1{font-size:22px}.maq{padding:0 9px;font-size:9.5px}.maq.tema{font-size:11.5px}}
 :root[data-tema="claro"]{
   color-scheme:light;
@@ -375,7 +390,9 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
     var m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', r === 'claro' ? '#f6f1e7' : '#080808');
     var b = document.getElementById('bTema');
     if (b) b.textContent = t === 'auto' ? '◐ Auto' : t === 'claro' ? '☀ Día' : '☾ Noche';
+    var sl = document.getElementById('selTema'); if (sl) sl.value = t;
   }
+  window.ponerTema = function (n) { try { localStorage.setItem('cartera_tema', n); } catch (e) {} aplicar(); };
   window.ciclarTema = function () {
     var t = pref(), n = t === 'auto' ? 'claro' : t === 'claro' ? 'oscuro' : 'auto';
     try { localStorage.setItem('cartera_tema', n); } catch (e) {}
@@ -397,7 +414,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <h1>Mi Cartera</h1>
 <div class="kick"><span class="lg">Panel de asignación de capital · </span><span id="hoyTxt">—</span></div>
 </div>
-<div class="hd-b"><button type="button" class="maq tema" id="bTema" aria-label="Tema día o noche">◐ Auto</button></div>
+<div class="hd-b"><div class="maq tema dd-n"><span id="bTema">◐ Auto</span><select id="selTema" aria-label="Tema día o noche"><option value="auto">◐ Automático</option><option value="claro">☀ Día</option><option value="oscuro">☾ Noche</option></select></div></div>
 </div>
 </div>
 
@@ -1024,6 +1041,19 @@ function semaforo(k, m) {
     fmtPct(k.maxConc, 0), k.maxConc <= cfg.topeConc ? 'ok' : (k.maxConc <= cfg.topeConc + 10 ? 'md' : 'ko'));
   add('neto', 'Resultado después de intereses', 'Ganancia de las acciones + dividendos − intereses del préstamo.',
     clpS(k.neto), k.neto >= 0 ? 'ok' : 'ko');
+  var C = {
+    cred: ['Retorno vs crédito', fmtPct(k.anualizado) + ' vs ' + fmtPct(cfg.costoCredito)],
+    capm: ['Retorno vs CAPM', fmtPct(k.anualizado) + ' vs ' + fmtPct(k.keCartera)],
+    wacc: ['Retorno vs WACC', fmtPct(k.anualizado) + ' vs ' + fmtPct(cfg.wacc)],
+    ipsa: ['Tú vs mercado chileno', m ? pp(m.retTot) + ' vs ' + pp(m.retI) : ''],
+    sharpe: ['Pago por riesgo (Sharpe)', m ? fmtDec(m.sharpe, 2) + ' (mín. 0,5)' : ''],
+    dd: ['Caída máxima', m ? fmtPct(m.mdd, 1) : ''],
+    dp: ['Deuda / patrimonio', fmtPct(k.dp, 0) + ' (límite ' + fmtPct(cfg.dpMax, 0) + ')'],
+    fondo: ['Colchón para cuotas', fmtDec(k.cuotasCub, 1) + ' cuotas (mín. 1)'],
+    conc: ['Mayor peso (' + k.maxTk + ')', fmtPct(k.maxConc, 0) + ' (tope ' + fmtPct(cfg.topeConc, 0) + ')'],
+    neto: ['Resultado tras intereses', clpS(k.neto)]
+  };
+  L.forEach(function (x) { if (C[x.id]) { x.n = C[x.id][0]; x.c = C[x.id][1]; } else { x.n = x.t; x.c = x.v; } });
   var ok = 0, ko = 0, claveKo = false;
   L.forEach(function (x) { if (x.s === 'ok') ok++; if (x.s === 'ko') { ko++; if (x.clave) claveKo = true; } });
   var est = (claveKo || ko >= 3) ? 'ko' : (ko === 0 && ok >= L.length - 2 ? 'ok' : 'md');
@@ -1862,6 +1892,33 @@ function htmlDividendos() {
 }
 
 var ALERTAS_H = '';
+var HERO_OP = 'a';
+function htmlHero(sem, HC, VER) {
+  /* Tarjeta "¿Cómo va mi cartera?": veredicto, medidor simple y lista corta de lo que está en rojo. */
+  var n = sem.lista.length, ok = sem.ok, col = HC[sem.est];
+  var malos = sem.lista.filter(function (x) { return x.s === 'ko'; }), medios = sem.lista.filter(function (x) { return x.s === 'md'; });
+  var lista = malos.length ? malos : medios;
+  var filas = lista.slice(0, 4).map(function (x) {
+    return '<div class="hz-r"><i style="background:' + HC[x.s] + '"></i><span>' + esc(x.n) + '</span><b class="num" style="color:' + HC[x.s] + '">' + esc(x.c) + '</b></div>';
+  }).join('');
+  var tituloL = malos.length ? 'En rojo (' + malos.length + ')' : medios.length ? 'Por mejorar (' + medios.length + ')' : '';
+  var cola = lista.length > 4 ? '<div class="hz-mas">y ' + (lista.length - 4) + ' más en Cartera → Ratios</div>' : '';
+  var listaH = lista.length ? '<div class="hz-lt">' + tituloL + '</div><div class="hz-l">' + filas + '</div>' + cola : '';
+  if (HERO_OP === 'b') {
+    return '<div class="w hz">' +
+      '<div class="hz-top"><div><div class="lbl">¿Cómo va mi cartera?</div><div class="hz-v" style="color:' + col + '">' + VER[sem.est][0] + '</div></div>' +
+      '<div class="hz-n"><b class="num" style="color:' + col + '">' + ok + '</b><span>de ' + n + '<br>en verde</span></div></div>' +
+      '<div class="hz-bar">' + sem.lista.map(function (x) { return '<i style="background:' + HC[x.s] + '"></i>'; }).join('') + '</div>' +
+      '<div class="hz-s">' + VER[sem.est][1] + '</div>' + listaH + '</div>';
+  }
+  var R = 34, L2 = 2 * Math.PI * R, fr = n ? ok / n : 0;
+  return '<div class="w hz">' +
+    '<div class="hz-top a"><svg class="hz-ring" viewBox="0 0 84 84"><circle cx="42" cy="42" r="' + R + '" fill="none" stroke="var(--line2)" stroke-width="8"/>' +
+    '<circle cx="42" cy="42" r="' + R + '" fill="none" stroke="' + col + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + (L2 * fr).toFixed(1) + ' ' + L2.toFixed(1) + '" transform="rotate(-90 42 42)"/>' +
+    '<text x="42" y="41" text-anchor="middle" font-size="22" font-weight="900" fill="var(--tx)">' + ok + '/' + n + '</text><text x="42" y="56" text-anchor="middle" font-size="9" font-weight="700" fill="var(--mut)">en verde</text></svg>' +
+    '<div style="min-width:0"><div class="lbl">¿Cómo va mi cartera?</div><div class="hz-v" style="color:' + col + '">' + VER[sem.est][0] + '</div><div class="hz-s" style="margin-top:4px">' + VER[sem.est][1] + '</div></div></div>' +
+    listaH + '</div>';
+}
 function renderDash(k) {
   var cfg = S.cfg, cr = S.credito, m = metricas(), sem = semaforo(k, m), h = '', i;
   var HC = { ok: 'var(--up)', md: 'var(--acc)', ko: 'var(--dn)' };
@@ -1873,16 +1930,7 @@ function renderDash(k) {
   var malos = sem.lista.filter(function (x) { return x.s === 'ko'; }).map(function (x) { return x.t.charAt(0).toLowerCase() + x.t.slice(1); });
   h += '<div class="dash">';
   // Héroe
-  h += '<div class="w hero" style="--hc:' + HC[sem.est] + '"><div class="luz">' + (sem.est === 'ok' ? '✓' : sem.est === 'md' ? '!' : '✕') + '</div>' +
-    '<div class="orbe" aria-hidden="true"><svg viewBox="0 0 200 200"><defs><linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4d6"/><stop offset=".45" stop-color="#e3b85c"/><stop offset="1" stop-color="#6e4a12"/></linearGradient><filter id="ob"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
-    '<g transform="translate(100 100)">' +
-    [0, 36, 72, 108, 144].map(function (r, ix) { return '<ellipse rx="' + (62 - ix * 4) + '" ry="' + (30 + ix * 5) + '" fill="none" stroke="url(#og)" stroke-width="' + (ix === 2 ? 3 : 1.4) + '" stroke-opacity="' + (0.9 - ix * 0.12) + '" transform="rotate(' + r + ')"><animateTransform attributeName="transform" type="rotate" from="' + r + '" to="' + (r + 360) + '" dur="' + (14 + ix * 3) + 's" repeatCount="indefinite"/></ellipse>'; }).join('') +
-    '<ellipse rx="58" ry="40" fill="none" stroke="#e3b85c" stroke-width="7" stroke-opacity=".35" filter="url(#ob)"><animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="18s" repeatCount="indefinite"/></ellipse>' +
-    '</g></svg></div>' +
-    '<div class="cuerpo" style="flex:1;min-width:0;position:relative;z-index:1"><div class="lbl">¿Cómo va mi cartera?</div><div class="ver" style="color:' + HC[sem.est] + '">' + VER[sem.est][0] + '</div>' +
-    '<div class="ver-s">' + VER[sem.est][1] + (malos.length ? ' En rojo: ' + esc(malos.slice(0, 3).join(', ')) + '.' : '') + '</div>' +
-    '<div class="score">' + sem.lista.map(function (x) { return '<i class="' + x.s + '" title="' + esc(x.t) + '"></i>'; }).join('') + '</div>' +
-    '<div class="ver-s" style="margin-top:6px;font-size:12px">' + sem.ok + ' de ' + sem.lista.length + ' indicadores en verde</div></div></div>';
+  h += htmlHero(sem, HC, VER);
   h += '<label class="w subir-bar"><span><b>¿Llegó tu cartola nueva?</b> Súbela y la cartera se actualiza al instante.</span><span class="btn">Subir PDF</span><input type="file" accept="application/pdf,.pdf" id="pdfIn2" style="display:none"></label>';
   // KPIs
   var vd = 0, vdBase = 0;
@@ -2422,6 +2470,7 @@ function itemNoticia(it) {
 var NOTF = 'todo';
 var NOTF_OPC = [['todo', 'Todo'], ['cmf', 'Hechos CMF'], ['prensa', 'Prensa'], ['merc', 'Mercurio'], ['reco', 'Recomendaciones']];
 document.addEventListener('change', function (ev) {
+  if (ev.target && ev.target.id === 'selTema') { ponerTema(ev.target.value); return; }
   if (!ev.target || ev.target.id !== 'notfSel') return;
   NOTF = ev.target.value;
   renderNoticias();
