@@ -165,27 +165,26 @@ textarea.red{border-color:var(--dn)}
 .mi-3{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}
 .mi-3>div+div{border-left:1px solid var(--line)}.mi-3 b{display:block;font-size:17px;font-weight:900;margin-top:4px}
 #intro{position:fixed;inset:0;z-index:9999;background:#080808;display:grid;place-items:center;overflow:hidden;transition:opacity .4s ease,transform .4s ease}
-#intro.fuera{opacity:0;transform:translateY(-3%)}
+#intro.fuera{opacity:0;transform:scale(1.04)}
 html.con-intro body{overflow:hidden}
-.in-c{display:flex;align-items:center;gap:12px;animation:inC .5s ease-out .95s forwards}
-.in-m{width:58px;height:58px;flex:none}
-.in-r{fill:none;stroke:#d6a94a;stroke-width:2.2;stroke-dasharray:183;stroke-dashoffset:183;transform:rotate(-90deg);transform-origin:32px 32px;animation:inR .6s cubic-bezier(.6,0,.2,1) .1s forwards}
-.in-b{fill:#e3b85c;transform:scaleY(0);transform-origin:center 46px;animation:inB .35s cubic-bezier(.3,1.4,.5,1) forwards}
-.in-b.b1{animation-delay:.45s}.in-b.b2{animation-delay:.55s;fill:#f3d48a}.in-b.b3{animation-delay:.65s;fill:#fff1c9}
-.in-t{display:flex;flex-direction:column;overflow:hidden;max-width:0;opacity:0;animation:inT .45s ease-out .7s forwards;white-space:nowrap}
+.in-z{position:absolute;inset:0;width:100%;height:100%}
+.in-3d{transform:perspective(900px) rotateX(22deg) rotateY(-14deg) translate(-34px,20px);transform-origin:50% 60%;animation:in3d 1.8s ease-out forwards}
+.ar path{fill:none;stroke-linejoin:miter;stroke-linecap:butt;stroke-dasharray:var(--L) var(--L);stroke-dashoffset:var(--L);animation-name:inD;animation-timing-function:cubic-bezier(.55,0,.25,1);animation-fill-mode:forwards}
+.ar-s{stroke:#4a3110}.ar-f{stroke:url(#igf)}.ar-h{stroke:#fff6dc;stroke-opacity:.55}
+.ar-p{opacity:0;transform:scale(.3);transform-box:fill-box;transform-origin:left center;animation:inP .25s cubic-bezier(.3,1.5,.5,1) forwards}
+.ar-ps{fill:#4a3110}.ar-pf{fill:#fff1c9}
+.a2,.a3{opacity:.45}
+.in-c{position:relative;display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:20px;background:rgba(8,8,8,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transform:translateY(10px) scale(.96);animation:inC .45s cubic-bezier(.3,1.3,.5,1) .85s forwards}
+.in-m{width:54px;height:54px;flex:none}
+.in-r{fill:none;stroke:#d6a94a;stroke-width:2.2}
+.in-zz,.in-zh{fill:none;stroke:#f3d48a;stroke-width:4;stroke-linejoin:miter;stroke-linecap:round}
+.in-t{display:flex;flex-direction:column;white-space:nowrap}
 .in-t b{font-size:24px;font-weight:900;letter-spacing:-.02em;color:#f5efe2}
 .in-t span{font-size:12.5px;font-weight:700;color:#bfa56a;margin-top:2px}
-.in-w{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;height:100%;pointer-events:none}
-.in-w i{flex:1;height:0;animation:inW .5s cubic-bezier(.7,0,.3,1) forwards}
-.in-w i:nth-child(1){background:#6e4a12;animation-delay:1.0s;--h:100%}
-.in-w i:nth-child(2){background:#9c7330;animation-delay:1.07s;--h:100%}
-.in-w i:nth-child(3){background:#c99a3e;animation-delay:1.14s;--h:100%}
-.in-w i:nth-child(4){background:#e3b85c;animation-delay:1.21s;--h:100%}
-@keyframes inR{to{stroke-dashoffset:0}}
-@keyframes inB{to{transform:scaleY(1)}}
-@keyframes inT{to{max-width:220px;opacity:1}}
-@keyframes inC{to{opacity:0;transform:scale(.96)}}
-@keyframes inW{to{height:100%}}
+@keyframes inD{to{stroke-dashoffset:0}}
+@keyframes inP{to{opacity:1;transform:scale(1)}}
+@keyframes inC{to{opacity:1;transform:none}}
+@keyframes in3d{to{transform:perspective(900px) rotateX(14deg) rotateY(-8deg) translate(-34px,4px)}}
 .hz{padding:18px 18px 14px}
 .hz-top{display:flex;justify-content:space-between;align-items:center;gap:14px}
 .hz-top.a{justify-content:flex-start}
@@ -438,11 +437,11 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 </head>
 <body>
 <div id="intro" aria-hidden="true">
+  <svg class="in-z" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="igf" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9c7330"/><stop offset=".55" stop-color="#e3b85c"/><stop offset="1" stop-color="#fff1c9"/></linearGradient></defs><g class="in-3d"><g class="ar a2"><path class="ar-s" d="M-40 600 L40 500 L90 550 L170 360 L220 410 L320 150" stroke-width="12" style="--L:754;animation-delay:0.25s;animation-duration:0.7s" transform="translate(7 9)"/><path class="ar-f" d="M-40 600 L40 500 L90 550 L170 360 L220 410 L320 150" stroke-width="12" style="--L:754;animation-delay:0.25s;animation-duration:0.7s"/><path class="ar-h" d="M-40 600 L40 500 L90 550 L170 360 L220 410 L320 150" stroke-width="2" style="--L:754;animation-delay:0.25s;animation-duration:0.7s" transform="translate(-3 -3)"/><g transform="translate(320 150) rotate(-69.0)"><g class="ar-p" style="animation-delay:0.87s"><polygon class="ar-ps" points="0,-16 22,0 0,16" transform="translate(7 9)"/><polygon class="ar-pf" points="0,-16 22,0 0,16"/></g></g></g><g class="ar a3"><path class="ar-s" d="M120 880 L200 760 L250 800 L330 620 L370 660 L440 470" stroke-width="12" style="--L:664;animation-delay:0.35s;animation-duration:0.7s" transform="translate(7 9)"/><path class="ar-f" d="M120 880 L200 760 L250 800 L330 620 L370 660 L440 470" stroke-width="12" style="--L:664;animation-delay:0.35s;animation-duration:0.7s"/><path class="ar-h" d="M120 880 L200 760 L250 800 L330 620 L370 660 L440 470" stroke-width="2" style="--L:664;animation-delay:0.35s;animation-duration:0.7s" transform="translate(-3 -3)"/><g transform="translate(440 470) rotate(-69.8)"><g class="ar-p" style="animation-delay:0.97s"><polygon class="ar-ps" points="0,-16 22,0 0,16" transform="translate(7 9)"/><polygon class="ar-pf" points="0,-16 22,0 0,16"/></g></g></g><g class="ar a1"><path class="ar-s" d="M-30 800 L70 640 L130 700 L220 470 L280 540 L400 250" stroke-width="24" style="--L:927;animation-delay:0.05s;animation-duration:0.85s" transform="translate(7 9)"/><path class="ar-f" d="M-30 800 L70 640 L130 700 L220 470 L280 540 L400 250" stroke-width="24" style="--L:927;animation-delay:0.05s;animation-duration:0.85s"/><path class="ar-h" d="M-30 800 L70 640 L130 700 L220 470 L280 540 L400 250" stroke-width="4" style="--L:927;animation-delay:0.05s;animation-duration:0.85s" transform="translate(-6 -6)"/><g transform="translate(400 250) rotate(-67.5)"><g class="ar-p" style="animation-delay:0.82s"><polygon class="ar-ps" points="0,-30 42,0 0,30" transform="translate(7 9)"/><polygon class="ar-pf" points="0,-30 42,0 0,30"/></g></g></g></g></svg>
   <div class="in-c">
-    <svg class="in-m" viewBox="0 0 64 64"><circle class="in-r" cx="32" cy="32" r="29"/><rect class="in-b b1" x="19" y="34" width="6" height="12" rx="1.5"/><rect class="in-b b2" x="29" y="27" width="6" height="19" rx="1.5"/><rect class="in-b b3" x="39" y="19" width="6" height="27" rx="1.5"/></svg>
+    <svg class="in-m" viewBox="0 0 64 64"><circle class="in-r" cx="32" cy="32" r="29"/><path class="in-zz" d="M16 44 L26 32 L32 37 L46 21"/><path class="in-zh" d="M39 20 L47 20 L47 28"/></svg>
     <div class="in-t"><b>Mi Cartera</b><span>Hola, Guillermo</span></div>
   </div>
-  <div class="in-w"><i></i><i></i><i></i><i></i></div>
 </div>
 <script>
 /* Animación de entrada (1,6 s): solo al abrir la app, una vez por sesión. Toque para saltar. */
@@ -454,7 +453,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
   document.documentElement.classList.add('con-intro');
   function fin() { if (!el.parentNode) return; el.classList.add('fuera'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); document.documentElement.classList.remove('con-intro'); }, 420); }
   el.addEventListener('click', fin);
-  setTimeout(fin, 1650);
+  setTimeout(fin, 1800);
 })();
 </script>
 <div class="wrap">
