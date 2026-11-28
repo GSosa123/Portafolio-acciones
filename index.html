@@ -164,6 +164,28 @@ textarea.red{border-color:var(--dn)}
 .mi-gh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}.mi-gh>b{font-size:15px}
 .mi-3{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}
 .mi-3>div+div{border-left:1px solid var(--line)}.mi-3 b{display:block;font-size:17px;font-weight:900;margin-top:4px}
+#intro{position:fixed;inset:0;z-index:9999;background:#080808;display:grid;place-items:center;overflow:hidden;transition:opacity .4s ease,transform .4s ease}
+#intro.fuera{opacity:0;transform:translateY(-3%)}
+html.con-intro body{overflow:hidden}
+.in-c{display:flex;align-items:center;gap:12px;animation:inC .5s ease-out .95s forwards}
+.in-m{width:58px;height:58px;flex:none}
+.in-r{fill:none;stroke:#d6a94a;stroke-width:2.2;stroke-dasharray:183;stroke-dashoffset:183;transform:rotate(-90deg);transform-origin:32px 32px;animation:inR .6s cubic-bezier(.6,0,.2,1) .1s forwards}
+.in-b{fill:#e3b85c;transform:scaleY(0);transform-origin:center 46px;animation:inB .35s cubic-bezier(.3,1.4,.5,1) forwards}
+.in-b.b1{animation-delay:.45s}.in-b.b2{animation-delay:.55s;fill:#f3d48a}.in-b.b3{animation-delay:.65s;fill:#fff1c9}
+.in-t{display:flex;flex-direction:column;overflow:hidden;max-width:0;opacity:0;animation:inT .45s ease-out .7s forwards;white-space:nowrap}
+.in-t b{font-size:24px;font-weight:900;letter-spacing:-.02em;color:#f5efe2}
+.in-t span{font-size:12.5px;font-weight:700;color:#bfa56a;margin-top:2px}
+.in-w{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;height:100%;pointer-events:none}
+.in-w i{flex:1;height:0;animation:inW .5s cubic-bezier(.7,0,.3,1) forwards}
+.in-w i:nth-child(1){background:#6e4a12;animation-delay:1.0s;--h:100%}
+.in-w i:nth-child(2){background:#9c7330;animation-delay:1.07s;--h:100%}
+.in-w i:nth-child(3){background:#c99a3e;animation-delay:1.14s;--h:100%}
+.in-w i:nth-child(4){background:#e3b85c;animation-delay:1.21s;--h:100%}
+@keyframes inR{to{stroke-dashoffset:0}}
+@keyframes inB{to{transform:scaleY(1)}}
+@keyframes inT{to{max-width:220px;opacity:1}}
+@keyframes inC{to{opacity:0;transform:scale(.96)}}
+@keyframes inW{to{height:100%}}
 .hz{padding:18px 18px 14px}
 .hz-top{display:flex;justify-content:space-between;align-items:center;gap:14px}
 .hz-top.a{justify-content:flex-start}
@@ -415,6 +437,26 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 </script>
 </head>
 <body>
+<div id="intro" aria-hidden="true">
+  <div class="in-c">
+    <svg class="in-m" viewBox="0 0 64 64"><circle class="in-r" cx="32" cy="32" r="29"/><rect class="in-b b1" x="19" y="34" width="6" height="12" rx="1.5"/><rect class="in-b b2" x="29" y="27" width="6" height="19" rx="1.5"/><rect class="in-b b3" x="39" y="19" width="6" height="27" rx="1.5"/></svg>
+    <div class="in-t"><b>Mi Cartera</b><span>Hola, Guillermo</span></div>
+  </div>
+  <div class="in-w"><i></i><i></i><i></i><i></i></div>
+</div>
+<script>
+/* Animación de entrada (1,6 s): solo al abrir la app, una vez por sesión. Toque para saltar. */
+(function () {
+  var el = document.getElementById('intro'), visto = false;
+  try { visto = sessionStorage.getItem('cartera_intro') === '1'; sessionStorage.setItem('cartera_intro', '1'); } catch (e) {}
+  var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (visto || quieto || /[?&]v=/.test(location.search)) { el.parentNode.removeChild(el); return; }
+  document.documentElement.classList.add('con-intro');
+  function fin() { if (!el.parentNode) return; el.classList.add('fuera'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); document.documentElement.classList.remove('con-intro'); }, 420); }
+  el.addEventListener('click', fin);
+  setTimeout(fin, 1650);
+})();
+</script>
 <div class="wrap">
 
 <div class="hd">
