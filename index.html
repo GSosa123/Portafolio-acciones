@@ -26,7 +26,7 @@ input,button,textarea{font:inherit;color:inherit;border-radius:0;border:none;-we
 button{cursor:pointer}
 a{color:var(--brand)}
 .num{font-variant-numeric:tabular-nums}
-.wrap{max-width:1120px;margin:0 auto;min-height:100vh;padding:0 16px 60px}
+.wrap{max-width:1120px;margin:0 auto;min-height:100vh;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
 .hd{padding:10px 0 10px;padding-top:calc(env(safe-area-inset-top) + 10px)}
 .hd-t{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hd h1{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1;background:linear-gradient(90deg,#f7e7bf,#d6a94a 60%,#a87a2a);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -41,9 +41,9 @@ a{color:var(--brand)}
 .al-n{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.08)}
 .al-t{font-size:12.5px;font-weight:600;line-height:1.4}
 .al-more{align-self:flex-start;min-height:30px;color:var(--mut);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:0 4px}
-nav{position:sticky;top:env(safe-area-inset-top);z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px;margin:0 -4px 16px;background:rgba(8,8,8,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav{position:sticky;top:env(safe-area-inset-top);z-index:5;display:grid;gap:4px;overflow:hidden;padding:8px;margin:0 -4px 16px;background:rgba(8,8,8,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-nav button{flex:none;min-height:36px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--mut);transition:all .2s}
+nav button{min-width:0;min-height:36px;padding:0 6px;overflow:hidden;text-overflow:ellipsis;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--mut);transition:all .2s}
 nav button.on{background:linear-gradient(135deg,#f3d48a,#c9952f);color:#1a1408;box-shadow:0 4px 16px rgba(214,169,74,.35)}
 .pane{display:none}
 .pane.on{display:block;animation:fadeUp .35s ease both}
@@ -302,6 +302,14 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 :root[data-tema="claro"] input.red{background:var(--dn-bg)}
 
 body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:var(--bg);z-index:40;pointer-events:none}
+
+#barra{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:rgba(10,10,10,.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+#barra button{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:50px;justify-content:center;color:var(--mut2);font-size:10.5px;font-weight:700;transition:color .2s}
+#barra button svg{width:24px;height:24px}
+#barra button.on{color:var(--brand2)}
+:root[data-tema="claro"] #barra{background:rgba(255,252,245,.92)}
+:root[data-tema="claro"] #barra button.on{color:var(--brand)}
+@media(min-width:900px){#barra{left:50%;right:auto;transform:translateX(-50%);width:520px;bottom:14px;border:1px solid var(--line);border-radius:22px;padding:6px}}
 </style>
 <script>
 /* Si hay una versión nueva publicada, la app se recarga sola (evita la caché del iPhone). */
@@ -368,6 +376,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <div id="alertas"></div>
 
 <nav id="nav"></nav>
+<div id="barra" role="navigation" aria-label="Secciones"></div>
 
 <!-- Contenido estático: se ve incluso si el visor no ejecuta JavaScript (WhatsApp en iPhone).
      Cuando el JS corre, lo reemplaza por la versión interactiva. -->
@@ -667,6 +676,16 @@ var TABS = [
   { id: 'cartera', label: 'Cartera' }, { id: 'agenda', label: 'Agenda' }, { id: 'noticias', label: 'Noticias' },
   { id: 'cartola', label: 'Cartola' }, { id: 'ajustes', label: 'Ajustes' }
 ];
+/* Secciones de la barra inferior (estilo iPhone). Cada una agrupa pestañas, que se muestran como filtros arriba. */
+var SECC = [
+  { id: 'inicio', label: 'Inicio', tabs: ['panel'], ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>' },
+  { id: 'cartera', label: 'Cartera', tabs: ['papeles', 'cartera', 'credito', 'cartola'], sub: { papeles: 'Acciones', cartera: 'Ratios', credito: 'Crédito', cartola: 'Cartola' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' },
+  { id: 'analisis', label: 'Análisis', tabs: ['empresas', 'test'], sub: { empresas: 'Empresas', test: 'Test compra' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>' },
+  { id: 'noticias', label: 'Noticias', tabs: ['noticias', 'agenda'], sub: { noticias: 'Noticias', agenda: 'Agenda' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/></svg>' },
+  { id: 'ajustes', label: 'Ajustes', tabs: ['ajustes'], ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>' }
+];
+var SECC_ULT = {};
+function seccDe(tab) { for (var i = 0; i < SECC.length; i++) if (SECC[i].tabs.indexOf(tab) >= 0) return SECC[i]; return SECC[0]; }
 
 function clon(o) { return JSON.parse(JSON.stringify(o)); }
 
@@ -2569,11 +2588,22 @@ function render() {
   ALERTAS_H = h;
   document.getElementById('alertas').innerHTML = '';
 
-  var nv = '';
-  for (i = 0; i < TABS.length; i++) {
-    nv += '<button type="button" class="' + (S.tab === TABS[i].id ? 'on' : '') + '" data-tab="' + TABS[i].id + '">' + TABS[i].label + '</button>';
+  var sc = seccDe(S.tab), nv = '', bb = '';
+  SECC_ULT[sc.id] = S.tab;
+  if (sc.tabs.length > 1) {
+    for (i = 0; i < sc.tabs.length; i++) {
+      nv += '<button type="button" class="' + (S.tab === sc.tabs[i] ? 'on' : '') + '" data-tab="' + sc.tabs[i] + '">' + sc.sub[sc.tabs[i]] + '</button>';
+    }
   }
-  document.getElementById('nav').innerHTML = nv;
+  var navEl = document.getElementById('nav');
+  navEl.innerHTML = nv;
+  navEl.style.display = nv ? '' : 'none';
+  navEl.style.gridTemplateColumns = 'repeat(' + sc.tabs.length + ',1fr)';
+  for (i = 0; i < SECC.length; i++) {
+    var sx = SECC[i];
+    bb += '<button type="button" class="' + (sx === sc ? 'on' : '') + '" data-tab="' + (SECC_ULT[sx.id] || sx.tabs[0]) + '">' + sx.ic + '<span>' + sx.label + '</span></button>';
+  }
+  document.getElementById('barra').innerHTML = bb;
   for (i = 0; i < TABS.length; i++) {
     document.getElementById('p-' + TABS[i].id).className = 'pane' + (S.tab === TABS[i].id ? ' on' : '');
   }
