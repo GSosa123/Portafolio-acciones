@@ -69,6 +69,13 @@ def limpio(s):
     return re.sub(r"\s+", " ", H.unescape(s)).strip()
 
 
+def decodificar(b):
+    try:
+        return b.decode("utf-8")
+    except UnicodeDecodeError:
+        return b.decode("latin-1", "replace")
+
+
 # ---------------------------------------------------------------- CMF
 CMF_URL = ("https://www.cmfchile.cl/institucional/mercados/entidad.php?mercado=V&rut={rut}"
            "&grupo=&tipoentidad=RVEMI&row=&vig=VI&control=svs&pestania=25")
@@ -77,13 +84,13 @@ CMF_URL = ("https://www.cmfchile.cl/institucional/mercados/entidad.php?mercado=V
 def hechos_cmf(tk, emp, dias=30):
     url = CMF_URL.format(rut=emp["rut"])
     if not emp.get("razon"):
-        g = get(url).decode("latin-1", "replace")
+        g = decodificar(get(url))
         m = re.search(r'name=\s*"entidad"\s+value="([^"]*)"', g)
         emp["razon"] = m.group(1) if m else ""
     datos = urllib.parse.urlencode({
         "dd": "###", "mm": "###", "aa": "###", "dd2": "###", "mm2": "###", "aa2": "###",
         "dias": str(dias), "entidad": emp.get("razon", ""), "rut": emp["rut"] + " ", "formulario": "1"}).encode()
-    h = get(url, datos).decode("latin-1", "replace")
+    h = decodificar(get(url, datos))
     fin = h.find("end inc/hechos_e.php")
     ini = h.rfind("<table", 0, fin) if fin > 0 else -1
     if ini < 0:
@@ -103,7 +110,7 @@ def hechos_cmf(tk, emp, dias=30):
         href = H.unescape(link.group(1)) if link else url
         if href.startswith("/"):
             href = "https://www.cmfchile.cl" + href
-        materia = max((t for t in txt if not re.fullmatch(r"[\d/ :\-]+", t)), key=len, default="Hecho esencial")
+        materia = txt[-1] if txt[-1] and not re.fullmatch(r"[\d/ :\-]+", txt[-1]) else "Hecho esencial"
         out.append({"ticker": tk, "fuente": "CMF", "tipo": "Hecho esencial", "fecha": fecha,
                     "titulo": materia, "url": href, "importante": True})
     return out

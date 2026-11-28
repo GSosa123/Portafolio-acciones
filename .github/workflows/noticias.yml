@@ -6,8 +6,6 @@ on:
     - cron: "10 11-23/2 * * *"
     - cron: "10 1 * * *"
   workflow_dispatch:
-  push:
-    branches: [claude/project-thread-xm9gmn]
 
 permissions:
   contents: write
