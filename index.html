@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,7 +27,7 @@ button{cursor:pointer}
 a{color:var(--brand)}
 .num{font-variant-numeric:tabular-nums}
 .wrap{max-width:1120px;margin:0 auto;min-height:100vh;padding:0 16px 60px}
-.hd{padding:10px 0 10px;padding-top:max(10px,env(safe-area-inset-top))}
+.hd{padding:10px 0 10px;padding-top:calc(env(safe-area-inset-top) + 10px)}
 .hd-t{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hd h1{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1;background:linear-gradient(90deg,#f7e7bf,#d6a94a 60%,#a87a2a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .kick{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:4px}
@@ -297,7 +300,35 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 :root[data-tema="claro"] .chk-r .ic.nd,:root[data-tema="claro"] .tag.nd{background:#cfc6b4;color:#2a241a}
 :root[data-tema="claro"] input[type=text],:root[data-tema="claro"] input[type=number],:root[data-tema="claro"] input[type=date],:root[data-tema="claro"] input[type=password]{background:#fff;color-scheme:light}
 :root[data-tema="claro"] input.red{background:var(--dn-bg)}
+
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:var(--bg);z-index:40;pointer-events:none}
 </style>
+<script>
+/* Si hay una versión nueva publicada, la app se recarga sola (evita la caché del iPhone). */
+(function () {
+  function h(t) { var x = 0; for (var i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) | 0; return (x >>> 0).toString(36) + t.length.toString(36); }
+  function revisar() {
+    if (!window.fetch) return;
+    var u = location.pathname;
+    var v = [];
+    fetch(u, { cache: 'force-cache' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+      v[0] = t;
+      return fetch(u, { cache: 'reload' }).then(function (r) { return r.ok ? r.text() : ''; });
+    }).then(function (t) {
+      v[1] = t;
+      if (!v[0] || !v[1]) return;
+      var nueva = h(v[1]);
+      if (/[?&]v=/.test(location.search) && location.search.indexOf('v=' + nueva) >= 0) return;
+      if (v[0] === v[1] && !/[?&]v=/.test(location.search)) return;
+      var k = 'cartera_recarga_' + nueva;
+      try { if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) {}
+      location.replace(u + '?v=' + nueva);
+    }).catch(function () {});
+  }
+  window.addEventListener('load', revisar);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') revisar(); });
+})();
+</script>
 <script>
 (function () {
   var mq = window.matchMedia ? matchMedia('(prefers-color-scheme: light)') : null;
