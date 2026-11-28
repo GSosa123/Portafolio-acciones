@@ -317,6 +317,13 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 .emp-hd small{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--mut)}
 .emp-tk{padding:3px 9px;border-radius:8px;background:var(--tc);color:#0b0b0b;font-size:11px;font-weight:900;letter-spacing:.04em}
 .emp-sel{display:flex;flex-wrap:wrap;gap:6px}
+.tk-dd{position:relative;display:inline-flex;flex-direction:row;text-transform:none;letter-spacing:0;line-height:1;white-space:nowrap;align-items:center;gap:8px;min-height:36px;padding:0 34px 0 12px;border-radius:999px;border:1px solid var(--tc,var(--line2));background:color-mix(in srgb,var(--tc,#d6a94a) 14%,transparent);font-size:13px;font-weight:800;color:var(--tx);max-width:100%}
+.tk-dd i{width:10px;height:10px;border-radius:3px;background:var(--tc,var(--gold));flex:none}
+.tk-dd i.no{background:transparent;border:1px solid var(--mut)}
+.tk-dd b{color:var(--mut);font-weight:700}
+.tk-dd:after{content:'';position:absolute;right:13px;top:50%;width:7px;height:7px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.tk-dd select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;cursor:pointer;-webkit-appearance:none;appearance:none}
+.tk-ddw{display:block}
 .emp-sel button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);font-size:12px;font-weight:800;color:var(--mut)}
 .emp-sel button i{width:9px;height:9px;border-radius:3px;background:var(--tc)}
 .emp-sel button.on{color:var(--tx);border-color:var(--tc,var(--gold));background:color-mix(in srgb,var(--tc,#d6a94a) 22%,transparent)}
@@ -325,6 +332,12 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 .val-v .k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
 .val-v b{font-size:18px;font-weight:900}
 .val-v.ok{border-color:color-mix(in srgb,var(--up) 50%,transparent)}.val-v.ko{border-color:color-mix(in srgb,var(--dn) 50%,transparent)}.val-v.md{border-color:color-mix(in srgb,var(--acc) 50%,transparent)}
+
+.est-f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.est-f>*{min-width:0}
+.est-f input,.est-f select{width:100%;min-width:0;box-sizing:border-box}
+.est-f label{font-size:11px;font-weight:700;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+.est-f select{min-height:46px;padding:0 10px;border:1px solid var(--line2);border-radius:10px;background:var(--bg);color:var(--tx);font-size:15px;font-weight:700;-webkit-appearance:none;appearance:none}
 </style>
 <script>
 /* Si hay una versión nueva publicada, la app se recarga sola (evita la caché del iPhone). */
@@ -384,7 +397,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <h1>Mi Cartera</h1>
 <div class="kick"><span class="lg">Panel de asignación de capital · </span><span id="hoyTxt">—</span></div>
 </div>
-<div class="hd-b"><button type="button" class="maq tema" id="bTema" aria-label="Tema día o noche">◐ Auto</button><button type="button" class="maq" id="bMaq">Sin maquillaje: OFF</button></div>
+<div class="hd-b"><button type="button" class="maq tema" id="bTema" aria-label="Tema día o noche">◐ Auto</button></div>
 </div>
 </div>
 
@@ -439,6 +452,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <div class="pane on" id="p-panel"><div id="dash"></div><details class="tech"><summary>Detalle técnico y fórmulas ▾</summary><div><div id="cards"></div><div id="cosmetico"></div></div></details></div>
 <div class="pane" id="p-papeles"><div id="papeles"></div></div>
 <div class="pane" id="p-empresas"><div id="empresas"></div></div>
+<div class="pane" id="p-estudio"><div id="estudio"></div></div>
 <div class="pane" id="p-credito"><div id="credito"></div></div>
 <div class="pane" id="p-test"><div id="test"></div></div>
 <div class="pane" id="p-cartera"><div id="cartera"></div></div>
@@ -689,13 +703,13 @@ var TABS = [
   { id: 'panel', label: 'Panel' }, { id: 'papeles', label: 'Papeles' },
   { id: 'empresas', label: 'Empresas' }, { id: 'credito', label: 'Crédito' }, { id: 'test', label: 'Test compra' },
   { id: 'cartera', label: 'Cartera' }, { id: 'agenda', label: 'Agenda' }, { id: 'noticias', label: 'Noticias' },
-  { id: 'cartola', label: 'Cartola' }, { id: 'ajustes', label: 'Ajustes' }
+  { id: 'cartola', label: 'Cartola' }, { id: 'ajustes', label: 'Ajustes' }, { id: 'estudio', label: 'En estudio' }
 ];
 /* Secciones de la barra inferior (estilo iPhone). Cada una agrupa pestañas, que se muestran como filtros arriba. */
 var SECC = [
   { id: 'inicio', label: 'Inicio', tabs: ['panel'], ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>' },
   { id: 'cartera', label: 'Cartera', tabs: ['papeles', 'cartera', 'credito', 'cartola'], sub: { papeles: 'Acciones', cartera: 'Ratios', credito: 'Crédito', cartola: 'Cartola' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' },
-  { id: 'analisis', label: 'Empresas', tabs: ['empresas'], ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>' },
+  { id: 'analisis', label: 'Empresas', tabs: ['empresas', 'estudio'], sub: { empresas: 'Mis acciones', estudio: 'En estudio' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>' },
   { id: 'noticias', label: 'Noticias', tabs: ['noticias', 'agenda'], sub: { noticias: 'Noticias', agenda: 'Agenda' }, ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/></svg>' },
   { id: 'ajustes', label: 'Ajustes', tabs: ['ajustes'], ic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>' }
 ];
@@ -718,7 +732,7 @@ function guardar() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
       version: S.version || MAESTRO.version, cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
-      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}, dividendos: S.dividendos, eeff: S.eeff || {}
+      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}, dividendos: S.dividendos, eeff: S.eeff || {}, estudio: S.estudio || []
     }));
   } catch (e) {}
 }
@@ -737,6 +751,7 @@ function cargar() {
     S.decisiones = d.decisiones || [];
     S.hist = d.hist || {};
     S.eeff = d.eeff || {};
+    S.estudio = d.estudio || [];
     if (d.dividendos && d.dividendos.length) {
       var yd = {};
       S.dividendos.forEach(function (x) { yd[x.ticker + x.fecha] = 1; });
@@ -1647,6 +1662,15 @@ function valorar(D, precio, beta) {
   }
   return R;
 }
+function veredictoTk(tk, precio, beta) {
+  var D = VAL[tk]; if (!D || !(precio > 0)) return null;
+  var R = valorar(D, precio, beta); return R.justo ? R : null;
+}
+function tagVer(R, chico) {
+  if (!R || !R.justo) return '';
+  var NV = { ok: 'Barata', md: 'Precio justo', ko: 'Cara' };
+  return '<span class="tag ' + R.ver + '"' + (chico ? ' style="font-size:9.5px;padding:2px 7px"' : '') + '>' + NV[R.ver] + ' · ' + (R.margen >= 0 ? '+' : '−') + fmtDec(Math.abs(R.margen), 0) + '%</span>';
+}
 function fmtP(v) { return '$' + (v >= 100 ? miles(Math.round(v)) : fmtDec(v, 2)); }
 function htmlValor(D, precio, beta, tk) {
   if (!D) return '';
@@ -1674,6 +1698,96 @@ function htmlValor(D, precio, beta, tk) {
   }
   return h + '</div>';
 }
+
+/* ---------- En estudio: cualquier empresa, con su EEFF ---------- */
+var SECT = {
+  banca: { lab: 'Banco', tipo: 'banco', pu: 11, txt: 'Bancos chilenos: P/U histórico ~10–12x.' },
+  electrica: { lab: 'Eléctrica / utilities', ev: 7.5, pu: 13, txt: 'Eléctricas y sanitarias: ~7–8x EV/EBITDA.' },
+  consumo: { lab: 'Consumo / bebidas / alimentos', ev: 8, pu: 15, txt: 'Consumo masivo: ~8x EV/EBITDA y ~15x P/U.' },
+  retail: { lab: 'Retail / comercio', ev: 7, pu: 12, txt: 'Retail: ~6–8x EV/EBITDA.' },
+  transporte: { lab: 'Transporte / aerolíneas / navieras', ev: 5.5, pu: 9, txt: 'Transporte: ~5–6x EV/EBITDA, cíclico.' },
+  mineria: { lab: 'Minería / servicios mineros', ev: 6, pu: 12, txt: 'Minería y servicios: ~6x EV/EBITDA.' },
+  forestal: { lab: 'Forestal / industrial', ev: 7, pu: 12, txt: 'Forestales e industriales: ~6–8x EV/EBITDA.' },
+  inmobiliaria: { lab: 'Inmobiliaria / construcción', ev: 9, pu: 10, txt: 'Inmobiliarias: ~9x EV/EBITDA, se miran mucho por P/VL.' },
+  telecom: { lab: 'Telecom / tecnología', ev: 6, pu: 13, txt: 'Telecom: ~5–7x EV/EBITDA.' },
+  otro: { lab: 'Otro', ev: 7, pu: 12, txt: 'Supuesto genérico: ~7x EV/EBITDA y ~12x P/U.' }
+};
+/* Pasa los EEFF subidos a los datos que usa la valoración (millones de pesos). */
+function datosEeff(E, e) {
+  if (!E || !E.R) return null;
+  var R = E.R, I = R.items, fa = 12 / (R.meses || 12);
+  function v(k) { return I[k] ? I[k].v : null; }
+  var aMM = (/^MM/.test(R.unidad) ? 1 : 0.001) * (/US/.test(R.unidad) ? VAL_FX : 1);
+  var sec = SECT[e.sector] || SECT.otro, banco = sec.tipo === 'banco' || (!v('ventas') && (v('nim') !== null || v('coloc') !== null));
+  var util = (v('gCtrl') !== null ? v('gCtrl') : v('ganancia'));
+  var pat = v('patCtrl') !== null ? v('patCtrl') : v('patrimonio');
+  var D = { tipo: banco ? 'banco' : 'empresa', acc: num(e.acciones), g: 0.03, obj: { pu: sec.pu, ev: sec.ev }, hist: sec.txt,
+    fecha: (R.fecha ? 'EEFF al ' + fFecha(R.fecha) : 'EEFF') + (R.meses && R.meses !== 12 ? ', ' + R.meses + ' meses anualizados' : '') + (/US/.test(R.unidad) ? ' (US$ × ' + VAL_FX + ')' : ''),
+    notas: 'Cifras leídas de tu PDF. Revisa el número de acciones: es clave para el valor por acción.' };
+  if (util !== null) D.util = util * fa * aMM;
+  if (pat !== null) D.pat = pat * aMM;
+  var bruta = v('bruta') !== null ? v('bruta') : (v('ventas') !== null && v('costo') !== null ? v('ventas') + v('costo') : null), ebit = null;
+  if (bruta !== null && v('dist') !== null && v('adm') !== null) ebit = bruta + v('dist') + v('adm');
+  else if (v('antesImp') !== null && v('costFin') !== null) ebit = v('antesImp') - v('costFin') - (v('ingFin') || 0);
+  if (ebit !== null && v('da') !== null) D.ebitda = (ebit + Math.abs(v('da'))) * fa * aMM;
+  if (v('pfCorr') !== null || v('pfNoCorr') !== null) D.dn = ((v('pfCorr') || 0) + (v('pfNoCorr') || 0) - (v('caja') || 0)) * aMM;
+  if (v('divPag') !== null && D.acc) D.dps = Math.abs(v('divPag')) * fa * aMM / D.acc;
+  if (banco && D.util && D.pat) { D.roe = D.util / D.pat; D.g = 0.04; }
+  return D;
+}
+function estudioAccion(a) {
+  if (a === 'agregar') {
+    var tk = String((document.getElementById('estTk') || {}).value || '').trim().toUpperCase();
+    if (!tk) return;
+    S.estudio = S.estudio || [];
+    if (S.estudio.some(function (x) { return x.ticker === tk; }) || S.posiciones.some(function (x) { return x.ticker === tk; })) { S.estMsg = tk + ' ya está en tu lista.'; render(); return; }
+    S.estudio.push({ ticker: tk, nombre: '', sector: (document.getElementById('estSec') || {}).value || 'otro', acciones: num((document.getElementById('estAcc') || {}).value), precio: 0, beta: 1 });
+    S.estSel = tk; S.estMsg = ''; guardar(); render(); precioEstudio(tk);
+    return;
+  }
+  var p = a.split('|');
+  if (p[0] === 'precio') precioEstudio(p[1]);
+  if (p[0] === 'quitar') { S.estudio = (S.estudio || []).filter(function (x) { return x.ticker !== p[1]; }); if (S.eeff) delete S.eeff[p[1]]; S.estSel = 'todas'; guardar(); render(); }
+}
+function precioEstudio(tk) {
+  var e = (S.estudio || []).filter(function (x) { return x.ticker === tk; })[0];
+  if (!e) return;
+  e.precioMsg = 'Buscando precio en la Bolsa…'; render();
+  yahooProxy(tk).then(function (q) { e.precio = Math.round(q.precio * 100) / 100; e.precioFecha = q.fecha; e.precioMsg = ''; guardar(); render(); },
+    function () { e.precioMsg = 'No pude traer el precio ahora. Escríbelo a mano.'; render(); });
+}
+function renderEstudio() {
+  var L = S.estudio || [], h = '<div class="dash"><div class="w"><h3>Empresas en estudio <small>no están en tu cartera</small></h3>' +
+    '<p class="expl" style="margin-top:6px">Agrega cualquier acción, sube su EEFF (PDF de la CMF o de la empresa) y la app hace el mismo análisis que con tus acciones: ratios con semáforo, comentarios con enlace a cada nota, y si está barata o cara.</p>' +
+    '<div class="est-f"><label>Nemotécnico<input type="text" id="estTk" placeholder="ej. CCU" autocapitalize="characters" autocomplete="off"></label>' +
+    '<label>Sector<select id="estSec">' + Object.keys(SECT).map(function (k) { return '<option value="' + k + '">' + SECT[k].lab + '</option>'; }).join('') + '</select></label>' +
+    '<label>Acciones emitidas (millones)<input type="number" step="any" inputmode="decimal" id="estAcc" placeholder="ej. 369,5"></label></div>' +
+    (S.estMsg ? '<div class="banda md">' + esc(S.estMsg) + '</div>' : '') +
+    '<button type="button" class="btn" data-estact="agregar">Agregar a "En estudio"</button></div>';
+  if (L.length) {
+    var sel = S.estSel && L.some(function (x) { return x.ticker === S.estSel; }) ? S.estSel : 'todas';
+    h += htmlDdTk('data-estdd', sel, L.map(function (q) { return q.ticker; }), 'margin:4px 0');
+    L.forEach(function (e) {
+      if (sel !== 'todas' && e.ticker !== sel) return;
+      var tk = e.ticker, E = (S.eeff || {})[tk], D = datosEeff(E, e);
+      h += '<div class="w s6 emp" style="--tc:' + colorTk(tk) + '"><div class="emp-hd"><span class="emp-tk">' + esc(tk) + '</span><b>' + esc(e.nombre || (SECT[e.sector] || SECT.otro).lab) + '</b>' + (D && E && num(e.acciones) && num(e.precio) ? tagVer(valorar(D, num(e.precio), num(e.beta) || 1)) : '') + '<small>en estudio</small></div>' +
+        '<div class="est-f">' +
+        '<label>Precio hoy ($)<input type="number" step="any" inputmode="decimal" data-et="' + esc(tk) + '" data-ef="precio" value="' + esc(e.precio || '') + '"></label>' +
+        '<label>Acciones (millones)<input type="number" step="any" inputmode="decimal" data-et="' + esc(tk) + '" data-ef="acciones" value="' + esc(e.acciones || '') + '"></label>' +
+        '<label>Sector<select data-et="' + esc(tk) + '" data-ef="sector">' + Object.keys(SECT).map(function (k) { return '<option value="' + k + '"' + (k === e.sector ? ' selected' : '') + '>' + SECT[k].lab + '</option>'; }).join('') + '</select></label>' +
+        '<label>Beta<input type="number" step="any" inputmode="decimal" data-et="' + esc(tk) + '" data-ef="beta" value="' + esc(e.beta || 1) + '"></label></div>' +
+        (e.precioMsg ? '<p class="expl">' + esc(e.precioMsg) + '</p>' : (e.precioFecha ? '<p class="expl">Precio de la Bolsa al ' + fFecha(e.precioFecha) + '.</p>' : '')) +
+        '<button type="button" class="btn o" style="margin-top:8px" data-estact="precio|' + esc(tk) + '">Actualizar precio</button>';
+      if (!E) h += '<div class="banda md" style="margin-top:12px">Sube su EEFF para ver ratios, comentarios y valoración.</div>';
+      else if (!num(e.acciones) || !num(e.precio)) h += '<div class="banda md" style="margin-top:12px">Falta ' + (!num(e.acciones) ? 'el número de acciones' : 'el precio') + ' para calcular la valoración.</div>';
+      else h += htmlValor(D, num(e.precio), num(e.beta) || 1, tk);
+      h += htmlEeff(tk) + '<button type="button" class="btn o" style="margin-top:8px;color:var(--dn)" data-estact="quitar|' + esc(tk) + '">Quitar de la lista</button></div>';
+    });
+  } else {
+    h += '<div class="w"><p class="expl">Aún no tienes empresas en estudio.</p></div>';
+  }
+  document.getElementById('estudio').innerHTML = h + '</div>';
+}
 /* Filtro por acción compartido por todas las secciones (se recuerda al cambiar de sección). */
 function filtroTk() {
   var s = S.empSel || 'todas';
@@ -1681,10 +1795,15 @@ function filtroTk() {
   return s;
 }
 function pasaTk(t) { var s = filtroTk(); return s === 'todas' || String(t || '').replace(/\s*\(.*\)$/, '') === s; }
+function htmlDdTk(attr, sel, lista, estilo) {
+  /* Filtro compacto tipo iPhone: un solo menú desplegable "Acción: Todas ▾". */
+  var col = sel === 'todas' ? '' : colorTk(sel);
+  return '<div class="tk-ddw"' + (estilo ? ' style="' + estilo + '"' : '') + '><div class="tk-dd"' + (col ? ' style="--tc:' + col + '"' : '') + '><i' + (col ? '' : ' class="no"') + '></i><b>Acción:</b><span>' + (sel === 'todas' ? 'Todas' : esc(sel)) + '</span>' +
+    '<select ' + attr + ' aria-label="Filtrar por acción"><option value="todas"' + (sel === 'todas' ? ' selected' : '') + '>Todas</option>' +
+    lista.map(function (t) { return '<option value="' + esc(t) + '"' + (sel === t ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div></div>';
+}
 function htmlFiltroTk(estilo) {
-  var sel = filtroTk();
-  return '<div class="emp-sel"' + (estilo ? ' style="' + estilo + '"' : '') + '><button type="button" data-emp="todas" class="' + (sel === 'todas' ? 'on' : '') + '">Todas</button>' +
-    S.posiciones.map(function (q) { return '<button type="button" data-emp="' + esc(q.ticker) + '" class="' + (sel === q.ticker ? 'on' : '') + '" style="--tc:' + colorTk(q.ticker) + '"><i></i>' + esc(q.ticker) + '</button>'; }).join('') + '</div>';
+  return htmlDdTk('data-empdd', filtroTk(), S.posiciones.map(function (q) { return q.ticker; }), estilo);
 }
 function renderEmpresas(k) {
   var h = '', i, NOM = { ok: 'bien', md: 'atención', ko: 'mal', nd: 'sin dato' };
@@ -1700,7 +1819,7 @@ function renderEmpresas(k) {
     f.ratios.forEach(function (r) { c[r.s]++; });
     var est = c.ko ? 'ko' : c.md ? 'md' : 'ok';
     var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
-    h += '<div class="w s6 emp" id="emp-' + esc(p.ticker) + '" style="--tc:' + tc + '"><div class="emp-hd"><span class="emp-tk">' + esc(p.ticker) + '</span><b>' + esc(p.nombre || p.ticker) + '</b><small>pesa ' + fmtPct(w, 1) + '</small></div>' +
+    h += '<div class="w s6 emp" id="emp-' + esc(p.ticker) + '" style="--tc:' + tc + '"><div class="emp-hd"><span class="emp-tk">' + esc(p.ticker) + '</span><b>' + esc(p.nombre || p.ticker) + '</b>' + tagVer(veredictoTk(p.ticker, num(p.precio), num(p.beta) || 1)) + '<small>pesa ' + fmtPct(w, 1) + '</small></div>' +
       '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
       '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlValor(VAL[p.ticker], num(p.precio), num(p.beta) || 1, p.ticker) + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
     f.ratios.forEach(function (r) {
@@ -1966,7 +2085,7 @@ function renderPapeles(k) {
     h += '<div class="pos"><button type="button" class="pos-h" data-open="' + esc(p.ticker) + '">' +
       '<div class="pos-top"><div style="min-width:0"><div><span class="pos-tk">' + esc(p.ticker) + '</span>' +
       '<span class="tag' + (p.tipo === 'Core' ? '' : ' esp') + '">' + esc(p.tipo) + '</span></div>' +
-      '<div class="pos-nm">' + esc(p.nombre) + '</div></div>' +
+      '<div class="pos-nm">' + esc(p.nombre) + '</div>' + (veredictoTk(p.ticker, num(p.precio), num(p.beta) || 1) ? '<div style="margin-top:5px">' + tagVer(veredictoTk(p.ticker, num(p.precio), num(p.beta) || 1), true) + '</div>' : '') + '</div>' +
       '<div class="pos-r"><b class="num ' + cls + '">' + pp(gpPct) + '</b><span class="num ' + cls + '">' + clpS(gp) + '</span></div></div>' +
       '<div class="g4">' +
       '<div><div class="mini">Acciones</div><div class="mini-v num">' + miles(p.acciones) + '</div></div>' +
@@ -2836,12 +2955,12 @@ function render() {
   for (i = 0; i < TABS.length; i++) {
     document.getElementById('p-' + TABS[i].id).className = 'pane' + (S.tab === TABS[i].id ? ' on' : '');
   }
-  document.getElementById('bMaq').className = 'maq' + (S.sinMaq ? ' on' : '');
-  document.getElementById('bMaq').textContent = 'Sin maquillaje: ' + (S.sinMaq ? 'ON' : 'OFF');
+  S.sinMaq = false;
 
   if (S.tab === 'panel') renderPanel(k);
   else if (S.tab === 'papeles') renderPapeles(k);
   else if (S.tab === 'empresas') renderEmpresas(k);
+  else if (S.tab === 'estudio') renderEstudio();
   else if (S.tab === 'credito') renderCredito(k);
   else if (S.tab === 'test') renderTest(k);
   else if (S.tab === 'cartera') renderCartera(k);
@@ -2865,6 +2984,14 @@ document.addEventListener('click', function (ev) {
   var n = ev.target, a;
   while (n && n !== document) {
     if (n.getAttribute) {
+      if ((a = n.getAttribute('data-estsel'))) {
+        var gs = document.querySelector('#estudio .emp-sel'), an = gs ? gs.getBoundingClientRect().top : null;
+        var wre = document.querySelector('.wrap'); if (wre) wre.style.minHeight = document.documentElement.scrollHeight + 'px';
+        S.estSel = a; render();
+        var gs2 = document.querySelector('#estudio .emp-sel'); if (an !== null && gs2) window.scrollBy(0, gs2.getBoundingClientRect().top - an);
+        return;
+      }
+      if ((a = n.getAttribute('data-estact'))) { estudioAccion(a); return; }
       if ((a = n.getAttribute('data-emp'))) {
         /* El filtro no mueve la pantalla: el grupo de chips tocado queda en el mismo lugar. */
         var grupos = Array.prototype.slice.call(document.querySelectorAll('.emp-sel')), gi = grupos.indexOf(n.parentNode);
@@ -2895,7 +3022,6 @@ document.addEventListener('click', function (ev) {
       }
       if ((a = n.getAttribute('data-act'))) { acciones(a); return; }
       if (n.id === 'bTema') { ciclarTema(); return; }
-      if (n.id === 'bMaq') { S.sinMaq = !S.sinMaq; render(); return; }
     }
     n = n.parentNode;
   }
@@ -2953,11 +3079,27 @@ function acciones(a) {
 }
 
 document.addEventListener('change', function (ev) {
+  var dd = ev.target && ev.target.getAttribute && (ev.target.hasAttribute('data-empdd') ? 'emp' : ev.target.hasAttribute('data-estdd') ? 'est' : '');
+  if (dd) {
+    /* El filtro no mueve la pantalla: el menú tocado queda en el mismo lugar. */
+    var gr = Array.prototype.slice.call(document.querySelectorAll('.tk-ddw')), gi = gr.indexOf(ev.target.closest('.tk-ddw'));
+    var antes = gi >= 0 ? gr[gi].getBoundingClientRect().top : null;
+    var wr = document.querySelector('.wrap'); if (wr) wr.style.minHeight = document.documentElement.scrollHeight + 'px';
+    if (dd === 'emp') S.empSel = ev.target.value; else S.estSel = ev.target.value;
+    render();
+    if (antes !== null) { var g2 = document.querySelectorAll('.tk-ddw')[gi]; if (g2) window.scrollBy(0, g2.getBoundingClientRect().top - antes); }
+    return;
+  }
   var el = ev.target;
   if (!el || !el.getAttribute) return;
   if (el.id === 'fileIn') { importar(el); return; }
   if (el.id === 'pdfIn' || el.id === 'pdfIn2') { subirPdf(el); return; }
   if (el.classList && el.classList.contains('eeffIn')) { subirEeff(el); return; }
+  var et = el.getAttribute('data-et'), ef = el.getAttribute('data-ef');
+  if (et && ef) {
+    (S.estudio || []).forEach(function (e) { if (e.ticker === et) e[ef] = ef === 'sector' || ef === 'nombre' ? el.value : num(el.value); });
+    guardar(); setTimeout(render, 0); return;
+  }
   var t = el.getAttribute('data-t'), f = el.getAttribute('data-f'), kk = el.getAttribute('data-k');
   if (t && f) {
     var i;
