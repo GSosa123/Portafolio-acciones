@@ -320,6 +320,11 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 .emp-sel button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);font-size:12px;font-weight:800;color:var(--mut)}
 .emp-sel button i{width:9px;height:9px;border-radius:3px;background:var(--tc)}
 .emp-sel button.on{color:var(--tx);border-color:var(--tc,var(--gold));background:color-mix(in srgb,var(--tc,#d6a94a) 22%,transparent)}
+
+.val-v{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;margin-top:8px;padding:12px;border-radius:14px;border:1px solid var(--line2);background:var(--panel2)}
+.val-v .k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.val-v b{font-size:18px;font-weight:900}
+.val-v.ok{border-color:color-mix(in srgb,var(--up) 50%,transparent)}.val-v.ko{border-color:color-mix(in srgb,var(--dn) 50%,transparent)}.val-v.md{border-color:color-mix(in srgb,var(--acc) 50%,transparent)}
 </style>
 <script>
 /* Si hay una versión nueva publicada, la app se recarga sola (evita la caché del iPhone). */
@@ -1592,6 +1597,83 @@ function htmlEeff(tk) {
 }
 
 /* Pestaña Empresas */
+/* ---------- Valoración: múltiplos y valor justo ----------
+   Montos en millones de pesos (MM$). Lo reportado en US$ se pasa a pesos con VAL_FX.
+   obj = múltiplos objetivo del sector (supuestos explícitos, editables aquí). */
+var VAL_FX = 970; // CLP por US$ implícito en los balances de Colbún (patrimonio y deuda en US$ vs. en pesos), nov-2026
+var VAL = {
+  'CHILE': { tipo: 'banco', fecha: '3T26 / TTM', acc: 101017, util: 1192262, pat: 6061000, dps: 9.998, roe: 0.215, g: 0.04,
+    obj: { pu: 11.5 }, hist: 'Últimos 5 años: P/U ~10,5–12x y P/VL ~1,9–2,1x.',
+    notas: 'Banco: se valora por su capacidad de generar retorno sobre el patrimonio (ROE) y por dividendos, no por EBITDA.',
+    fuentes: [['Investing.com ratios', 'https://www.investing.com/equities/banco-de-chile-(sn)-ratios'], ['MarketScreener', 'https://www.marketscreener.com/quote/stock/BANCO-DE-CHILE-6492973/valuation-dividend/'], ['KoalaGains (históricos)', 'https://koalagains.com/stocks/NYSE/BCH/fair-value']] },
+  'ANDINA-B': { tipo: 'empresa', fecha: 'LTM a sep-26', acc: 946.57, util: 297489, pat: 1157655, ebitda: 685292, dn: 684715, dps: 96.25, g: 0.04,
+    obj: { ev: 8, pu: 15 }, hist: 'Pares embotelladores de Latinoamérica transan ~8x EV/EBITDA y ~15x P/U. Consenso 2026: P/U 14,8x, dividendo 4,7%.',
+    notas: 'Dividendo: solo los pagos 2026 conocidos (ago y oct); el año completo suele ser mayor. Precio de la serie B aplicado a todas las acciones (A+B).',
+    fuentes: [['Infobae 3T26', 'https://www.infobae.com/america/agencias/2026/10/28/embotelladora-andina-gana-1794-millones-de-euros-hasta-septiembre-un-171-mas/'], ['MarketScreener', 'https://www.marketscreener.com/quote/stock/EMBOTELLADORA-ANDINA-S-A-15789405/finances/']] },
+  'COLBUN': { tipo: 'empresa', fecha: 'LTM a sep-26 (US$ × ' + 970 + ')', acc: 17536.6, util: 160310, pat: 3282868, ebitda: 631179, dn: 1494091, dps: 4.93, g: 0.03,
+    obj: { ev: 7.5, pu: 13 }, hist: 'Eléctricas chilenas transan ~7–8x EV/EBITDA. Consenso: P/U a 12 meses 11,6x. BCI precio objetivo $170; Credicorp rebajó a Mantener.',
+    notas: 'Viene un beneficio tributario único de ~US$140 MM (Ley 21.850) que no se incluye por no ser recurrente.',
+    fuentes: [['Colbún 3T26', 'https://www.colbun.cl/docs/default-source/resultados-trimestrales-2026/earnings-report-3q26.pdf'], ['StockAnalysis', 'https://stockanalysis.com/quote/snse/COLBUN/statistics']] },
+  'LTM': { tipo: 'empresa', fecha: 'LTM a sep-26 (US$ × 970)', acc: 573619, util: 1476728, pat: 2158735, ebitda: 4124731, dn: 6174535, dps: 0.215, g: 0.03,
+    obj: { ev: 5.5, pu: 9 }, hist: 'Aerolíneas transan barato por su ciclo: ~5–6x EV/EBITDA y ~8–10x P/U. Guía 2026: EBITDA US$3.900–4.050 MM (rebajada por combustible).',
+    notas: 'Deuda neta incluye arriendos de aviones (US$6.366 MM). Utilidad 12 meses estimada desde 9M26 (US$1.142 MM).',
+    fuentes: [['LATAM 3T26', 'https://www.sec.gov/Archives/edgar/data/1047716/000104771626000108/results-eng3q2026.htm']] },
+  'SCHWAGER': { tipo: 'empresa', fecha: '1S26 anualizado', acc: 22510, util: 6244, ebitda: 15616, dn: 20410, dps: 0.09, g: 0.03,
+    obj: { ev: 6, pu: 12 }, hist: 'Servicios mineros pequeños y poco líquidos: ~6x EV/EBITDA y ~12x P/U.',
+    notas: 'Datos más incompletos: semestre anualizado y sin patrimonio publicado. Crece fuerte (EBITDA +58%), lo que puede justificar algo más de múltiplo.',
+    fuentes: [['Reporte Minero 1S26', 'https://www.reporteminero.cl/noticia/noticias/2026/08/schwager-crece-58-porciento-ebitda-mineria-primer-semestre-2026'], ['StockAnalysis', 'https://stockanalysis.com/quote/snse/SCHWAGER/market-cap/']] }
+};
+function valorar(D, precio, beta) {
+  var ke = CALC.ke(S.cfg.rf, beta || 1, S.cfg.erp) / 100, g = D.g || 0.03, mc = precio * D.acc, R = { ke: ke, g: g, mult: [], met: [] };
+  function mult(k, v, ref, txt) { if (isFinite(v) && v > 0) R.mult.push({ k: k, v: v, ref: ref, txt: txt }); }
+  mult('Precio / Utilidad (P/U)', D.util > 0 ? mc / D.util : NaN, D.obj.pu, 'Años de utilidad que pagas al precio de hoy.');
+  if (D.ebitda) mult('Valor empresa / EBITDA', (mc + (D.dn || 0)) / D.ebitda, D.obj.ev, 'Precio de toda la empresa (acciones + deuda neta) sobre su caja operacional.');
+  mult('Precio / Valor libro (P/VL)', D.pat ? mc / D.pat : NaN, null, 'Cuánto pagas por cada peso de patrimonio contable.');
+  if (D.dps) R.dy = D.dps / precio * 100;
+  if (D.tipo === 'banco') {
+    var bv = D.pat / D.acc, pvlJ = (D.roe - g) / (ke - g);
+    if (ke > g) {
+      R.met.push({ k: 'P/VL justificado (Gordon)', v: bv * pvlJ, txt: 'P/VL = (ROE − g) / (Ke − g) = (' + fmtPct(D.roe * 100, 1) + ' − ' + fmtPct(g * 100, 1) + ') / (' + fmtPct(ke * 100, 1) + ' − ' + fmtPct(g * 100, 1) + ') = ' + fmtDec(pvlJ, 2) + 'x sobre un valor libro de $' + fmtDec(bv, 1) + ' por acción.' });
+      R.met.push({ k: 'Dividendos descontados (DDM)', v: D.dps * (1 + g) / (ke - g), txt: 'Dividendo $' + fmtDec(D.dps, 2) + ' que crece ' + fmtPct(g * 100, 1) + ' al año, descontado a Ke ' + fmtPct(ke * 100, 1) + '.' });
+    }
+  } else if (D.ebitda && D.obj.ev) {
+    R.met.push({ k: 'EV/EBITDA objetivo', v: (D.obj.ev * D.ebitda - (D.dn || 0)) / D.acc, txt: fmtDec(D.obj.ev, 1) + 'x el EBITDA, menos la deuda neta, repartido entre las acciones.' });
+  }
+  if (D.obj.pu && D.util > 0) R.met.push({ k: 'P/U objetivo', v: D.obj.pu * D.util / D.acc, txt: fmtDec(D.obj.pu, 1) + 'x la utilidad por acción ($' + fmtDec(D.util / D.acc, 2) + ').' });
+  if (R.met.length) {
+    R.justo = R.met.reduce(function (a, m) { return a + m.v; }, 0) / R.met.length;
+    R.margen = (R.justo / precio - 1) * 100;
+    R.ver = R.margen >= 15 ? 'ok' : R.margen >= -10 ? 'md' : 'ko';
+  }
+  return R;
+}
+function fmtP(v) { return '$' + (v >= 100 ? miles(Math.round(v)) : fmtDec(v, 2)); }
+function htmlValor(D, precio, beta, tk) {
+  if (!D) return '';
+  var R = valorar(D, precio, beta), h = '<div class="val"><div class="lbl" style="margin-top:14px">Valoración · ¿Barata o cara?</div>';
+  if (R.justo) {
+    var NV = { ok: 'Barata', md: 'Precio justo', ko: 'Cara' };
+    h += '<div class="val-v ' + R.ver + '"><div><div class="k">Precio hoy</div><b class="num">' + fmtP(precio) + '</b></div><div><div class="k">Valor justo estimado</div><b class="num">' + fmtP(R.justo) + '</b></div>' +
+      '<div><span class="tag ' + R.ver + '">' + NV[R.ver] + '</span><div class="num" style="font-size:12px;margin-top:4px">' + (R.margen >= 0 ? 'Margen de seguridad +' : 'Sobreprecio ') + fmtPct(Math.abs(R.margen), 1) + '</div></div></div>';
+  }
+  h += '<div class="chk">';
+  R.mult.forEach(function (m) {
+    var s = m.ref ? (m.v <= m.ref * 0.9 ? 'ok' : m.v <= m.ref * 1.1 ? 'md' : 'ko') : 'nd';
+    h += '<div class="chk-r"><div class="ic ' + s + '">' + (s === 'ok' ? '✓' : s === 'md' ? '=' : s === 'ko' ? '↑' : '–') + '</div><div class="tx">' + m.k + '<span>' + m.txt + (m.ref ? ' Sector: ' + fmtDec(m.ref, 1) + 'x.' : '') + '</span></div><div class="vv num">' + fmtDec(m.v, 1) + 'x</div></div>';
+  });
+  if (R.dy !== undefined) h += '<div class="chk-r"><div class="ic ' + (R.dy >= num(S.cfg.tpm) ? 'ok' : 'md') + '">%</div><div class="tx">Rentabilidad por dividendo<span>Dividendo de 12 meses ($' + fmtDec(D.dps, 2) + ') sobre el precio. Verde si supera la TPM (' + fmtPct(num(S.cfg.tpm), 2) + ').</span></div><div class="vv num">' + fmtPct(R.dy, 1) + '</div></div>';
+  h += '</div>';
+  if (R.met.length) {
+    h += '<details class="tech" style="margin-top:8px"><summary>Cómo se calculó el valor justo ▾</summary><div style="padding:8px 2px">';
+    R.met.forEach(function (m) { h += '<p class="expl" style="margin-top:6px"><b>' + m.k + ': ' + fmtP(m.v) + '.</b> ' + m.txt + '</p>'; });
+    h += '<p class="expl" style="margin-top:6px">Valor justo = promedio de los métodos.' + (D.tipo === 'banco' ? ' Costo de capital (Ke, CAPM) = ' + fmtPct(S.cfg.rf, 1) + ' + β ' + fmtDec(beta || 1, 2) + ' × ' + fmtPct(S.cfg.erp, 1) + ' = ' + fmtPct(R.ke * 100, 1) + '. Crecimiento de largo plazo g = ' + fmtPct(R.g * 100, 1) + ' (nominal, cerca de la inflación).' : ' Los múltiplos objetivo son los típicos de empresas comparables del sector (ver Referencia).') + '</p>' +
+      '<p class="expl" style="margin-top:6px">Regla: Barata si el valor justo supera el precio en 15% o más (margen de seguridad); Cara si está 10% o más bajo el precio; entre medio, Precio justo.</p>';
+    if (D.hist) h += '<p class="expl" style="margin-top:6px"><b>Referencia:</b> ' + esc(D.hist) + '</p>';
+    if (D.notas) h += '<p class="expl" style="margin-top:6px"><b>Ojo:</b> ' + esc(D.notas) + '</p>';
+    h += '<p class="expl" style="margin-top:6px;font-size:11px">Cifras ' + esc(D.fecha || '') + (D.fuentes ? '. Fuentes: ' + D.fuentes.map(function (f) { return '<a href="' + esc(f[1]) + '" target="_blank" rel="noopener">' + esc(f[0]) + '</a>'; }).join(' · ') : '') + '. No es recomendación de inversión.</p></div></details>';
+  }
+  return h + '</div>';
+}
 /* Filtro por acción compartido por todas las secciones (se recuerda al cambiar de sección). */
 function filtroTk() {
   var s = S.empSel || 'todas';
@@ -1620,7 +1702,7 @@ function renderEmpresas(k) {
     var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
     h += '<div class="w s6 emp" id="emp-' + esc(p.ticker) + '" style="--tc:' + tc + '"><div class="emp-hd"><span class="emp-tk">' + esc(p.ticker) + '</span><b>' + esc(p.nombre || p.ticker) + '</b><small>pesa ' + fmtPct(w, 1) + '</small></div>' +
       '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
-      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
+      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlValor(VAL[p.ticker], num(p.precio), num(p.beta) || 1, p.ticker) + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
     f.ratios.forEach(function (r) {
       h += '<div class="chk-r"><div class="ic ' + r.s + '" title="' + NOM[r.s] + '">' + (r.s === 'ok' ? '✓' : r.s === 'md' ? '!' : r.s === 'ko' ? '✕' : '–') + '</div><div class="tx">' + esc(r.k) + '<span>' + esc(r.r) + '</span></div><div class="vv num">' + esc(r.v) + '</div></div>';
     });
