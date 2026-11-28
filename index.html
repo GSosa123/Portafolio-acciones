@@ -200,6 +200,20 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .flip.on .flip-in{transform:rotateY(180deg)}
 .flip-hint{margin-top:10px;font-size:11.5px;color:var(--mut);text-align:center}
 .flip-l{margin:8px 0 0;padding-left:16px;font-size:12.5px;line-height:1.45;color:var(--tx)}.flip-l li{margin-bottom:6px}.flip-l li b{font-weight:800}
+/* Esfera giratoria de Inicio */
+.esf{position:relative;padding:14px 14px 10px;overflow:hidden}
+.esf-h{display:flex;justify-content:space-between;align-items:baseline}
+.esf-h b{font-size:15px}.esf-h span{font-size:12px;color:var(--mut)}
+.esf-st{position:relative;height:300px;margin-top:4px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.esf-st:active{cursor:grabbing}
+.esf-st::before{content:"";position:absolute;left:50%;top:50%;width:250px;height:250px;margin:-125px 0 0 -125px;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,178,60,.13),rgba(227,178,60,0) 68%);pointer-events:none}
+.ob{position:absolute;left:50%;top:50%;width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;will-change:transform,opacity;border:0;padding:0;font:inherit;-webkit-tap-highlight-color:transparent}
+.ob-a{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.38),rgba(255,255,255,0) 46%),var(--c);color:#0b0b0b;box-shadow:0 6px 16px rgba(0,0,0,.45),inset 0 -4px 8px rgba(0,0,0,.25)}
+.ob-a b{font-size:11px;font-weight:900;letter-spacing:.02em;line-height:1.1}.ob-a i{font-style:normal;font-size:10px;font-weight:800;margin-top:2px;padding:1px 5px;border-radius:6px;background:rgba(0,0,0,.72)}
+.ob-a i.up{color:#3ddc84}.ob-a i.dn{color:#ff5c5c}
+.ob-s{background:radial-gradient(circle at 32% 28%,#3a3220,#151311 70%);color:var(--acc);border:1px solid rgba(227,178,60,.55);box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.ob-s svg{width:46%;height:46%}.ob-s em{position:absolute;bottom:-15px;font-style:normal;font-size:9.5px;color:var(--mut);white-space:nowrap}
+.esf-pie{text-align:center;font-size:11px;color:var(--mut);margin-top:2px}
 .flip-ojo{color:var(--acc);list-style:none;margin-left:-18px;display:flex;gap:8px;align-items:flex-start}.flip-ojo svg{flex:0 0 18px;width:18px;height:18px;margin-top:1px}
 .al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
 .al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
@@ -2271,6 +2285,94 @@ function htmlHero(sem, HC, VER) {
     '<div style="min-width:0"><div class="lbl">¿Cómo va mi cartera?</div><div class="hz-v" style="color:' + col + '">' + VER[sem.est][0] + '</div><div class="hz-s" style="margin-top:4px">' + VER[sem.est][1] + '</div></div></div>' +
     listaH + '</div>';
 }
+/* Esfera giratoria: acciones y accesos flotando en 3D; se gira con el dedo y sigue por inercia. */
+var ORBE = { ax: -0.35, ay: 0, vx: 0, vy: 0.004, raf: 0 };
+function htmlOrbe(k) {
+  var it = [], i, tot = 0;
+  for (i = 0; i < S.posiciones.length; i++) tot += S.posiciones[i].acciones * S.posiciones[i].precio;
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i], w = tot ? p.acciones * p.precio / tot : 0.2, v = varDia(p);
+    it.push('<button type="button" class="ob ob-a" data-orbtk="' + esc(p.ticker) + '" style="--c:' + (TKCOL[p.ticker] || '#E3B23C') + ';--d:' + Math.round(54 + 46 * Math.sqrt(w)) + 'px"><b' + (p.ticker.replace(/-[AB]$/, '').length > 6 ? ' style="font-size:9px"' : '') + '>' + esc(p.ticker.replace(/-[AB]$/, '')) + '</b>' +
+      (v ? '<i class="' + (v.pct >= 0 ? 'up' : 'dn') + '">' + (v.pct >= 0 ? '+' : '') + fmtDec(v.pct, 1) + '%</i>' : '') + '</button>');
+  }
+  var ic = {
+    cartera: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/>',
+    credito: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+    empresas: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>',
+    estudio: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    noticias: '<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/>',
+    agenda: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    cartola: '<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>',
+    ajustes: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'
+  };
+  var nom = { cartera: 'Ratios', credito: 'Crédito', empresas: 'Empresas', estudio: 'En estudio', noticias: 'Noticias', agenda: 'Agenda', cartola: 'Cartola', ajustes: 'Ajustes' };
+  for (var t in ic) it.push('<button type="button" class="ob ob-s" data-tab="' + t + '" style="--d:40px" aria-label="' + nom[t] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ic[t] + '</svg><em>' + nom[t] + '</em></button>');
+  return '<div class="w esf"><div class="esf-h"><b>Tu cartera en 3D</b><span>gira con el dedo</span></div><div class="esf-st" id="orbeSt">' + it.join('') + '</div><div class="esf-pie">Toca una acción para ver su ficha</div></div>';
+}
+function orbeInit() {
+  var st = document.getElementById('orbeSt');
+  cancelAnimationFrame(ORBE.raf);
+  if (!st) return;
+  var bs = st.querySelectorAll('.ob'), n = bs.length, P = [], i, R = 112;
+  for (i = 0; i < n; i++) { // reparto uniforme sobre la esfera (Fibonacci)
+    var y = 1 - (i + 0.5) / n * 2, r = Math.sqrt(1 - y * y), th = i * 2.39996;
+    P.push([Math.cos(th) * r, y, Math.sin(th) * r]);
+  }
+  // intercalar: las acciones repartidas por toda la esfera, no amontonadas
+  var na = st.querySelectorAll('.ob-a').length, lib = [], ord = [], q;
+  for (q = 0; q < n; q++) lib.push(q);
+  for (q = 0; q < na; q++) { var pos = Math.floor((q + 0.5) * n / na); ord.push(pos); lib.splice(lib.indexOf(pos), 1); }
+  P = ord.concat(lib).map(function (ix) { return P[ix]; });
+  var drag = false, mov = 0, lx = 0, ly = 0, lt = 0, quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pintar() {
+    var cx = Math.cos(ORBE.ax), sx = Math.sin(ORBE.ax), cy = Math.cos(ORBE.ay), sy = Math.sin(ORBE.ay);
+    for (var j = 0; j < n; j++) {
+      var x = P[j][0], y = P[j][1], z = P[j][2];
+      var x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
+      var y2 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
+      var e = 0.62 + 0.38 * (z2 + 1) / 2;
+      bs[j].style.transform = 'translate3d(' + (x1 * R).toFixed(1) + 'px,' + (y2 * R).toFixed(1) + 'px,0) scale(' + e.toFixed(3) + ')';
+      bs[j].style.opacity = (0.28 + 0.72 * (z2 + 1) / 2).toFixed(2);
+      bs[j].style.zIndex = Math.round(100 + z2 * 100);
+      bs[j].style.pointerEvents = z2 > -0.2 ? '' : 'none';
+    }
+  }
+  function paso() {
+    if (!document.body.contains(st)) return;
+    if (!drag) {
+      ORBE.ay += ORBE.vy; ORBE.ax += ORBE.vx;
+      ORBE.vy = ORBE.vy * 0.95 + 0.004 * 0.05; // la inercia frena hasta un giro lento
+      ORBE.vx *= 0.95; ORBE.ax += (-0.35 - ORBE.ax) * 0.01;
+    }
+    pintar();
+    if (!quieto || drag) ORBE.raf = requestAnimationFrame(paso);
+  }
+  st.addEventListener('pointerdown', function (e) { drag = true; mov = 0; lx = e.clientX; ly = e.clientY; lt = performance.now(); ORBE.vx = ORBE.vy = 0; try { st.setPointerCapture(e.pointerId); } catch (er) {} if (quieto) ORBE.raf = requestAnimationFrame(paso); });
+  st.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - lx, dy = e.clientY - ly, now = performance.now(), dt = Math.max(8, now - lt);
+    mov += Math.abs(dx) + Math.abs(dy);
+    ORBE.ay += dx * 0.009; ORBE.ax -= dy * 0.009;
+    ORBE.ax = Math.max(-1.2, Math.min(1.2, ORBE.ax));
+    ORBE.vy = dx * 0.009 * 16 / dt; ORBE.vx = -dy * 0.009 * 16 / dt;
+    lx = e.clientX; ly = e.clientY; lt = now;
+  });
+  function soltar(e) {
+    if (!drag) return; drag = false;
+    if (mov < 8) { // fue un toque, no un giro
+      var b = document.elementFromPoint(e.clientX, e.clientY); b = b && b.closest ? b.closest('.ob') : null;
+      if (b) {
+        var tk = b.getAttribute('data-orbtk'), tb = b.getAttribute('data-tab');
+        if (tk) { S.empSel = tk; S.tab = 'empresas'; } else if (tb) S.tab = tb;
+        S.animar = true; guardar(); render(); window.scrollTo(0, 0);
+      }
+    }
+  }
+  st.addEventListener('pointerup', soltar);
+  st.addEventListener('pointercancel', function () { drag = false; });
+  st.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
+  pintar(); ORBE.raf = requestAnimationFrame(paso);
+}
 function renderDash(k) {
   var cfg = S.cfg, cr = S.credito, m = metricas(), sem = semaforo(k, m), h = '', i;
   var HC = { ok: 'var(--up)', md: 'var(--acc)', ko: 'var(--dn)' };
@@ -2286,6 +2388,7 @@ function renderDash(k) {
   h += '<div class="dash">';
   // Héroe
   h += htmlHero(sem, HC, VER);
+  h += htmlOrbe(k);
   h += htmlMisInv(k);
   h += '<label class="w subir-bar"><span><b>¿Llegó tu cartola nueva?</b> Súbela y la cartera se actualiza al instante.</span><span class="btn">Subir PDF</span><input type="file" accept="application/pdf,.pdf" id="pdfIn2" style="display:none"></label>';
   // KPIs
@@ -2426,6 +2529,7 @@ function renderDash(k) {
   if (S.animar !== false) { animarPanel(el); }
   else { var sg = el.querySelectorAll('circle.seg[data-da]'); for (i = 0; i < sg.length; i++) sg[i].setAttribute('stroke-dasharray', sg[i].getAttribute('data-da')); el.classList.add('quieto'); }
   S.animar = false;
+  orbeInit();
 }
 
 function renderPanel(k) {
