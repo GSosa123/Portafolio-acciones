@@ -289,6 +289,8 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 
 .hd-b{display:flex;gap:6px;flex:none;align-items:center}
 .maq.tema{letter-spacing:.02em;text-transform:none;font-size:12px;padding:0 11px}
+.dd-n{position:relative;display:inline-flex;align-items:center;gap:6px}.dd-n:after{content:'';width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.dd-n select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;-webkit-appearance:none;appearance:none;cursor:pointer}
 @media(max-width:420px){.hd .kick .lg{display:none}.hd h1{font-size:22px}.maq{padding:0 9px;font-size:9.5px}.maq.tema{font-size:11.5px}}
 :root[data-tema="claro"]{
   color-scheme:light;
@@ -388,7 +390,9 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
     var m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', r === 'claro' ? '#f6f1e7' : '#080808');
     var b = document.getElementById('bTema');
     if (b) b.textContent = t === 'auto' ? '◐ Auto' : t === 'claro' ? '☀ Día' : '☾ Noche';
+    var sl = document.getElementById('selTema'); if (sl) sl.value = t;
   }
+  window.ponerTema = function (n) { try { localStorage.setItem('cartera_tema', n); } catch (e) {} aplicar(); };
   window.ciclarTema = function () {
     var t = pref(), n = t === 'auto' ? 'claro' : t === 'claro' ? 'oscuro' : 'auto';
     try { localStorage.setItem('cartera_tema', n); } catch (e) {}
@@ -410,7 +414,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <h1>Mi Cartera</h1>
 <div class="kick"><span class="lg">Panel de asignación de capital · </span><span id="hoyTxt">—</span></div>
 </div>
-<div class="hd-b"><button type="button" class="maq tema" id="bTema" aria-label="Tema día o noche">◐ Auto</button></div>
+<div class="hd-b"><div class="maq tema dd-n"><span id="bTema">◐ Auto</span><select id="selTema" aria-label="Tema día o noche"><option value="auto">◐ Automático</option><option value="claro">☀ Día</option><option value="oscuro">☾ Noche</option></select></div></div>
 </div>
 </div>
 
@@ -2466,6 +2470,7 @@ function itemNoticia(it) {
 var NOTF = 'todo';
 var NOTF_OPC = [['todo', 'Todo'], ['cmf', 'Hechos CMF'], ['prensa', 'Prensa'], ['merc', 'Mercurio'], ['reco', 'Recomendaciones']];
 document.addEventListener('change', function (ev) {
+  if (ev.target && ev.target.id === 'selTema') { ponerTema(ev.target.value); return; }
   if (!ev.target || ev.target.id !== 'notfSel') return;
   NOTF = ev.target.value;
   renderNoticias();
