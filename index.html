@@ -214,6 +214,18 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .ob-s{background:radial-gradient(circle at 32% 28%,#3a3220,#151311 70%);color:var(--acc);border:1px solid rgba(227,178,60,.55);box-shadow:0 4px 12px rgba(0,0,0,.5)}
 .ob-s svg{width:46%;height:46%}.ob-s em{position:absolute;bottom:-15px;font-style:normal;font-size:9.5px;color:var(--mut);white-space:nowrap}
 .esf-pie{text-align:center;font-size:11px;color:var(--mut);margin-top:2px}
+.tk-ddw .tk-dd select{pointer-events:none}
+.esfsel{position:fixed;inset:0;z-index:9000}
+.esfsel-fondo{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .25s;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.esfsel-hoja{position:absolute;left:0;right:0;bottom:0;padding:8px 16px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:#121212;border-top:1px solid rgba(227,178,60,.35);transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.9,.3,1)}
+.esfsel.ab .esfsel-fondo{opacity:1}.esfsel.ab .esfsel-hoja{transform:none}
+.esfsel-asa{width:38px;height:5px;border-radius:3px;background:#444;margin:0 auto 10px}
+.esfsel-t{display:flex;justify-content:space-between;align-items:baseline;color:var(--txt)}.esfsel-t span{font-size:12px;color:var(--mut)}
+.esfsel-st{height:250px}.esfsel-st::before{width:210px;height:210px;margin:-105px 0 0 -105px}
+.ob-a.on{outline:3px solid #fff;outline-offset:2px}
+.esfsel-todas{display:block;margin:6px auto 0;min-width:150px;min-height:44px;border-radius:22px;border:1px solid rgba(227,178,60,.6);background:transparent;color:var(--acc);font:inherit;font-weight:800}
+.esfsel-todas.on{background:var(--acc);color:#0b0b0b}
+:root[data-tema="claro"] .esfsel-hoja{background:#fbf6ec}
 .flip-ojo{color:var(--acc);list-style:none;margin-left:-18px;display:flex;gap:8px;align-items:flex-start}.flip-ojo svg{flex:0 0 18px;width:18px;height:18px;margin-top:1px}
 .al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
 .al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
@@ -2309,23 +2321,24 @@ function htmlOrbe(k) {
   for (var t in ic) it.push('<button type="button" class="ob ob-s" data-tab="' + t + '" style="--d:40px" aria-label="' + nom[t] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ic[t] + '</svg><em>' + nom[t] + '</em></button>');
   return '<div class="w esf"><div class="esf-h"><b>Tu cartera en 3D</b><span>gira con el dedo</span></div><div class="esf-st" id="orbeSt">' + it.join('') + '</div><div class="esf-pie">Toca una acción para ver su ficha</div></div>';
 }
-function orbeInit() {
-  var st = document.getElementById('orbeSt');
-  cancelAnimationFrame(ORBE.raf);
-  if (!st) return;
-  var bs = st.querySelectorAll('.ob'), n = bs.length, P = [], i, R = 112;
+/* Motor de esfera giratoria, reutilizable: st = escenario, O = estado del giro, R = radio, tap = qué hacer al tocar. */
+function esfGirar(st, O, R, tap) {
+  cancelAnimationFrame(O.raf);
+  var bs = st.querySelectorAll('.ob'), n = bs.length, P = [], i;
   for (i = 0; i < n; i++) { // reparto uniforme sobre la esfera (Fibonacci)
     var y = 1 - (i + 0.5) / n * 2, r = Math.sqrt(1 - y * y), th = i * 2.39996;
     P.push([Math.cos(th) * r, y, Math.sin(th) * r]);
   }
   // intercalar: las acciones repartidas por toda la esfera, no amontonadas
   var na = st.querySelectorAll('.ob-a').length, lib = [], ord = [], q;
-  for (q = 0; q < n; q++) lib.push(q);
-  for (q = 0; q < na; q++) { var pos = Math.floor((q + 0.5) * n / na); ord.push(pos); lib.splice(lib.indexOf(pos), 1); }
-  P = ord.concat(lib).map(function (ix) { return P[ix]; });
+  if (na < n) {
+    for (q = 0; q < n; q++) lib.push(q);
+    for (q = 0; q < na; q++) { var pos = Math.floor((q + 0.5) * n / na); ord.push(pos); lib.splice(lib.indexOf(pos), 1); }
+    P = ord.concat(lib).map(function (ix) { return P[ix]; });
+  }
   var drag = false, mov = 0, lx = 0, ly = 0, lt = 0, quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function pintar() {
-    var cx = Math.cos(ORBE.ax), sx = Math.sin(ORBE.ax), cy = Math.cos(ORBE.ay), sy = Math.sin(ORBE.ay);
+    var cx = Math.cos(O.ax), sx = Math.sin(O.ax), cy = Math.cos(O.ay), sy = Math.sin(O.ay);
     for (var j = 0; j < n; j++) {
       var x = P[j][0], y = P[j][1], z = P[j][2];
       var x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
@@ -2340,39 +2353,86 @@ function orbeInit() {
   function paso() {
     if (!document.body.contains(st)) return;
     if (!drag) {
-      ORBE.ay += ORBE.vy; ORBE.ax += ORBE.vx;
-      ORBE.vy = ORBE.vy * 0.95 + 0.004 * 0.05; // la inercia frena hasta un giro lento
-      ORBE.vx *= 0.95; ORBE.ax += (-0.35 - ORBE.ax) * 0.01;
+      O.ay += O.vy; O.ax += O.vx;
+      O.vy = O.vy * 0.95 + 0.004 * 0.05; // la inercia frena hasta un giro lento
+      O.vx *= 0.95; O.ax += (-0.35 - O.ax) * 0.01;
     }
     pintar();
-    if (!quieto || drag) ORBE.raf = requestAnimationFrame(paso);
+    if (!quieto || drag) O.raf = requestAnimationFrame(paso);
   }
-  st.addEventListener('pointerdown', function (e) { drag = true; mov = 0; lx = e.clientX; ly = e.clientY; lt = performance.now(); ORBE.vx = ORBE.vy = 0; try { st.setPointerCapture(e.pointerId); } catch (er) {} if (quieto) ORBE.raf = requestAnimationFrame(paso); });
+  st.addEventListener('pointerdown', function (e) { drag = true; mov = 0; lx = e.clientX; ly = e.clientY; lt = performance.now(); O.vx = O.vy = 0; try { st.setPointerCapture(e.pointerId); } catch (er) {} if (quieto) O.raf = requestAnimationFrame(paso); });
   st.addEventListener('pointermove', function (e) {
     if (!drag) return;
     var dx = e.clientX - lx, dy = e.clientY - ly, now = performance.now(), dt = Math.max(8, now - lt);
     mov += Math.abs(dx) + Math.abs(dy);
-    ORBE.ay += dx * 0.009; ORBE.ax -= dy * 0.009;
-    ORBE.ax = Math.max(-1.2, Math.min(1.2, ORBE.ax));
-    ORBE.vy = dx * 0.009 * 16 / dt; ORBE.vx = -dy * 0.009 * 16 / dt;
+    O.ay += dx * 0.009; O.ax -= dy * 0.009;
+    O.ax = Math.max(-1.2, Math.min(1.2, O.ax));
+    O.vy = dx * 0.009 * 16 / dt; O.vx = -dy * 0.009 * 16 / dt;
     lx = e.clientX; ly = e.clientY; lt = now;
   });
-  function soltar(e) {
+  st.addEventListener('pointerup', function (e) {
     if (!drag) return; drag = false;
     if (mov < 8) { // fue un toque, no un giro
       var b = document.elementFromPoint(e.clientX, e.clientY); b = b && b.closest ? b.closest('.ob') : null;
-      if (b) {
-        var tk = b.getAttribute('data-orbtk'), tb = b.getAttribute('data-tab');
-        if (tk) { S.empSel = tk; S.tab = 'empresas'; } else if (tb) S.tab = tb;
-        S.animar = true; guardar(); render(); window.scrollTo(0, 0);
-      }
+      if (b && st.contains(b)) tap(b);
     }
-  }
-  st.addEventListener('pointerup', soltar);
+  });
   st.addEventListener('pointercancel', function () { drag = false; });
   st.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
-  pintar(); ORBE.raf = requestAnimationFrame(paso);
+  pintar(); O.raf = requestAnimationFrame(paso);
 }
+function orbeInit() {
+  var st = document.getElementById('orbeSt');
+  cancelAnimationFrame(ORBE.raf);
+  if (!st) return;
+  esfGirar(st, ORBE, 112, function (b) {
+    var tk = b.getAttribute('data-orbtk'), tb = b.getAttribute('data-tab');
+    if (tk) { S.empSel = tk; S.tab = 'empresas'; } else if (tb) S.tab = tb;
+    S.animar = true; guardar(); render(); window.scrollTo(0, 0);
+  });
+}
+/* Filtro "Acción": al tocarlo se abre una hoja con una mini esfera de acciones que gira; "Todas" queda al centro. */
+var ESFSEL = { ax: -0.35, ay: 0, vx: 0, vy: 0.012, raf: 0 };
+function abrirEsfSel(sel) {
+  cerrarEsfSel(true);
+  var ops = Array.prototype.slice.call(sel.options), it = '', v = sel.value;
+  ops.forEach(function (o) {
+    if (o.value === 'todas') return;
+    var p = S.posiciones.filter(function (q) { return q.ticker === o.value; })[0], vd = p ? varDia(p) : null, nm = o.value.replace(/-[AB]$/, '');
+    it += '<button type="button" class="ob ob-a' + (o.value === v ? ' on' : '') + '" data-v="' + esc(o.value) + '" style="--c:' + colorTk(o.value) + ';--d:66px"><b' + (nm.length > 6 ? ' style="font-size:9px"' : '') + '>' + esc(nm) + '</b>' +
+      (vd ? '<i class="' + (vd.pct >= 0 ? 'up' : 'dn') + '">' + (vd.pct >= 0 ? '+' : '') + fmtDec(vd.pct, 1) + '%</i>' : '') + '</button>';
+  });
+  var d = document.createElement('div');
+  d.id = 'esfSel'; d.className = 'esfsel';
+  d.innerHTML = '<div class="esfsel-fondo"></div><div class="esfsel-hoja" role="dialog" aria-label="Elegir acción"><div class="esfsel-asa"></div>' +
+    '<div class="esfsel-t"><b>Elige una acción</b><span>gira con el dedo</span></div>' +
+    '<div class="esf-st esfsel-st">' + it + '</div>' +
+    '<button type="button" class="esfsel-todas' + (v === 'todas' ? ' on' : '') + '">Todas</button></div>';
+  document.body.appendChild(d);
+  var elegir = function (val) {
+    cerrarEsfSel();
+    if (val !== sel.value) { sel.value = val; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+  };
+  d.querySelector('.esfsel-fondo').addEventListener('click', function () { cerrarEsfSel(); });
+  d.querySelector('.esfsel-todas').addEventListener('click', function () { elegir('todas'); });
+  ESFSEL.vy = 0.05; // entra girando y frena por inercia
+  esfGirar(d.querySelector('.esfsel-st'), ESFSEL, 92, function (b) { elegir(b.getAttribute('data-v')); });
+  requestAnimationFrame(function () { d.classList.add('ab'); });
+}
+function cerrarEsfSel(ya) {
+  var d = document.getElementById('esfSel');
+  if (!d) return;
+  cancelAnimationFrame(ESFSEL.raf);
+  if (ya) { d.remove(); return; }
+  d.classList.remove('ab'); setTimeout(function () { d.remove(); }, 260);
+}
+document.addEventListener('click', function (e) {
+  var dd = e.target.closest && e.target.closest('.tk-ddw .tk-dd');
+  if (!dd) return;
+  var sel = dd.querySelector('select[data-empdd],select[data-estdd]');
+  if (!sel) return;
+  e.preventDefault(); e.stopPropagation(); abrirEsfSel(sel);
+}, true);
 function renderDash(k) {
   var cfg = S.cfg, cr = S.credito, m = metricas(), sem = semaforo(k, m), h = '', i;
   var HC = { ok: 'var(--up)', md: 'var(--acc)', ko: 'var(--dn)' };
