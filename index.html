@@ -24,20 +24,21 @@ button{cursor:pointer}
 a{color:var(--brand)}
 .num{font-variant-numeric:tabular-nums}
 .wrap{max-width:1120px;margin:0 auto;min-height:100vh;padding:0 16px 60px}
-.hd{padding:20px 0 14px}
+.hd{padding:10px 0 10px;padding-top:max(10px,env(safe-area-inset-top))}
 .hd-t{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hd h1{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1;background:linear-gradient(90deg,#f7e7bf,#d6a94a 60%,#a87a2a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .kick{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:4px}
 .maq{flex:none;min-height:36px;padding:0 12px;border:1px solid var(--line2);border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);transition:all .2s}
 .maq.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
-#alertas{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+#alertas{display:none}
+#alertasP{display:flex;flex-direction:column;gap:6px}
 .al{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:12px;border:1px solid var(--line)}
 .al-alta{background:var(--dn-bg);color:#ffd2d6;border-color:rgba(255,100,112,.3)}
 .al-media{background:var(--acc-bg);color:#ffe2b5;border-color:rgba(255,181,71,.28)}
 .al-n{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.08)}
 .al-t{font-size:12.5px;font-weight:600;line-height:1.4}
 .al-more{align-self:flex-start;min-height:30px;color:var(--mut);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:0 4px}
-nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px;margin:0 -4px 16px;background:rgba(8,8,8,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav{position:sticky;top:env(safe-area-inset-top);z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px;margin:0 -4px 16px;background:rgba(8,8,8,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav button{flex:none;min-height:36px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--mut);transition:all .2s}
 nav button.on{background:linear-gradient(135deg,#f3d48a,#c9952f);color:#1a1408;box-shadow:0 4px 16px rgba(214,169,74,.35)}
@@ -269,7 +270,56 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 @media(max-width:759px){.s3{grid-column:span 6}}
 @media(max-width:420px){.g4{grid-template-columns:1fr 1fr}.fr{grid-template-columns:1fr}.hb-r{grid-template-columns:108px 1fr 66px}.luz{width:60px;height:60px;font-size:24px}.hero .ver{font-size:22px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}svg .draw{stroke-dashoffset:0}}
+
+.hd-b{display:flex;gap:6px;flex:none;align-items:center}
+.maq.tema{letter-spacing:.02em;text-transform:none;font-size:12px;padding:0 11px}
+@media(max-width:420px){.hd .kick .lg{display:none}.hd h1{font-size:22px}.maq{padding:0 9px;font-size:9.5px}.maq.tema{font-size:11.5px}}
+:root[data-tema="claro"]{
+  color-scheme:light;
+  --bg:#f6f1e7;--bg2:#efe8da;--panel:#fffdf8;--panel2:#f8f2e6;--line:rgba(60,42,12,.10);--line2:rgba(60,42,12,.20);
+  --tx:#1f1a12;--mut:rgba(31,26,18,.62);--mut2:rgba(31,26,18,.45);
+  --up:#1e9160;--up-bg:rgba(30,145,96,.12);--dn:#d23f3f;--dn-bg:rgba(210,63,63,.10);
+  --acc:#b07d12;--acc-bg:rgba(176,125,18,.12);--brand:#a87a1f;--brand2:#c9952f;--gold:#a87a1f;
+  --sh:0 8px 24px rgba(80,60,20,.10)
+}
+:root[data-tema="claro"] body{background:radial-gradient(900px 500px at 85% -10%,rgba(214,169,74,.18),transparent 60%),var(--bg)}
+:root[data-tema="claro"] .w{background:linear-gradient(180deg,#fffdf8,#fbf6ec);background-image:none}
+:root[data-tema="claro"] nav{background:rgba(255,252,245,.88)}
+:root[data-tema="claro"] .hd h1{background:linear-gradient(90deg,#8a6514,#b8862a 55%,#6e4f10);-webkit-background-clip:text;background-clip:text}
+:root[data-tema="claro"] .al-alta{color:#8f1f1f}
+:root[data-tema="claro"] .al-media{color:#6e4a00}
+:root[data-tema="claro"] .al-n{background:rgba(0,0,0,.06)}
+:root[data-tema="claro"] .warn p{color:#8f1f1f}
+:root[data-tema="claro"] .dark{background:linear-gradient(135deg,#fbf3e2,#fffdf8)}
+:root[data-tema="claro"] .dark .lbl,:root[data-tema="claro"] .dark .sub{color:var(--mut)}
+:root[data-tema="claro"] .lim-b em{background:rgba(0,0,0,.35)}
+:root[data-tema="claro"] .hb-r .t,:root[data-tema="claro"] .bar,:root[data-tema="claro"] .kebar,:root[data-tema="claro"] .lim-b{background:rgba(60,42,12,.09)}
+:root[data-tema="claro"] .chk-r .ic.nd,:root[data-tema="claro"] .tag.nd{background:#cfc6b4;color:#2a241a}
+:root[data-tema="claro"] input[type=text],:root[data-tema="claro"] input[type=number],:root[data-tema="claro"] input[type=date],:root[data-tema="claro"] input[type=password]{background:#fff;color-scheme:light}
+:root[data-tema="claro"] input.red{background:var(--dn-bg)}
 </style>
+<script>
+(function () {
+  var mq = window.matchMedia ? matchMedia('(prefers-color-scheme: light)') : null;
+  function pref() { try { return localStorage.getItem('cartera_tema') || 'auto'; } catch (e) { return 'auto'; } }
+  function aplicar() {
+    var t = pref(), r = t === 'auto' ? (mq && mq.matches ? 'claro' : 'oscuro') : t;
+    document.documentElement.setAttribute('data-tema', r);
+    var m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', r === 'claro' ? '#f6f1e7' : '#080808');
+    var b = document.getElementById('bTema');
+    if (b) b.textContent = t === 'auto' ? '◐ Auto' : t === 'claro' ? '☀ Día' : '☾ Noche';
+  }
+  window.ciclarTema = function () {
+    var t = pref(), n = t === 'auto' ? 'claro' : t === 'claro' ? 'oscuro' : 'auto';
+    try { localStorage.setItem('cartera_tema', n); } catch (e) {}
+    aplicar();
+  };
+  window.aplicarTema = aplicar;
+  if (mq) { if (mq.addEventListener) mq.addEventListener('change', aplicar); else if (mq.addListener) mq.addListener(aplicar); }
+  aplicar();
+  document.addEventListener('DOMContentLoaded', aplicar);
+})();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -278,9 +328,9 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 <div class="hd-t">
 <div>
 <h1>Mi Cartera</h1>
-<div class="kick">Panel de asignación de capital · <span id="hoyTxt">—</span></div>
+<div class="kick"><span class="lg">Panel de asignación de capital · </span><span id="hoyTxt">—</span></div>
 </div>
-<button type="button" class="maq" id="bMaq">Sin maquillaje: OFF</button>
+<div class="hd-b"><button type="button" class="maq tema" id="bTema" aria-label="Tema día o noche">◐ Auto</button><button type="button" class="maq" id="bMaq">Sin maquillaje: OFF</button></div>
 </div>
 </div>
 
@@ -924,12 +974,12 @@ function svgLinea(m) {
   var pc = path(m.idx), pi = path(m.ipx);
   var area = pc + 'L' + X(n - 1).toFixed(1) + ' ' + (Hh - pb) + 'L' + X(0).toFixed(1) + ' ' + (Hh - pb) + 'Z';
   var y100 = Y(100).toFixed(1);
-  var lbl = '<text x="' + pl + '" y="' + (Hh - 6) + '" fill="rgba(242,239,232,.45)" font-size="11">' + fFecha(m.fechas[0]) + '</text>' +
-    '<text x="' + (W - pr) + '" y="' + (Hh - 6) + '" fill="rgba(242,239,232,.45)" font-size="11" text-anchor="end">' + fFecha(m.fechas[n - 1]) + '</text>';
+  var lbl = '<text x="' + pl + '" y="' + (Hh - 6) + '" style="fill:var(--mut2)" font-size="11">' + fFecha(m.fechas[0]) + '</text>' +
+    '<text x="' + (W - pr) + '" y="' + (Hh - 6) + '" style="fill:var(--mut2)" font-size="11" text-anchor="end">' + fFecha(m.fechas[n - 1]) + '</text>';
   var colC = '#e3b85c';
   return '<svg viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block;margin-top:10px" role="img" aria-label="Cartera vs mercado chileno">' +
     '<defs><filter id="glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + colC + '" stop-opacity=".28"/><stop offset="1" stop-color="' + colC + '" stop-opacity="0"/></linearGradient></defs>' +
-    '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y100 + '" y2="' + y100 + '" stroke="rgba(255,255,255,.3)" stroke-dasharray="4 4"/>' +
+    '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y100 + '" y2="' + y100 + '" style="stroke:var(--mut2)" stroke-dasharray="4 4"/>' +
     '<path class="fadein" d="' + area + '" fill="url(#ga)"/>' +
     '<path class="draw" style="--len:3000" d="' + pi + '" fill="none" stroke="#a7a7a7" stroke-width="2" stroke-opacity=".85"/>' +
     '<path class="draw" style="--len:3000" d="' + pc + '" fill="none" stroke="' + colC + '" stroke-width="2.6" stroke-linejoin="round" filter="url(#glow)"/>' +
@@ -943,16 +993,16 @@ function svgDonut(items, total, centro, sub) {
     h += '<circle class="seg" cx="80" cy="80" r="' + R + '" fill="none" stroke="' + items[i].c + '" stroke-width="20" stroke-dasharray="0 ' + C.toFixed(1) + '" data-da="' + len.toFixed(1) + ' ' + (C - len).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '"/>';
     off += f * C;
   }
-  return '<svg class="donut" viewBox="0 0 160 160" width="160" height="160"><circle cx="80" cy="80" r="' + R + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="20"/>' + h +
-    '<text x="80" y="78" text-anchor="middle" fill="#f2efe8" font-size="17" font-weight="800">' + centro + '</text>' +
-    '<text x="80" y="96" text-anchor="middle" fill="rgba(242,239,232,.55)" font-size="10.5" font-weight="700">' + sub + '</text></svg>';
+  return '<svg class="donut" viewBox="0 0 160 160" width="160" height="160"><circle cx="80" cy="80" r="' + R + '" fill="none" style="stroke:var(--line2)" stroke-width="20"/>' + h +
+    '<text x="80" y="78" text-anchor="middle" style="fill:var(--tx)" font-size="17" font-weight="800">' + centro + '</text>' +
+    '<text x="80" y="96" text-anchor="middle" style="fill:var(--mut)" font-size="10.5" font-weight="700">' + sub + '</text></svg>';
 }
 function svgAnillo(frac, color, centro, sub) {
   var R = 44, C = 2 * Math.PI * R, len = Math.max(0, Math.min(1, frac)) * C;
-  return '<svg class="donut" viewBox="0 0 110 110" width="110" height="110"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e2a8"/><stop offset="1" stop-color="#b07f2c"/></linearGradient></defs><circle cx="55" cy="55" r="' + R + '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="11"/>' +
+  return '<svg class="donut" viewBox="0 0 110 110" width="110" height="110"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e2a8"/><stop offset="1" stop-color="#b07f2c"/></linearGradient></defs><circle cx="55" cy="55" r="' + R + '" fill="none" style="stroke:var(--line2)" stroke-width="11"/>' +
     '<circle class="seg" cx="55" cy="55" r="' + R + '" fill="none" stroke="' + color + '" stroke-width="11" stroke-linecap="round" stroke-dasharray="0 ' + C.toFixed(1) + '" data-da="' + len.toFixed(1) + ' ' + (C - len).toFixed(1) + '"/>' +
-    '<text x="55" y="56" text-anchor="middle" fill="#f2efe8" font-size="17" font-weight="800">' + centro + '</text>' +
-    '<text x="55" y="72" text-anchor="middle" fill="rgba(242,239,232,.55)" font-size="9.5" font-weight="700">' + sub + '</text></svg>';
+    '<text x="55" y="56" text-anchor="middle" style="fill:var(--tx)" font-size="17" font-weight="800">' + centro + '</text>' +
+    '<text x="55" y="72" text-anchor="middle" style="fill:var(--mut)" font-size="9.5" font-weight="700">' + sub + '</text></svg>';
 }
 function medidor(valor, max, color, marcas) {
   var f = Math.max(0, Math.min(1, valor / max));
@@ -1533,9 +1583,10 @@ function htmlDividendos() {
   return h;
 }
 
+var ALERTAS_H = '';
 function renderDash(k) {
   var cfg = S.cfg, cr = S.credito, m = metricas(), sem = semaforo(k, m), h = '', i;
-  var HC = { ok: '#5fd39a', md: '#e9b949', ko: '#ff6b6b' };
+  var HC = { ok: 'var(--up)', md: 'var(--acc)', ko: 'var(--dn)' };
   var VER = {
     ok: ['Vas bien', 'La cartera rinde sobre sus costos y el riesgo está controlado.'],
     md: ['Atención', 'Hay indicadores que mejorar antes de seguir invirtiendo.'],
@@ -1568,6 +1619,7 @@ function renderDash(k) {
   h += kpi('Hoy', vdBase ? '<span class="' + (vd >= 0 ? 'up' : 'dn') + '">' + (vd >= 0 ? '▲ ' : '▼ ') + cuenta(vdPct, 'pp') + '</span>' : '<span class="mut">—</span>',
     vdBase ? '<span class="chip ' + (vd >= 0 ? 'up' : 'dn') + '">' + clpS(vd) + '</span>' : '<span class="mut">sin datos del día</span>');
   h += kpi('Resultado neto', '<span class="' + (k.neto >= 0 ? 'up' : 'dn') + '">' + cuenta(k.neto, 'clpS') + '</span>', '<span class="mut">después de intereses</span>');
+  if (ALERTAS_H) h += '<div class="w"><h3>Alertas</h3><div id="alertasP">' + ALERTAS_H + '</div></div>';
   h += htmlGanoCredito(k);
   h += htmlLimites(k, m);
   // Cartera vs IPSA
@@ -2483,7 +2535,8 @@ function render() {
     h += '<button type="button" class="al-more" data-act="alertas">' +
       (S.verAlertas ? 'Ocultar alertas' : 'Ver ' + (al.length - 3) + ' alertas más') + '</button>';
   }
-  document.getElementById('alertas').innerHTML = h;
+  ALERTAS_H = h;
+  document.getElementById('alertas').innerHTML = '';
 
   var nv = '';
   for (i = 0; i < TABS.length; i++) {
@@ -2539,6 +2592,7 @@ document.addEventListener('click', function (ev) {
         S.rotaciones.splice(+a, 1); guardar(); render(); return;
       }
       if ((a = n.getAttribute('data-act'))) { acciones(a); return; }
+      if (n.id === 'bTema') { ciclarTema(); return; }
       if (n.id === 'bMaq') { S.sinMaq = !S.sinMaq; render(); return; }
     }
     n = n.parentNode;
