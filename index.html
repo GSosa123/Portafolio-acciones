@@ -2547,15 +2547,14 @@ function renderDash(k) {
   // Cartera vs IPSA
   if (m) {
     var Tq = serieTWR(), r9 = Tq ? retDesde(Tq, String(S.cfg.hoy).slice(0, 4) + '-01-01').r : null;
-    h += '<div class="flip s8" data-flip><div class="flip-in"><div class="w flip-f"><h3>Tu cartera vs. el mercado chileno <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
-      '<div class="leg"><span><i style="background:' + '#e3b85c' + '"></i>Tu cartera ' + pp(m.retTot) + '</span><span><i style="background:#a7a7a7"></i>MSCI Chile en pesos ' + pp(m.retI) + '</span>' +
+    h += '<div class="flip s8" data-flip><div class="flip-in"><div class="w flip-f"><h3>Tu cartera vs. IPSA <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
+      '<div class="leg"><span><i style="background:' + '#e3b85c' + '"></i>Tu cartera ' + pp(m.retTot) + '</span><span><i style="background:#a7a7a7"></i>IPSA ' + pp(m.retI) + '</span>' +
       '<span class="chip ' + (m.alfa >= 0 ? 'up' : 'dn') + '">' + (m.alfa >= 0 ? 'Le ganas por ' : 'Pierdes por ') + fmtDec(Math.abs(m.alfa), 2) + ' pp</span></div>' +
       '<div class="flip-hint">Toca dos veces para ver de dónde sale ↻</div></div>' +
       '<div class="w flip-b"><h3>¿De dónde sale esto? <small>desliza para leer más</small></h3><ul class="flip-l">' +
       '<li><b>Ventaja:</b> ' + pp(m.retTot) + ' − (' + pp(m.retI) + ') = ' + fmtDec(m.alfa, 2) + ' pp.</li>' +
-      '<li class="flip-ojo"><svg viewBox="0 0 24 24" aria-label="Alerta" role="img"><path d="M12 2.5 1.5 21h21z" fill="#e0b84f"/><rect x="11" y="9" width="2" height="6.5" rx="1" fill="#111"/><circle cx="12" cy="18" r="1.2" fill="#111"/></svg><span>El MSCI en pesos cayó más que el IPSA. Al 24/11 el MSCI iba −5,3% en el año y el IPSA −1,4%. Contra el IPSA la ventaja sería unos 5 puntos menor (aproximado: medido desde el 09/02, y esa diferencia cambia según el período). Hoy rondaría <b>~' + fmtDec(m.alfa - 5, 0) + ' pp</b>.' + (m.alfa - 5 > 0 ? ' Igual le ganas, pero por menos.' : '') + '</span></li>' +
       '<li><b>Tu cartera (' + pp(m.retTot) + '):</b> precio de cierre de cada día de tus ' + S.posiciones.length + ' acciones actuales, cada una desde que la compraste y con las acciones que tienes hoy. Solo precio: sin dividendos, sin ventas cerradas y sin comisiones.</li>' +
-      '<li><b>Mercado (' + pp(m.retI) + '):</b> fondo iShares MSCI Chile (ECH), que cotiza en dólares, pasado a pesos con el dólar de cada día. También solo precio, sin dividendos. Se usa porque Yahoo no entrega la historia del IPSA.</li>' +
+      '<li><b>IPSA (' + pp(m.retI) + '):</b> S&amp;P IPSA, cierre oficial de cada día de la Bolsa de Santiago (fuente findic.cl, revisado contra la prensa). Es un índice de precio: no suma dividendos, igual que tu cartera acá.</li>' +
       '<li><b>Desde ' + fFecha(m.fechas[0]) + ':</b> el día de tu primera compra que sigue en cartera.</li>' +
       (r9 != null ? '<li><b>¿Por qué Inicio dice ' + fmtPct(r9) + ' en ' + String(S.cfg.hoy).slice(0, 4) + '?</b> Allá se suman dividendos y ventas cerradas y se parte del precio real de compra con comisión. Acá es solo precio, para comparar parejo con el índice.</li>' : '') +
       '</ul><div class="flip-hint">Toca dos veces para volver ↻</div></div></div></div>';
@@ -2650,7 +2649,7 @@ function renderDash(k) {
       '<div><div class="k">Information ratio</div><div class="v num ' + (m.ir >= 0 ? 'up' : 'dn') + '">' + fmtDec(m.ir, 2) + '</div><div class="n">exceso ÷ tracking error</div></div>' +
       '<div><div class="k">VaR 95% · 1 mes</div><div class="v num dn">' + clp(m.varM * k.valor / 100) + '</div><div class="n">' + fmtPct(m.varM, 1) + ' · CVaR ' + clp(m.cvarM * k.valor / 100) + '</div></div>' : '') +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
-    '</div><div style="margin-top:8px">' + htmlNota('Cómo se calcula', 'Cómo se calcula', '<p>Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA.</p><p>Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel.</p><p>Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
+    '</div><div style="margin-top:8px">' + htmlNota('Cómo se calcula', 'Cómo se calcula', '<p>Mercado = S&amp;P IPSA, cierre oficial diario de la Bolsa de Santiago (fuente findic.cl).</p><p>Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel.</p><p>Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   cortar('rent');
   var OPC = [['credito', '¿Le gano al crédito?'], ['riesgo', 'Riesgo de mercado'], ['costos', '¿Rinde más de lo que cuesta?'], ['gp', 'Ganancia por acción'],
     ['comp', 'Composición'], ['prestamo', 'Préstamo'], ['divs', 'Dividendos cobrados'], ['ind', 'Todos los indicadores'], ['rent', 'Rentabilidad en detalle']].filter(function (o) { return D[o[0]]; });
@@ -3861,15 +3860,7 @@ function enRueda() {
   } catch (e) { return true; }
 }
 function yahooProxy(tk) {
-  if (tk === '^IPSA') {
-    return Promise.all([yahooProxy('ECH'), yahooProxy('CLP=X')]).then(function (r) {
-      var e = r[0], fx = r[1], m = {}, t = [], c = [], i, ult = 0;
-      for (i = 0; i < fx.t.length; i++) m[fx.t[i]] = fx.c[i];
-      for (i = 0; i < e.t.length; i++) { ult = m[e.t[i]] || ult; if (ult) { t.push(e.t[i]); c.push(e.c[i] * ult); } }
-      if (!c.length) throw new Error('sin datos');
-      return { precio: c[c.length - 1], ant: c.length > 1 ? c[c.length - 2] : 0, ts: e.ts, fecha: t[t.length - 1], t: t, c: c };
-    });
-  }
+  if (tk === '^IPSA') return Promise.reject(new Error('IPSA viene de precios.json'));
   var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(tk === 'ECH' || tk === 'CLP=X' || tk.charAt(0) === '^' ? tk : tk + '.SN') + '?range=1y&interval=1d';
   var i = 0;
   function intento() {
