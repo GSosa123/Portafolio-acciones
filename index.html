@@ -228,6 +228,28 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 :root[data-tema="claro"] .esfsel-hoja{background:#fbf6ec}
 .nota-i{display:inline-flex;align-items:center;gap:5px;background:none;border:0;padding:4px 0;font:inherit;font-size:12px;color:var(--mut);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .nota-i svg{width:14px;height:14px;opacity:.8}
+/* Precios en vivo (estilo app de corredora) */
+.vv{padding:16px 18px 10px}
+.vv-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.vv-hd h3{margin:0}
+.vv-est{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--panel2);color:var(--mut);border:1px solid var(--line)}
+.vv-est i{width:7px;height:7px;border-radius:50%;background:var(--mut2)}
+.vv-est.on{color:var(--brand2);border-color:rgba(214,169,74,.35);background:var(--acc-bg)}
+.vv-est.on i{background:var(--gold);box-shadow:0 0 0 0 rgba(214,169,74,.6);animation:vvLat 2s infinite}
+@keyframes vvLat{0%{box-shadow:0 0 0 0 rgba(214,169,74,.55)}70%{box-shadow:0 0 0 7px rgba(214,169,74,0)}100%{box-shadow:0 0 0 0 rgba(214,169,74,0)}}
+.vv-r{display:grid;grid-template-columns:minmax(0,1fr) 78px auto;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.vv-r:first-of-type{border-top:0}
+.vv-tk{display:flex;align-items:center;gap:8px;min-width:0}
+.vv-tk em{width:8px;height:8px;border-radius:50%;flex:none}
+.vv-tk b{font-size:14px;display:block}
+.vv-tk small{display:block;font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vv-sp{width:78px;height:30px;display:block}
+.vv-p{text-align:right;min-width:86px}
+.vv-p b{display:block;font-size:14.5px;border-radius:6px;padding:1px 4px;margin:-1px -4px}
+.vv-p small{display:block;font-size:11.5px;font-weight:700;margin-top:2px}
+.vv-p b.fl-up{animation:vvFlU 1.8s ease-out}.vv-p b.fl-dn{animation:vvFlD 1.8s ease-out}
+@keyframes vvFlU{0%,35%{background:var(--up-bg)}100%{background:transparent}}@keyframes vvFlD{0%,35%{background:var(--dn-bg)}100%{background:transparent}}
+.vv-ft{display:flex;justify-content:flex-end;border-top:1px solid var(--line);margin-top:2px;padding-top:4px}
 .nota-txt{margin:12px 0 6px;font-size:14px;line-height:1.5;color:var(--txt);max-height:50vh;overflow:auto}.nota-txt p{margin:0 0 10px}
 .giro-pista{position:absolute;left:50%;bottom:6px;width:54px;height:54px;margin-left:-27px;border-radius:50%;z-index:400;pointer-events:none;
 background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.05) 55%,rgba(227,178,60,.10));backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
@@ -2549,6 +2571,7 @@ function renderDash(k) {
   // Héroe
   h += htmlHero(sem, HC, VER);
   h += htmlOrbe(k);
+  h += htmlVivo();
   h += htmlMisInv(k);
   h += '<label class="w subir-bar"><span><b>¿Llegó tu cartola nueva?</b> Súbela y la cartera se actualiza al instante.</span><span class="btn">Subir PDF</span><input type="file" accept="application/pdf,.pdf" id="pdfIn2" style="display:none"></label>';
   // KPIs
@@ -3975,12 +3998,116 @@ function actualizarPrecios(manual) {
   }).then(function () { preciosEnCurso = false; });
 }
 
+/* ============================================================
+   Precios en vivo: con la app abierta y la bolsa operando, pide a Yahoo
+   el precio del día cada 1 minuto (Yahoo publica la Bolsa de Santiago con 15 min de retraso).
+   Solo toca la tarjeta #vivo; el resto de la pantalla se refresca cuando el usuario no está interactuando.
+   ============================================================ */
+var VIVO = { intra: {}, ts: 0, chk: 0, timer: 0, fallas: 0, enCurso: false, toque: 0, prev: {} };
+function horaStgo(ms) {
+  try { return new Date(ms).toLocaleTimeString('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit', hour12: false }); }
+  catch (e) { var d = new Date(ms); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+}
+function yahooIntra(tk) {
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(tk + '.SN') + '?range=1d&interval=5m&_=' + Math.floor(Date.now() / 60000);
+  var i = 0;
+  function intento() {
+    if (i >= PROXIES.length) return Promise.reject(new Error('proxies caídos'));
+    return getJSON(PROXIES[i++](url), 9000).then(function (d) {
+      var res = d.chart.result[0], m = res.meta;
+      if (!(m.regularMarketPrice > 0)) throw new Error('sin precio');
+      var q = (res.indicators && res.indicators.quote && res.indicators.quote[0]) || {}, cl = q.close || [], t = res.timestamp || [], c = [], j;
+      for (j = 0; j < t.length; j++) if (cl[j] > 0) c.push(cl[j]);
+      var ts = (m.regularMarketTime || Date.now() / 1000) * 1000;
+      return { precio: m.regularMarketPrice, ts: ts, ant: m.chartPreviousClose || m.previousClose || 0, max: m.regularMarketDayHigh || 0, min: m.regularMarketDayLow || 0,
+        vol: m.regularMarketVolume || 0, c: c, fecha: new Date(ts - 3 * 3600000).toISOString().slice(0, 10) };
+    }).catch(intento);
+  }
+  return intento();
+}
+function svgSpark(c, ant, col) {
+  var W = 78, H = 30, pad = 2;
+  if (!c || c.length < 2) return '<svg class="vv-sp" viewBox="0 0 ' + W + ' ' + H + '"></svg>';
+  var lo = Math.min.apply(null, c.concat(ant > 0 ? [ant] : [])), hi = Math.max.apply(null, c.concat(ant > 0 ? [ant] : []));
+  if (hi - lo < 1e-9) { hi += 1; lo -= 1; }
+  function y(v) { return (pad + (hi - v) / (hi - lo) * (H - 2 * pad)).toFixed(1); }
+  var pts = c.map(function (v, i) { return (i / (c.length - 1) * W).toFixed(1) + ',' + y(v); }).join(' ');
+  return '<svg class="vv-sp" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+    (ant > 0 ? '<line x1="0" x2="' + W + '" y1="' + y(ant) + '" y2="' + y(ant) + '" stroke="var(--mut2)" stroke-width="1" stroke-dasharray="2 3"/>' : '') +
+    '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+function htmlVivoIn() {
+  var abierto = enRueda(), h = '', i;
+  h += '<div class="vv-hd"><h3>Precios de hoy</h3><span class="vv-est' + (abierto ? ' on' : '') + '"><i></i>' + (abierto ? 'En vivo' : 'Mercado cerrado') + '</span></div>';
+  for (i = 0; i < S.posiciones.length; i++) {
+    var p = S.posiciones[i], v = varDia(p), up = !v || v.abs >= 0, col = v ? (v.abs > 0.0001 ? 'var(--up)' : v.abs < -0.0001 ? 'var(--dn)' : 'var(--mut)') : 'var(--mut)';
+    var cls = v ? (v.abs > 0.0001 ? 'up' : v.abs < -0.0001 ? 'dn' : '') : '';
+    var cam = VIVO.prev[p.ticker] && Math.abs(VIVO.prev[p.ticker] - p.precio) > 0.0001 ? (p.precio > VIVO.prev[p.ticker] ? ' fl-up' : ' fl-dn') : '';
+    h += '<div class="vv-r"><div class="vv-tk"><em style="background:' + colorTk(p.ticker) + '"></em><div style="min-width:0"><b>' + esc(p.ticker) + '</b><small>' + esc(p.nombre || '') + '</small></div></div>' +
+      svgSpark(VIVO.intra[p.ticker], p.dia ? num(p.dia.ant) : 0, col) +
+      '<div class="vv-p"><b class="num' + cam + '">' + precioTxt(p.precio) + '</b><small class="num ' + cls + '">' + (v ? (v.abs > 0.0001 ? '+' : v.abs < -0.0001 ? '−' : '') + fmtPct(Math.abs(v.pct)) : '—') + '</small></div></div>';
+  }
+  var cuando = VIVO.ts ? horaStgo(VIVO.ts) : '';
+  h += '<div class="vv-ft">' + htmlNota('15 min de retraso' + (cuando ? ' · ' + cuando : ''), 'Precios de hoy',
+    '<p>Los precios vienen de Yahoo Finance, que publica la Bolsa de Santiago con 15 minutos de retraso (dato oficial de Yahoo, proveedor ICE Data Services).</p>' +
+    '<p>Mientras tengas la app abierta y la bolsa esté operando (lun–vie 9:30 a 16:00), la app los pide cada 1 minuto.' + (cuando ? ' Último precio recibido: ' + cuando + '.' : '') + '</p>' +
+    '<p>El gráfico es el día de hoy; la línea punteada es el cierre de ayer. Precios sin retraso solo los entrega la Bolsa (de pago) o la app de tu corredora.</p>') + '</div>';
+  VIVO.prev = {};
+  return h;
+}
+function htmlVivo() { return '<div class="w vv" id="vivo">' + htmlVivoIn() + '</div>'; }
+function vivoPintar(cambio) {
+  var el = document.getElementById('vivo');
+  /* Refresco completo solo si no está usando la pantalla (no rompe cartas dadas vuelta ni listas abiertas). */
+  if (cambio && Date.now() - VIVO.toque > 12000 && !document.querySelector('#dash .flip.on, #dash details[open], .esfsel')) { render(); return; }
+  if (el) el.innerHTML = htmlVivoIn();
+}
+function vivoTick() {
+  if (VIVO.enCurso || !S.posiciones.length) return;
+  VIVO.enCurso = true;
+  var prev = {}, cambio = false;
+  S.posiciones.forEach(function (p) { prev[p.ticker] = p.precio; });
+  Promise.all(S.posiciones.map(function (p) {
+    return yahooIntra(p.ticker).then(function (x) { return [p, x]; }, function () { return [p, null]; });
+  })).then(function (rs) {
+    var ok = 0;
+    rs.forEach(function (r) {
+      var p = r[0], x = r[1]; if (!x) return; ok++;
+      VIVO.intra[p.ticker] = x.c;
+      if (x.ts > VIVO.ts) VIVO.ts = x.ts;
+      if (x.ts <= num(p.precioTs) && Math.abs(p.precio - x.precio) > 0.005) return; // hay un precio a mano más nuevo
+      if (Math.abs(p.precio - x.precio) > 0.005) cambio = true;
+      p.precio = Math.round(x.precio * 100) / 100;
+      p.dia = { ant: num(x.ant) || (p.dia ? num(p.dia.ant) : 0), max: num(x.max), min: num(x.min), vol: num(x.vol), fecha: x.fecha };
+      p.precioTs = Math.max(x.ts, num(p.precioTs));
+      if (x.fecha && x.fecha > S.cfg.hoy) S.cfg.hoy = x.fecha;
+    });
+    VIVO.fallas = ok ? 0 : VIVO.fallas + 1;
+    VIVO.chk = Date.now();
+    if (cambio) { if (VIVO.chk0) VIVO.prev = prev; guardar(); }
+    VIVO.chk0 = true;
+    vivoPintar(cambio);
+  }).then(function () { VIVO.enCurso = false; }, function () { VIVO.enCurso = false; });
+}
+function vivoProgramar() {
+  clearTimeout(VIVO.timer);
+  if (document.visibilityState === 'hidden') return;
+  /* Cada 1 min en rueda; si las consultas fallan, espera más (hasta 5 min). Fuera de rueda solo revisa cada 10 min si ya abrió. */
+  var ms = enRueda() ? Math.min(60000 * Math.pow(2, VIVO.fallas), 300000) : 600000;
+  VIVO.timer = setTimeout(function () { if (enRueda()) vivoTick(); else { var el = document.getElementById('vivo'); if (el) el.innerHTML = htmlVivoIn(); } vivoProgramar(); }, ms);
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') { if (Date.now() - VIVO.chk > 55000) vivoTick(); vivoProgramar(); }
+  else clearTimeout(VIVO.timer);
+});
+['pointerdown', 'touchstart', 'wheel'].forEach(function (e) { document.addEventListener(e, function () { VIVO.toque = Date.now(); }, { passive: true }); });
+
 var estatico = document.getElementById('estatico');
 if (estatico && estatico.parentNode) estatico.parentNode.removeChild(estatico);
 cargar();
 if (avanzarCredito() || S.migrado) guardar();
 render();
-if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias(); }
+if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias(); setTimeout(vivoTick, 1500); vivoProgramar(); }
 </script>
 <script>
 /* Deslizar por los gráficos: funciona con dedo o mouse. Vibración suave al cambiar de mes (iPhone con iOS 18+). */
