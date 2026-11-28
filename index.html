@@ -229,6 +229,19 @@ svg .fadein{opacity:0;animation:fi .8s .9s ease forwards}
 .lim-e{margin-top:5px;font-size:11.5px;line-height:1.45;color:var(--mut)}
 .emp-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
 .emp a{color:var(--gold)}
+.tap{cursor:pointer}.chk-r.tap:active,tr.tap:active{background:rgba(214,169,74,.08)}
+.nchip{display:inline-block;margin:0 2px;padding:1px 8px;border-radius:999px;border:1px solid rgba(214,169,74,.5);color:var(--gold);font-size:11px;font-weight:800;cursor:pointer}
+.coment{margin-top:12px;padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line)}
+.coment .k{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--gold)}
+.coment p{margin-top:8px;font-size:13px;line-height:1.55;color:var(--tx)}
+#visor{display:none;position:fixed;inset:0;z-index:50;background:#0b0b0b;flex-direction:column}
+#visor.on{display:flex}
+.vz-h{display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));background:#111;border-bottom:1px solid var(--line)}
+.vz-h span{flex:1;text-align:center;font-size:13px;font-weight:800;color:var(--tx)}
+.vz-h button{min-width:40px;height:36px;border-radius:10px;border:1px solid var(--line2);color:var(--gold);font-weight:900}
+.vz-b{flex:1;overflow:auto;padding:8px;-webkit-overflow-scrolling:touch}
+.vz-b canvas{display:block;margin:0 auto;background:#fff;border-radius:4px}
+.vz-b p{color:var(--mut);text-align:center;margin-top:20px;font-size:13px}
 .btn.subir{display:flex;align-items:center;justify-content:center;cursor:pointer}
 .subir-bar{text-transform:none;letter-spacing:0;font-weight:500;flex-direction:row;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:12px 16px;font-size:13px;line-height:1.4;color:var(--mut)}
 .subir-bar b{color:var(--tx);font-weight:800}
@@ -572,7 +585,7 @@ function clon(o) { return JSON.parse(JSON.stringify(o)); }
 var S = {
   cfg: clon(MAESTRO.cfg), credito: clon(MAESTRO.credito),
   posiciones: clon(MAESTRO.posiciones), eventos: clon(MAESTRO.eventos),
-  rotaciones: clon(MAESTRO.rotaciones), decisiones: [], dividendos: clon(MAESTRO.dividendos),
+  rotaciones: clon(MAESTRO.rotaciones), decisiones: [], dividendos: clon(MAESTRO.dividendos), eeff: {},
   tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
   prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '5640' },
   justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-11-26' },
@@ -583,7 +596,7 @@ function guardar() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
       version: S.version || MAESTRO.version, cfg: S.cfg, credito: S.credito, posiciones: S.posiciones,
-      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}, dividendos: S.dividendos
+      eventos: S.eventos, rotaciones: S.rotaciones, decisiones: S.decisiones, hist: S.hist || {}, dividendos: S.dividendos, eeff: S.eeff || {}
     }));
   } catch (e) {}
 }
@@ -601,6 +614,7 @@ function cargar() {
     S.rotaciones = d.rotaciones || [];
     S.decisiones = d.decisiones || [];
     S.hist = d.hist || {};
+    S.eeff = d.eeff || {};
     if (d.dividendos && d.dividendos.length) {
       var yd = {};
       S.dividendos.forEach(function (x) { yd[x.ticker + x.fecha] = 1; });
@@ -1128,20 +1142,343 @@ function htmlLimites(k, m) {
   return h;
 }
 
+/* ============================================================
+   EEFF trimestrales (formato CMF/IFRS): lectura en el teléfono,
+   cifras clave con su nota y página, ratios y comentarios por reglas.
+   ============================================================ */
+function eeffMonto(c) {
+  var t = String(c || '').replace(/\s/g, '');
+  if (t === '-' || t === '–') return 0;
+  if (!/^\(?-?\$?\d{1,3}(\.\d{3})*(,\d+)?\)?$/.test(t)) return null;
+  var neg = /^\(.*\)$/.test(t) || /^\(?-/.test(t);
+  var n = parseFloat(t.replace(/[()$-]/g, '').replace(/\./g, '').replace(',', '.'));
+  return isFinite(n) ? (neg ? -n : n) : null;
+}
+/* Una fila de estado financiero: etiqueta, nota (opcional) y montos. */
+function eeffFila(l) {
+  var celdas = String(l).split(/\s{3,}/), lab = celdas[0].trim(), nota = '', montos = [], i;
+  for (i = 1; i < celdas.length; i++) {
+    var c = celdas[i].trim(), m = eeffMonto(c);
+    if (m !== null && (/\./.test(c.replace(/\s/g, '')) || /^\(/.test(c) || c === '-' || montos.length || nota)) { montos.push(m); continue; }
+    var nt = c.replace(/\s/g, '').match(/^(\d{1,2}(?:\.\d{1,2})?)(?:-\d+)?$/);
+    if (nt && !montos.length && !nota) { nota = nt[1]; continue; }
+    if (m !== null) { montos.push(m); continue; }
+  }
+  return { lab: lab, nota: nota, montos: montos };
+}
+var EEFF_ITEMS = [
+  ['ventas', /^Ingresos de actividades ordinarias/i, 'Ingresos (ventas)'],
+  ['costo', /^Costo de ventas/i, 'Costo de ventas'],
+  ['bruta', /^Ganancia bruta/i, 'Ganancia bruta'],
+  ['dist', /^Costos de distribución/i, 'Costos de distribución'],
+  ['adm', /^Gastos de administración/i, 'Gastos de administración'],
+  ['ingFin', /^Ingresos financieros/i, 'Ingresos financieros'],
+  ['costFin', /^Costos financieros/i, 'Costos financieros'],
+  ['antesImp', /^Ganancia( \(pérdida\))?,? antes de impuestos?/i, 'Ganancia antes de impuesto'],
+  ['ganancia', /^Ganancia( \(pérdida\))?$/i, 'Ganancia del período'],
+  ['gCtrl', /^Ganancia( \(pérdida\))?,? atribuible a (los )?propietarios de la controladora/i, 'Ganancia de los dueños'],
+  ['caja', /^Efectivo y equivalentes al efectivo$/i, 'Caja (efectivo)'],
+  ['inv', /^Inventarios/i, 'Inventarios'],
+  ['actCorr', /^Total (de )?activos corrientes/i, 'Activos corrientes'],
+  ['activos', /^Total (de )?activos$/i, 'Activos totales'],
+  ['pfCorr', /^Otros pasivos financieros(,? corrientes)?$/i, 'Deuda financiera corto plazo'],
+  ['pasCorr', /^Total (de )?pasivos corrientes/i, 'Pasivos corrientes'],
+  ['pfNoCorr', /^Otros pasivos financieros,? no corrientes$/i, 'Deuda financiera largo plazo'],
+  ['patCtrl', /^Patrimonio atribuible a (los )?propietarios de la controladora/i, 'Patrimonio de los dueños'],
+  ['patrimonio', /^(Patrimonio total|Total patrimonio)$/i, 'Patrimonio total'],
+  ['da', /^(Gastos? (por|de) )?depreciaci[oó]n y amortizaci[oó]n$/i, 'Depreciación y amortización'],
+  ['cfo', /^Flujos de efectivo netos procedentes de (\(utilizados en\) )?actividades de operaci[oó]n/i, 'Caja generada por la operación'],
+  ['capex', /^Compras de propiedades, planta y equipo/i, 'Inversión en activo fijo'],
+  ['divPag', /^Dividendos pagados/i, 'Dividendos pagados']
+];
+function eeffAnalizar(paginas) {
+  var R = { items: {}, notas: {}, meses: 12, fecha: '', unidad: '', nombre: '' }, p, i, k;
+  var rxNota = /^(?:NOTA\s+)?(\d(?: ?\d)?(?:\.\d+)?)\s*[–-]\s*([A-ZÁÉÍÓÚÑ][^a-z]{3,})$/;
+  var daCand = [];
+  for (p = 0; p < paginas.length; p++) {
+    var L = paginas[p];
+    for (i = 0; i < L.length; i++) {
+      var t = L[i].trim();
+      if (!R.nombre && /S\.A\./.test(t) && t.length < 80 && t === t.toUpperCase()) R.nombre = t;
+      if (!R.unidad) { var mu = t.match(/\b(MUS\$|MMUS\$|ThUS\$|MM\$|M\$)\b/); if (mu) R.unidad = mu[1]; }
+      if (!R.fecha && p < 25) {
+        var fs = t.split(/\s{2,}/).map(function (c) { return c.replace(/\s/g, ''); }).filter(function (c) { return /^\d{2}\.\d{2}\.20\d\d$/.test(c); });
+        for (var q = 0; q < fs.length; q++) if (!/^01\.01/.test(fs[q]) && +fs[q].slice(3, 5) >= 1 && +fs[q].slice(3, 5) <= 12) { R.fecha = fs[q].slice(6) + '-' + fs[q].slice(3, 5) + '-' + fs[q].slice(0, 2); R.meses = +fs[q].slice(3, 5); break; }
+      }
+      var mn = t.match(rxNota);
+      if (mn && t.indexOf('...') < 0) {
+        var letras = mn[2].replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ]/g, '');
+        var may = letras.replace(/[^A-ZÁÉÍÓÚÑ]/g, '').length;
+        var num0 = mn[1].replace(/\s/g, '');
+        if (letras.length && may / letras.length > 0.8 && !R.notas[num0]) R.notas[num0] = { pag: p + 1, titulo: mn[2].trim() };
+      }
+      var f = eeffFila(t);
+      if (f.montos.length < 2) continue;
+      if (/^(Gastos? (por|de) )?depreciaci[oó]n y amortizaci[oó]n$/i.test(f.lab)) daCand.push({ v: Math.abs(f.montos[0]), ant: Math.abs(f.montos[1]), pag: p + 1 });
+      for (k = 0; k < EEFF_ITEMS.length; k++) {
+        var it = EEFF_ITEMS[k], key = it[0];
+        if (!it[1].test(f.lab)) continue;
+        if (key === 'pfCorr' && R.items.pfCorr) { if (!R.items.pfNoCorr && R.items.pasCorr) { key = 'pfNoCorr'; it = EEFF_ITEMS.filter(function (x) { return x[0] === 'pfNoCorr'; })[0]; } else continue; }
+        if (key === 'caja' && R.items.caja) continue;
+        if (R.items[key]) continue;
+        R.items[key] = { v: f.montos[0], ant: f.montos[1], nota: f.nota, pag: p + 1, lab: it[2] };
+        break;
+      }
+    }
+  }
+  var primeraNota = 9999;
+  for (k in R.notas) if (R.notas[k].pag < primeraNota) primeraNota = R.notas[k].pag;
+  for (k in R.items) if (R.items[k].pag >= primeraNota) delete R.items[k];
+  if (!R.items.da) {
+    for (k in R.notas) if (/NATURALEZA/.test(R.notas[k].titulo)) {
+      var nk = k;
+      daCand.forEach(function (c) { if (!R.items.da && (c.pag === R.notas[nk].pag || c.pag === R.notas[nk].pag + 1)) R.items.da = { v: c.v, ant: c.ant, nota: nk, pag: c.pag, lab: 'Depreciación y amortización' }; });
+    }
+  }
+  return R;
+}
+var EEFF_BANCO = [
+  ['nim', /^Ingreso neto por intereses( y reajustes)?/i, 'Ingreso neto por intereses'],
+  ['ingOp', /^(Total ingresos operacionales|Ingreso operacional neto|Total ingresos operacionales netos)/i, 'Ingresos operacionales'],
+  ['gastOp', /^Total gastos operacionales/i, 'Gastos operacionales'],
+  ['prov', /^(Gasto por p[ée]rdidas crediticias|Provisiones por riesgo de cr[ée]dito|P[ée]rdidas crediticias)/i, 'Gasto en riesgo de crédito'],
+  ['utilB', /^Utilidad( \(p[ée]rdida\))? consolidada del (ejercicio|per[ií]odo)/i, 'Utilidad del período'],
+  ['coloc', /^(Cr[ée]ditos y cuentas por cobrar a clientes|Adeudado por clientes|Colocaciones)/i, 'Préstamos a clientes']
+];
+EEFF_ITEMS = EEFF_ITEMS.concat(EEFF_BANCO);
+
+function eeffUni(R) { return /US/.test(R.unidad) ? 'US$' : '$'; }
+function eeffFmt(R, v) {
+  var div = /^MM/.test(R.unidad) ? 1 : 1000;
+  var x = v / div;
+  return (x < 0 ? '−' : '') + eeffUni(R) + ' ' + miles(Math.round(Math.abs(x))) + ' MM';
+}
+function eeffChip(tk, R, key) {
+  var it = R.items[key];
+  if (!it) return '';
+  var n = it.nota && R.notas[it.nota] ? it.nota : '';
+  var pag = n ? R.notas[n].pag : it.pag;
+  return '<button type="button" class="nchip" data-eeff="' + esc(tk) + '|' + pag + '">' + (n ? 'nota ' + esc(n) : 'pág. ' + pag) + '</button>';
+}
+function eeffRatios(tk, R) {
+  var I = R.items, out = [], com = [], fa = 12 / (R.meses || 12);
+  function v(k) { return I[k] ? I[k].v : null; }
+  function a(k) { return I[k] ? I[k].ant : null; }
+  function pct(x) { return fmtPct(x, 1); }
+  function add(k, val, s, r, refs) { out.push({ k: k, v: val, s: s, r: r, refs: refs }); }
+  function ch() { var h = '', i, vis = {}; for (i = 0; i < arguments.length; i++) { var c = eeffChip(tk, R, arguments[i]); if (c && !vis[c]) { vis[c] = 1; h += c; } } return h; }
+  var p = null;
+  S.posiciones.forEach(function (x) { if (x.ticker === tk) p = x; });
+  var ke = CALC.ke(S.cfg.rf, p ? num(p.beta) || 1 : 1, S.cfg.erp), inf = num(S.cfg.inflacion);
+  var esBanco = !v('ventas') && (v('nim') !== null || v('coloc') !== null);
+  if (!esBanco && v('ventas') !== null) {
+    var ventas = v('ventas'), gV = a('ventas') ? (ventas / a('ventas') - 1) * 100 : null;
+    if (gV !== null) {
+      add('Crecimiento de ventas', pp(gV, 1), gV >= inf ? 'ok' : gV >= 0 ? 'md' : 'ko', 'Verde si crece sobre la inflación (' + pct(inf) + ').', ['ventas']);
+      com.push((gV >= inf ? 'Las ventas crecieron ' + pct(gV) + ', sobre la inflación: crecimiento real.' : gV >= 0 ? 'Las ventas crecieron ' + pct(gV) + ', bajo la inflación de ' + pct(inf) + ': en términos reales venden menos.' : 'Las ventas cayeron ' + pct(Math.abs(gV)) + '.') + ' ' + ch('ventas'));
+    }
+    var bruta = v('bruta') !== null ? v('bruta') : (v('costo') !== null ? ventas + v('costo') : null);
+    if (bruta !== null && ventas) {
+      var mb = bruta / ventas * 100, mbA = a('bruta') && a('ventas') ? a('bruta') / a('ventas') * 100 : null;
+      add('Margen bruto', pct(mb) + (mbA !== null ? ' (antes ' + pct(mbA) + ')' : ''), mbA === null || mb >= mbA - 0.5 ? 'ok' : mb >= mbA - 2 ? 'md' : 'ko', 'Verde si se mantiene o sube; rojo si cae más de 2 puntos.', ['costo', 'bruta']);
+      if (mbA !== null && Math.abs(mb - mbA) >= 0.5) com.push('El margen bruto ' + (mb > mbA ? 'subió' : 'bajó') + ' de ' + pct(mbA) + ' a ' + pct(mb) + (mb < mbA ? ': los costos crecieron más rápido que los precios.' : ': mejor poder de precios o costos más bajos.') + ' ' + ch('costo'));
+    }
+    var ebit = null, ebitA = null;
+    if (bruta !== null && v('dist') !== null && v('adm') !== null) { ebit = bruta + v('dist') + v('adm'); if (a('bruta') !== null) ebitA = a('bruta') + a('dist') + a('adm'); }
+    else if (v('antesImp') !== null && v('costFin') !== null) { ebit = v('antesImp') - v('costFin') - (v('ingFin') || 0); }
+    if (ebit !== null && ventas) {
+      var mo = ebit / ventas * 100, moA = ebitA !== null && a('ventas') ? ebitA / a('ventas') * 100 : null;
+      add('Margen operacional', pct(mo) + (moA !== null ? ' (antes ' + pct(moA) + ')' : ''), mo >= 12 ? 'ok' : mo >= 6 ? 'md' : 'ko', 'Verde ≥ 12%; amarillo ≥ 6%. Resultado de la operación sobre ventas.', ['dist', 'adm']);
+      if (moA !== null) com.push('El resultado operacional fue ' + eeffFmt(R, ebit) + ' (' + pct(mo) + ' de las ventas), ' + (mo >= moA ? 'mejor' : 'peor') + ' que el ' + pct(moA) + ' del período anterior. ' + ch('dist', 'adm'));
+    }
+    var ebitda = ebit !== null && v('da') !== null ? ebit + Math.abs(v('da')) : null, base = ebitda !== null ? ebitda : ebit, nomB = ebitda !== null ? 'EBITDA' : 'resultado operacional';
+    if (ebit !== null && v('costFin')) {
+      var cob = ebit / Math.abs(v('costFin'));
+      add('Cobertura de intereses', fmtDec(cob, 1) + ' veces', cob >= 5 ? 'ok' : cob >= 3 ? 'md' : 'ko', 'Verde ≥ 5x; amarillo ≥ 3x. Cuántas veces la operación paga los intereses.', ['costFin']);
+      com.push('La operación paga ' + fmtDec(cob, 1) + ' veces sus intereses' + (cob >= 5 ? ', una holgura cómoda.' : cob >= 3 ? ': aceptable, pero sin mucho margen.' : ': ajustado, la deuda pesa.') + ' ' + ch('costFin'));
+    }
+    if (v('pfCorr') !== null && base) {
+      var dfn = v('pfCorr') + (v('pfNoCorr') || 0) - (v('caja') || 0), lev = dfn / (base * fa);
+      add('Deuda financiera neta / ' + nomB + ' anual', fmtDec(lev, 2) + ' veces', lev <= 2.5 ? 'ok' : lev <= 3.5 ? 'md' : 'ko', 'Verde ≤ 2,5x; amarillo ≤ 3,5x. Años de ' + nomB + ' para pagar la deuda neta.', ['pfCorr', 'pfNoCorr', 'caja']);
+      com.push('Deuda financiera neta de ' + eeffFmt(R, dfn) + ', equivalente a ' + fmtDec(lev, 2) + ' años de ' + nomB + (lev <= 2.5 ? ': endeudamiento sano.' : lev <= 3.5 ? ': endeudamiento a vigilar.' : ': endeudamiento alto.') + ' ' + ch('pfCorr', 'pfNoCorr'));
+    }
+    if (v('actCorr') !== null && v('pasCorr')) {
+      var lc = v('actCorr') / v('pasCorr');
+      add('Liquidez corriente', fmtDec(lc, 2) + ' veces', lc >= 1.2 ? 'ok' : lc >= 1 ? 'md' : 'ko', 'Verde ≥ 1,2x; amarillo ≥ 1x. Activos de corto plazo para pagar deudas de corto plazo.', ['actCorr', 'pasCorr']);
+      if (v('inv') !== null) { var ac = (v('actCorr') - v('inv')) / v('pasCorr'); add('Prueba ácida (sin inventarios)', fmtDec(ac, 2) + ' veces', ac >= 1 ? 'ok' : ac >= 0.7 ? 'md' : 'ko', 'Verde ≥ 1x; amarillo ≥ 0,7x.', ['inv']); }
+    }
+  }
+  if (esBanco) {
+    if (v('gastOp') !== null && v('ingOp')) { var ef = Math.abs(v('gastOp')) / v('ingOp') * 100; add('Eficiencia (gastos / ingresos)', pct(ef), ef <= 45 ? 'ok' : ef <= 55 ? 'md' : 'ko', 'Verde ≤ 45%; amarillo ≤ 55%.', ['gastOp', 'ingOp']); com.push('Gasta ' + pct(ef) + ' de lo que ingresa' + (ef <= 45 ? ': banco eficiente.' : '.') + ' ' + ch('gastOp')); }
+    if (v('prov') !== null && v('coloc')) { var cr = Math.abs(v('prov')) * fa / v('coloc') * 100; add('Costo de riesgo (anual)', pct(cr), cr <= 1.2 ? 'ok' : cr <= 1.8 ? 'md' : 'ko', 'Verde ≤ 1,2%; amarillo ≤ 1,8%. Pérdidas por créditos sobre préstamos.', ['prov', 'coloc']); com.push('Las pérdidas por créditos equivalen a ' + pct(cr) + ' anual de los préstamos. ' + ch('prov')); }
+  }
+  var gan = v('gCtrl') !== null ? v('gCtrl') : (v('ganancia') !== null ? v('ganancia') : v('utilB')), ganA = v('gCtrl') !== null ? a('gCtrl') : (v('ganancia') !== null ? a('ganancia') : a('utilB'));
+  var gk = v('gCtrl') !== null ? 'gCtrl' : (v('ganancia') !== null ? 'ganancia' : 'utilB');
+  if (gan !== null && ganA) {
+    var gG = (gan / ganA - 1) * 100;
+    add('Crecimiento de la utilidad', pp(gG, 1), gG >= 0 ? 'ok' : gG > -10 ? 'md' : 'ko', 'Verde si crece; rojo si cae más de 10%.', [gk]);
+    com.push('La utilidad fue ' + eeffFmt(R, gan) + ', ' + (gG >= 0 ? 'un ' + pct(gG) + ' más' : 'un ' + pct(Math.abs(gG)) + ' menos') + ' que el período anterior. ' + ch(gk));
+  }
+  var pat = v('patCtrl') !== null ? v('patCtrl') : v('patrimonio');
+  if (gan !== null && pat) {
+    var roe = gan * fa / pat * 100;
+    add('Rentabilidad sobre patrimonio (ROE anual)', pct(roe), roe >= ke + 3 ? 'ok' : roe >= ke ? 'md' : 'ko', 'Verde si supera en 3 puntos lo que exige el riesgo (' + pct(ke) + ').', [gk, v('patCtrl') !== null ? 'patCtrl' : 'patrimonio']);
+    com.push('Rentabiliza su patrimonio al ' + pct(roe) + ' anual' + (roe >= ke ? ', sobre el ' + pct(ke) + ' que exige su riesgo: crea valor.' : ', bajo el ' + pct(ke) + ' que exige su riesgo: destruye valor.') + ' ' + ch(gk));
+  }
+  if (v('activos') && v('patrimonio')) {
+    var pp2 = (v('activos') - v('patrimonio')) / v('patrimonio');
+    add('Pasivos / patrimonio', fmtDec(pp2, 2) + ' veces', esBanco ? 'nd' : pp2 <= 1.5 ? 'ok' : pp2 <= 2.5 ? 'md' : 'ko', esBanco ? 'En bancos es normal que sea alto; se mira el capital regulatorio.' : 'Verde ≤ 1,5x; amarillo ≤ 2,5x.', ['activos', 'patrimonio']);
+  }
+  if (v('cfo') !== null && v('capex') !== null) {
+    var fcl = v('cfo') + v('capex');
+    add('Flujo de caja libre', eeffFmt(R, fcl), fcl > 0 ? 'ok' : 'ko', 'Caja de la operación menos inversión en activo fijo. Verde si es positivo.', ['cfo', 'capex']);
+    if (v('divPag') !== null && fcl > 0) {
+      var po = Math.abs(v('divPag')) / fcl * 100;
+      add('Dividendos / flujo de caja libre', pct(po), po <= 80 ? 'ok' : po <= 110 ? 'md' : 'ko', 'Verde ≤ 80%; amarillo ≤ 110%. Sobre 100% paga más de lo que genera.', ['divPag']);
+      com.push('Generó ' + eeffFmt(R, fcl) + ' de caja libre y pagó ' + eeffFmt(R, Math.abs(v('divPag'))) + ' en dividendos (' + pct(po) + ')' + (po > 100 ? ': paga más de lo que genera, lo cubre con caja o deuda.' : '.') + ' ' + ch('cfo', 'divPag'));
+    }
+  }
+  return { ratios: out, comentarios: com, banco: esBanco };
+}
+
+/* PDF de EEFF guardado en el teléfono (IndexedDB) y visor por página */
+function eeffDB() {
+  return new Promise(function (ok, ko) {
+    if (!window.indexedDB) { ko(new Error('idb')); return; }
+    var r = indexedDB.open('cartera_eeff', 1);
+    r.onupgradeneeded = function () { r.result.createObjectStore('pdf'); };
+    r.onsuccess = function () { ok(r.result); };
+    r.onerror = function () { ko(r.error); };
+  });
+}
+function eeffGuardarPdf(tk, buf) {
+  return eeffDB().then(function (db) { return new Promise(function (ok, ko) { var tx = db.transaction('pdf', 'readwrite'); tx.objectStore('pdf').put(buf, tk); tx.oncomplete = function () { ok(); }; tx.onerror = function () { ko(tx.error); }; }); });
+}
+function eeffLeerPdf(tk) {
+  return eeffDB().then(function (db) { return new Promise(function (ok, ko) { var rq = db.transaction('pdf').objectStore('pdf').get(tk); rq.onsuccess = function () { ok(rq.result); }; rq.onerror = function () { ko(rq.error); }; }); });
+}
+var eeffDocs = {};
+function eeffDoc(tk) {
+  if (eeffDocs[tk]) return Promise.resolve(eeffDocs[tk]);
+  return eeffLeerPdf(tk).then(function (buf) {
+    if (!buf) throw new Error('sinpdf');
+    return cargarPdfjs().then(function (lib) { return lib.getDocument({ data: new Uint8Array(buf.slice(0)) }).promise; });
+  }).then(function (d) { eeffDocs[tk] = d; return d; });
+}
+function paginasPdf(buf) {
+  return cargarPdfjs().then(function (lib) { return lib.getDocument({ data: new Uint8Array(buf.slice(0)) }).promise; }).then(function (doc) {
+    var ps = [], n;
+    for (n = 1; n <= doc.numPages; n++) ps.push(doc.getPage(n).then(function (pg) { return pg.getTextContent(); }));
+    return Promise.all(ps).then(function (tcs) { return tcs.map(function (tc) { return lineasPdf(tc.items); }); });
+  });
+}
+function subirEeff(el) {
+  var tk = el.getAttribute('data-tk'), file = el.files && el.files[0];
+  if (!tk || !file) return;
+  S.eeffMsg = S.eeffMsg || {};
+  S.eeffMsg[tk] = 'Leyendo los estados financieros… (puede tardar unos segundos)';
+  render();
+  var r = new FileReader();
+  r.onload = function () {
+    var buf = r.result;
+    paginasPdf(buf).then(function (pags) {
+      var R = eeffAnalizar(pags), n = Object.keys(R.items).length;
+      if (n < 5) { S.eeffMsg[tk] = 'No reconocí el formato de este PDF. Usa los estados financieros que publica la CMF o la empresa (con balance, resultados y notas).'; render(); return; }
+      S.eeff = S.eeff || {};
+      S.eeff[tk] = { R: R, archivo: file.name, subido: hoyLocal() };
+      delete eeffDocs[tk];
+      S.eeffMsg[tk] = '';
+      guardar();
+      return eeffGuardarPdf(tk, buf).catch(function () { S.eeffMsg[tk] = 'Leí las cifras, pero el teléfono no dejó guardar el PDF: para abrir las notas tendrás que subirlo de nuevo.'; }).then(function () { render(); });
+    }, function (e) {
+      S.eeffMsg[tk] = e && e.message === 'pdfjs' ? 'No pude cargar el lector de PDF. Revisa tu internet.' : 'No pude leer ese PDF.';
+      render();
+    });
+  };
+  r.readAsArrayBuffer(file);
+  el.value = '';
+}
+var visor = { tk: '', pag: 1, zoom: 1 };
+function abrirVisor(tk, pag) {
+  visor.tk = tk; visor.pag = pag; visor.zoom = 1;
+  var v = document.getElementById('visor');
+  if (!v) {
+    v = document.createElement('div'); v.id = 'visor';
+    v.innerHTML = '<div class="vz-h"><button type="button" data-vz="prev">◀</button><span id="vzT"></span><button type="button" data-vz="next">▶</button><button type="button" data-vz="zoom">＋</button><button type="button" data-vz="x">✕</button></div><div class="vz-b"><canvas id="vzC"></canvas><p id="vzM"></p></div>';
+    document.body.appendChild(v);
+  }
+  v.className = 'on';
+  pintarVisor();
+}
+function pintarVisor() {
+  var tk = visor.tk, msg = document.getElementById('vzM'), cv = document.getElementById('vzC');
+  msg.textContent = 'Abriendo página ' + visor.pag + '…';
+  eeffDoc(tk).then(function (doc) {
+    visor.pag = Math.max(1, Math.min(doc.numPages, visor.pag));
+    document.getElementById('vzT').textContent = 'Pág. ' + visor.pag + ' de ' + doc.numPages;
+    return doc.getPage(visor.pag);
+  }).then(function (pg) {
+    var ancho = Math.min(window.innerWidth, 900) - 16;
+    var vp0 = pg.getViewport({ scale: 1 }), esc0 = ancho / vp0.width * visor.zoom, dpr = window.devicePixelRatio || 1;
+    var vp = pg.getViewport({ scale: esc0 * dpr });
+    cv.width = vp.width; cv.height = vp.height;
+    cv.style.width = (vp.width / dpr) + 'px'; cv.style.height = (vp.height / dpr) + 'px';
+    return pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+  }).then(function () { msg.textContent = ''; }, function (e) {
+    msg.textContent = e && e.message === 'sinpdf' ? 'Este teléfono no tiene guardado el PDF. Vuelve a subirlo en la pestaña Empresas.' : 'No pude abrir la página.';
+  });
+}
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest ? ev.target.closest('[data-eeff],[data-vz]') : null;
+  if (!b) return;
+  var e = b.getAttribute('data-eeff');
+  if (e) { var x = e.split('|'); abrirVisor(x[0], +x[1] || 1); return; }
+  var a = b.getAttribute('data-vz');
+  if (a === 'x') { document.getElementById('visor').className = ''; return; }
+  if (a === 'prev') visor.pag--;
+  if (a === 'next') visor.pag++;
+  if (a === 'zoom') { visor.zoom = visor.zoom === 1 ? 2 : 1; b.textContent = visor.zoom === 1 ? '＋' : '−'; }
+  pintarVisor();
+});
+function htmlEeff(tk) {
+  var E = (S.eeff || {})[tk], msg = (S.eeffMsg || {})[tk], h = '', NOM = { ok: 'bien', md: 'atención', ko: 'mal', nd: 'referencia' };
+  h += '<div class="eeff">';
+  if (msg) h += '<div class="banda md">' + esc(msg) + '</div>';
+  if (E) {
+    var R = E.R, A = eeffRatios(tk, R);
+    h += '<div class="emp-r" style="margin-top:12px"><span class="tag ok">Tus EEFF</span><span class="mut" style="font-size:11.5px">' + (R.fecha ? 'al ' + fFecha(R.fecha) + ' · ' + R.meses + ' meses' : '') + ' · ' + esc(E.archivo) + '</span></div>';
+    if (A.comentarios.length) h += '<div class="coment"><div class="k">Lectura del analista</div>' + A.comentarios.map(function (c) { return '<p>' + c + '</p>'; }).join('') + '</div>';
+    h += '<div class="chk">';
+    A.ratios.forEach(function (r) {
+      var it = R.items[r.refs[0]] || R.items[r.refs[1]] || {}, n = it.nota && R.notas[it.nota] ? it.nota : '', pag = n ? R.notas[n].pag : it.pag;
+      h += '<div class="chk-r tap"' + (pag ? ' data-eeff="' + esc(tk) + '|' + pag + '"' : '') + '><div class="ic ' + r.s + '" title="' + NOM[r.s] + '">' + (r.s === 'ok' ? '✓' : r.s === 'md' ? '!' : r.s === 'ko' ? '✕' : '–') + '</div><div class="tx">' + esc(r.k) + '<span>' + esc(r.r) + (pag ? ' · ' + (n ? 'nota ' + n : 'pág. ' + pag) + ' ›' : '') + '</span></div><div class="vv num">' + esc(r.v) + '</div></div>';
+    });
+    h += '</div><details class="tech"><summary>Cifras leídas del PDF ▾</summary><div class="tb"><table><thead><tr><th>Partida</th><th>Actual</th><th>Anterior</th><th>Nota</th></tr></thead><tbody>';
+    EEFF_ITEMS.forEach(function (x) {
+      var it = R.items[x[0]]; if (!it) return;
+      var n = it.nota && R.notas[it.nota] ? it.nota : '', pag = n ? R.notas[n].pag : it.pag;
+      h += '<tr class="tap" data-eeff="' + esc(tk) + '|' + pag + '"><td>' + esc(it.lab) + '</td><td class="num">' + eeffFmt(R, it.v) + '</td><td class="num mut">' + eeffFmt(R, it.ant) + '</td><td class="acc">' + (n ? n : 'p.' + pag) + ' ›</td></tr>';
+    });
+    h += '</tbody></table></div></details>';
+  }
+  h += '<label class="btn o subir" style="margin-top:12px">' + (E ? 'Cambiar EEFF (PDF)' : 'Subir EEFF trimestral (PDF)') + '<input type="file" accept="application/pdf,.pdf" class="eeffIn" data-tk="' + esc(tk) + '" style="display:none"></label></div>';
+  return h;
+}
+
 /* Pestaña Empresas */
 function renderEmpresas(k) {
   var h = '', i, NOM = { ok: 'bien', md: 'atención', ko: 'mal', nd: 'sin dato' };
   h += '<div class="dash"><div class="w"><h3>Salud de cada empresa <small>últimos datos públicos</small></h3><p class="expl" style="margin-top:6px">Ratios del último reporte trimestral de cada empresa, cada uno con su propio semáforo y la regla usada. Verde bien, amarillo atención, rojo mal, gris sin dato público.</p></div>';
   for (i = 0; i < S.posiciones.length; i++) {
     var p = S.posiciones[i], f = FUND[p.ticker];
-    if (!f) { h += '<div class="w s6"><h3>' + esc(p.ticker) + '</h3><p class="expl">Sin ficha cargada.</p></div>'; continue; }
+    if (!f) { h += '<div class="w s6 emp"><h3>' + esc(p.ticker) + '</h3><p class="expl">Sin ficha pública cargada.</p>' + htmlEeff(p.ticker) + '</div>'; continue; }
     var c = { ok: 0, md: 0, ko: 0, nd: 0 };
     f.ratios.forEach(function (r) { c[r.s]++; });
     var est = c.ko ? 'ko' : c.md ? 'md' : 'ok';
     var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
     h += '<div class="w s6 emp"><h3>' + esc(p.nombre || p.ticker) + ' <small>' + esc(p.ticker) + ' · pesa ' + fmtPct(w, 1) + '</small></h3>' +
       '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
-      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p><div class="chk">';
+      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
     f.ratios.forEach(function (r) {
       h += '<div class="chk-r"><div class="ic ' + r.s + '" title="' + NOM[r.s] + '">' + (r.s === 'ok' ? '✓' : r.s === 'md' ? '!' : r.s === 'ko' ? '✕' : '–') + '</div><div class="tx">' + esc(r.k) + '<span>' + esc(r.r) + '</span></div><div class="vv num">' + esc(r.v) + '</div></div>';
     });
@@ -2152,6 +2489,7 @@ document.addEventListener('change', function (ev) {
   if (!el || !el.getAttribute) return;
   if (el.id === 'fileIn') { importar(el); return; }
   if (el.id === 'pdfIn' || el.id === 'pdfIn2') { subirPdf(el); return; }
+  if (el.classList && el.classList.contains('eeffIn')) { subirEeff(el); return; }
   var t = el.getAttribute('data-t'), f = el.getAttribute('data-f'), kk = el.getAttribute('data-k');
   if (t && f) {
     var i;
