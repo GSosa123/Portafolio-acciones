@@ -188,6 +188,8 @@ svg .fadein{opacity:0;animation:fi .8s .9s ease forwards}
 .hb-r .t i.neg{transform-origin:right}
 .hb-r .t .mid{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--line2)}
 .hb-r b{text-align:right}
+.tkdot{display:inline-block;flex:none;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.tkn{display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
 .chk{display:flex;flex-direction:column;gap:2px;margin-top:10px}
 .chk-r{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
 .chk-r:last-child{border-bottom:none}
@@ -261,7 +263,7 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
   #papeles>.sec,#credito>.dark,#credito>.grid2,#cartera>.grid2{grid-column:1/-1}
 }
 @media(max-width:759px){.s3{grid-column:span 6}}
-@media(max-width:420px){.g4{grid-template-columns:1fr 1fr}.fr{grid-template-columns:1fr}.hb-r{grid-template-columns:84px 1fr 62px}.luz{width:60px;height:60px;font-size:24px}.hero .ver{font-size:22px}}
+@media(max-width:420px){.g4{grid-template-columns:1fr 1fr}.fr{grid-template-columns:1fr}.hb-r{grid-template-columns:108px 1fr 66px}.luz{width:60px;height:60px;font-size:24px}.hero .ver{font-size:22px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}svg .draw{stroke-dashoffset:0}}
 </style>
 </head>
@@ -897,6 +899,15 @@ function semaforo(k, m) {
    Gráficos SVG
    ============================================================ */
 var COLS = ['#e3b85c', '#9c7330', '#f6e2a8', '#c0c0c0', '#6e5526', '#8c8c8c', '#d9a441', '#5a5a5a'];
+var TKCOL = { 'CHILE': '#4C9BE8', 'ANDINA-B': '#E3B23C', 'COLBUN': '#2EC4B6', 'LTM': '#B07CF2', 'SCHWAGER': '#F28C38', 'AGUAS-A': '#E040FB', 'VAPORES': '#6EC1FF', 'ENELGXCH': '#A3D96A', 'BSANTANDER': '#C9CED6', 'CFMITNIPSA': '#FF8FAB' };
+var TKEXTRA = ['#F25F9A', '#6EC1FF', '#A3D96A', '#C9CED6', '#E8D44D', '#FF8FAB', '#8FA8FF', '#D9A0FF'];
+function colorTk(tk) {
+  var k = String(tk || '').replace(/\s*\(.*\)$/, '').toUpperCase();
+  if (TKCOL[k]) return TKCOL[k];
+  var h = 0; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0;
+  return TKEXTRA[h % TKEXTRA.length];
+}
+function dotTk(tk) { return '<i class="tkdot" style="background:' + colorTk(tk) + '"></i>'; }
 function svgLinea(m) {
   var W = 640, Hh = 220, pl = 6, pr = 6, pt = 12, pb = 22;
   var all = m.idx.concat(m.ipx), mn = Math.min.apply(null, all), mx = Math.max.apply(null, all);
@@ -1507,7 +1518,7 @@ function htmlDividendos() {
     var A = porAnio[y], tks = Object.keys(A.tk).sort(function (a, b) { return A.tk[b] - A.tk[a]; }), mx = A.tk[tks[0]] || 1;
     h += '<div class="bar-r" style="margin-top:' + (ix ? 16 : 10) + 'px"><span style="font-weight:800">' + y + '</span><span class="num up" style="font-weight:900;font-size:16px">' + clp(A.tot) + '</span></div><div class="hb" style="margin-top:6px">';
     tks.forEach(function (t, j) {
-      h += '<div class="hb-r"><span>' + esc(t) + (vig[t] ? '' : ' <small class="mut">vendida</small>') + '</span><div class="t"><i style="left:0;width:' + (A.tk[t] / mx * 100).toFixed(1) + '%;background:' + (vig[t] ? '#5fd39a' : '#6e6e6e') + ';animation-delay:' + (j * 0.06) + 's"></i></div><b class="num">' + clp(A.tk[t]) + '</b></div>';
+      h += '<div class="hb-r"><span><b class="tkn">' + dotTk(t) + esc(t) + '</b>' + (vig[t] ? '' : ' <small class="mut">vendida</small>') + '</span><div class="t"><i style="left:0;width:' + (A.tk[t] / mx * 100).toFixed(1) + '%;background:' + colorTk(t) + ';' + (vig[t] ? '' : 'opacity:.45;') + 'animation-delay:' + (j * 0.06) + 's"></i></div><b class="num">' + clp(A.tk[t]) + '</b></div>';
     });
     h += '</div>';
   });
@@ -1584,13 +1595,13 @@ function renderDash(k) {
   h += '</div><p class="expl">' + (k.gap >= 0
     ? 'Tu rentabilidad supera el costo del crédito por ' + fmtDec(k.gap, 2) + ' puntos: el préstamo te está ayudando.'
     : 'El crédito cuesta ' + fmtDec(Math.abs(k.gap), 2) + ' puntos más de lo que rinde la cartera. Cada peso prestado hoy resta.') + '</p></div>';
-  var items = S.posiciones.map(function (p, ix) { return { t: p.ticker, v: CALC.valorMercado(p), c: COLS[ix % COLS.length], g: CALC.costoReal(p) ? (CALC.valorMercado(p) / CALC.costoReal(p) - 1) * 100 : 0 }; });
+  var items = S.posiciones.map(function (p, ix) { return { t: p.ticker, v: CALC.valorMercado(p), c: colorTk(p.ticker), g: CALC.costoReal(p) ? (CALC.valorMercado(p) / CALC.costoReal(p) - 1) * 100 : 0 }; });
   // G/P por acción
   var maxG = Math.max.apply(null, items.map(function (x) { return Math.abs(x.g); }).concat([1]));
   h += '<div class="w s6"><h3>Ganancia o pérdida por acción <small>sobre costo real</small></h3><div class="hb">';
   items.forEach(function (it, ix) {
     var w = Math.abs(it.g) / maxG * 50;
-    h += '<div class="hb-r"><span>' + esc(it.t) + '</span><div class="t"><span class="mid" style="left:50%"></span><i class="' + (it.g < 0 ? 'neg' : '') + '" style="' + (it.g >= 0 ? 'left:50%' : 'right:50%') + ';width:' + w.toFixed(1) + '%;background:' + (it.g >= 0 ? '#5fd39a' : '#ff6b6b') + ';animation-delay:' + (ix * 0.08) + 's"></i></div><b class="num ' + (it.g >= 0 ? 'up' : 'dn') + '">' + pp(it.g, 1) + '</b></div>';
+    h += '<div class="hb-r"><span><b class="tkn">' + dotTk(it.t) + esc(it.t) + '</b></span><div class="t"><span class="mid" style="left:50%"></span><i class="' + (it.g < 0 ? 'neg' : '') + '" style="' + (it.g >= 0 ? 'left:50%' : 'right:50%') + ';width:' + w.toFixed(1) + '%;background:' + (it.g >= 0 ? '#5fd39a' : '#ff6b6b') + ';animation-delay:' + (ix * 0.08) + 's"></i></div><b class="num ' + (it.g >= 0 ? 'up' : 'dn') + '">' + pp(it.g, 1) + '</b></div>';
   });
   h += '</div></div>';
   // Composición
