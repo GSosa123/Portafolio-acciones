@@ -8,17 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -s -m 30 -A "Mozilla/5.0" https://findic.cl/api/ipsa -o ipsa.json; echo "findic code: $?"; head -c 600 ipsa.json; echo
-          python3 - <<'PY'
-          import json
-          try:
-              d=json.load(open('ipsa.json')); s=d.get('serie') or d
-              print('keys', list(d.keys())[:10] if isinstance(d,dict) else type(d))
-              print('n', len(s)); print('first', s[:3]); print('last', s[-3:] if isinstance(s,list) else '')
-              m={x['fecha'][:10]:x['valor'] for x in s}
-              for f in ['2026-02-09','2026-02-10','2026-02-12','2026-06-19','2026-11-04','2026-11-24','2026-11-26','2026-11-27','2025-12-30','2025-12-31']:
-                  print(f, m.get(f))
-          except Exception as e: print('err', e)
-          PY
-          curl -s -m 30 -A "Mozilla/5.0" "https://query1.finance.yahoo.com/v8/finance/chart/%5EIPSA?range=1mo&interval=1d" | head -c 300; echo
-          curl -s -m 30 -A "Mozilla/5.0" -o /dev/null -w "bcch %{http_code}\n" "https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?function=SearchSeries&frequency=DAILY"
+          for u in ipsa/2026 ipsa/2025 ipsa/09-02-2026 ipsa/2026-02-09; do curl -s -m 30 -A "Mozilla/5.0" https://findic.cl/api/$u -o o.json; echo "== $u"; python3 -c "
+          import json;d=json.load(open('o.json'));s=d.get('serie',[]);m={x['fecha'][:10]:x['valor'] for x in s};print(len(s), s[:1], s[-1:]);[print(f,m.get(f)) for f in ['2025-12-30','2026-01-02','2026-02-09','2026-02-10','2026-02-12','2026-06-19','2026-11-04']]" || head -c 200 o.json; done
