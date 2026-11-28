@@ -2169,7 +2169,7 @@ function renderDash(k) {
       '<div class="flip-hint">Toca dos veces para ver de dónde sale ↻</div></div>' +
       '<div class="w flip-b"><h3>¿De dónde sale esto? <small>desliza para leer más</small></h3><ul class="flip-l">' +
       '<li><b>Ventaja:</b> ' + pp(m.retTot) + ' − (' + pp(m.retI) + ') = ' + fmtDec(m.alfa, 2) + ' pp.</li>' +
-      '<li class="flip-ojo"><b>Ojo:</b> el MSCI en pesos cayó más que el IPSA. Al 24/11 el MSCI iba −5,3% en el año y el IPSA −1,4%. Contra el IPSA la ventaja es unos 5 puntos menor: hoy ronda <b>' + fmtDec(m.alfa - 5, 0) + ' pp</b>.' + (m.alfa - 5 > 0 ? ' Igual le ganas, pero por menos.' : '') + '</li>' +
+      '<li class="flip-ojo"><b>Ojo:</b> el MSCI en pesos cayó más que el IPSA. Al 24/11 el MSCI iba −5,3% en el año y el IPSA −1,4%. Contra el IPSA la ventaja sería unos 5 puntos menor (aproximado: medido desde el 09/02, y esa diferencia cambia según el período). Hoy rondaría <b>~' + fmtDec(m.alfa - 5, 0) + ' pp</b>.' + (m.alfa - 5 > 0 ? ' Igual le ganas, pero por menos.' : '') + '</li>' +
       '<li><b>Tu cartera (' + pp(m.retTot) + '):</b> precio de cierre de cada día de tus ' + S.posiciones.length + ' acciones actuales, cada una desde que la compraste y con las acciones que tienes hoy. Solo precio: sin dividendos, sin ventas cerradas y sin comisiones.</li>' +
       '<li><b>Mercado (' + pp(m.retI) + '):</b> fondo iShares MSCI Chile (ECH), que cotiza en dólares, pasado a pesos con el dólar de cada día. También solo precio, sin dividendos. Se usa porque Yahoo no entrega la historia del IPSA.</li>' +
       '<li><b>Desde ' + fFecha(m.fechas[0]) + ':</b> el día de tu primera compra que sigue en cartera.</li>' +
