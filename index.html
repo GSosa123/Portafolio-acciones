@@ -1201,6 +1201,25 @@ function opsCartera() {
   ops.sort(function (a, b) { return a.f < b.f ? -1 : a.f > b.f ? 1 : 0; });
   return ops;
 }
+/* Rentabilidad sobre lo invertido (Dietz modificado): ganancia en pesos (precio + dividendos + ventas, neta de
+   comisiones) dividida por el capital promedio invertido en el período. Es comparable con la cartola de Banchile. */
+function rentInvertido(a, z) {
+  var H = S.hist || {}, ops = opsCartera();
+  if (!(S.operaciones || []).length) return null;
+  function px(tk, f) {
+    var h = H[tk], v = 0, i;
+    if (h && h.t && h.t.length > 5) { v = h.c[0]; for (i = 0; i < h.t.length && h.t[i] <= f; i++) v = h.c[i]; return v; }
+    var pts = ops.filter(function (o) { return o.tk === tk && o.q && o.f <= f; });
+    return pts.length ? Math.abs(pts[pts.length - 1].m / pts[pts.length - 1].q) : 0;
+  }
+  function valor(f) { var q = {}, v = 0, t; ops.forEach(function (o) { if (o.f <= f) q[o.tk] = (q[o.tk] || 0) + o.q; }); for (t in q) if (q[t] > 0.5) v += q[t] * px(t, f); return v; }
+  var t0 = CALC.fecha(a), t1 = CALC.fecha(z), D = (t1 - t0) / 864e5, v0 = valor(a), v1 = valor(z), fl = 0, wf = 0, dv = 0;
+  if (!(D > 0)) return null;
+  ops.forEach(function (o) { if (o.f > a && o.f <= z) { fl -= o.m; wf -= o.m * ((t1 - CALC.fecha(o.f)) / 864e5) / D; } });
+  (S.dividendos || []).forEach(function (d) { if (String(d.fecha) > a && String(d.fecha) <= z) dv += num(d.monto); });
+  var gan = v1 - v0 - fl + dv, base = v0 + wf;
+  return base > 0 ? { r: gan / base * 100, gan: gan } : null;
+}
 function motorCartera(conDiv) {
   var H = S.hist || {}, ip = H['^IPSA'];
   if (!ip || !ip.t || ip.t.length < 20 || !(S.operaciones || []).length) return null;
@@ -1427,10 +1446,15 @@ function htmlMisInv(k) {
       [['mes', 'Este mes'], ['anio', 'Este año'], ['12m', 'Últimos 12 meses']].map(function (o) { return '<option value="' + o[0] + '"' + (per === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div>' +
       svgRent(xs, vs);
     var rM = retDesde(T, hoy.slice(0, 8) + '01').r, rA = retDesde(T, y + '-01-01').r, r12 = retDesde(T, (+y - 1) + hoy.slice(4)).r;
-    function cel(t, r) { return '<div><span>' + t + '</span><b class="num ' + (r >= 0 ? 'up' : 'dn') + '">' + (r >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(r)) + '</b></div>'; }
-    h += '<div class="mi-3">' + cel(MESES_L[mesN], rM) + cel(y, rA) + cel('Últimos 12 meses', r12) + '</div>';
+    /* Cifra principal: rentabilidad sobre lo invertido (como Banchile). El TWR queda como dato secundario. */
+    function finMes(f) { var d = CALC.fecha(f); d.setDate(0); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+    var fin = T.fechas[T.fechas.length - 1];
+    var iM = rentInvertido(finMes(hoy.slice(0, 8) + '01'), fin), iA = rentInvertido((+y - 1) + '-12-31', fin), i12 = rentInvertido((+y - 1) + fin.slice(4), fin);
+    function cel(t, r, tw) { return '<div><span>' + t + '</span><b class="num ' + (r >= 0 ? 'up' : 'dn') + '">' + (r >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(r)) + '</b><small style="display:block;font-size:10.5px;color:var(--mut2);margin-top:2px">TWR ' + pp(tw) + '</small></div>'; }
+    h += '<div class="mi-3">' + cel(MESES_L[mesN], iM ? iM.r : rM, rM) + cel(y, iA ? iA.r : rA, rA) + cel('Últimos 12 meses', i12 ? i12.r : r12, r12) + '</div>';
+    h += '<p class="expl" style="margin-top:6px;text-align:center">Rentabilidad sobre lo invertido, comparable con Banchile' + (iA ? ' · Ganado en ' + y + ': ' + clpS(iA.gan) : '') + '</p>';
   }
-  h += '<div style="margin-top:10px">' + htmlNota('Rentabilidad ponderada por tiempo', 'Cómo se calcula', '<p>Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale.</p><p>Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
+  h += '<div style="margin-top:10px">' + htmlNota('Rentabilidad ponderada por tiempo', 'Cómo se calcula', '<p>Cifra grande: rentabilidad sobre lo invertido (Dietz modificado). Es la ganancia en pesos (precio + dividendos + ventas, menos comisiones) dividida por la plata promedio que tuviste invertida en el período. Se compara con la cartola de Banchile.</p><p>Cifra chica (TWR): rentabilidad ponderada por tiempo. Le da el mismo peso a cada día, aunque hubiera poca plata invertida, como en enero de 2026, antes del crédito.</p><p>Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   return h;
 }
 /* ============================================================
