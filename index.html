@@ -251,6 +251,22 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .vv-p small{display:block;font-size:11.5px;font-weight:700;margin-top:2px}
 .vv-p b.fl-up{animation:vvFlU 1.8s ease-out}.vv-p b.fl-dn{animation:vvFlD 1.8s ease-out}
 @keyframes vvFlU{0%,35%{background:var(--up-bg)}100%{background:transparent}}@keyframes vvFlD{0%,35%{background:var(--dn-bg)}100%{background:transparent}}
+.ind{padding:16px 18px 10px}
+.ind-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ind-t{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.ind-t .l{font-size:11.5px;font-weight:700;color:var(--mut);letter-spacing:.02em}
+.ind-t .v{font-size:18px;font-weight:800;margin-top:3px;white-space:nowrap;border-radius:6px;padding:1px 4px;margin-left:-4px;margin-right:-4px}
+.ind-t .d{font-size:11.5px;font-weight:700;margin-top:2px}
+.ind-t .s{font-size:11px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ind-t .v.fl-up{animation:vvFlU 1.8s ease-out}.ind-t .v.fl-dn{animation:vvFlD 1.8s ease-out}
+.ind-mas{margin-top:8px}
+.ind-mas>summary{list-style:none;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--brand2);padding:8px 0 4px;display:flex;align-items:center;gap:6px}
+.ind-mas>summary::-webkit-details-marker{display:none}
+.ind-ch{font-style:normal;font-size:13px;display:inline-block;transition:transform .2s}
+.ind-mas[open] .ind-ch{transform:rotate(180deg)}
+.ind-r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.ind-r>span{color:var(--txt)}.ind-r>span small{color:var(--mut);font-size:11px;margin-left:4px}
+.ind-r b{font-weight:800;text-align:right}.ind-r b small{display:block;font-size:11px;font-weight:700}
 .vv-ft{display:flex;justify-content:flex-end;border-top:1px solid var(--line);margin-top:2px;padding-top:4px}
 .nota-txt{margin:12px 0 6px;font-size:14px;line-height:1.5;color:var(--txt);max-height:50vh;overflow:auto}.nota-txt p{margin:0 0 10px}
 .giro-pista{position:absolute;left:50%;bottom:6px;width:54px;height:54px;margin-left:-27px;border-radius:50%;z-index:400;pointer-events:none;
@@ -2621,6 +2637,7 @@ function renderDash(k) {
   h += htmlHero(sem, HC, VER);
   h += htmlOrbe(k);
   h += htmlVivo();
+  h += htmlInd();
   h += htmlMisInv(k);
   h += '<label class="w subir-bar"><span><b>¿Llegó tu cartola nueva?</b> Súbela y la cartera se actualiza al instante.</span><span class="btn">Subir PDF</span><input type="file" accept="application/pdf,.pdf" id="pdfIn2" style="display:none"></label>';
   // KPIs
@@ -4151,12 +4168,143 @@ document.addEventListener('visibilitychange', function () {
 });
 ['pointerdown', 'touchstart', 'wheel'].forEach(function (e) { document.addEventListener(e, function () { VIVO.toque = Date.now(); }, { passive: true }); });
 
+/* ============================================================
+   Dólar, UF y monedas.
+   - Oficial (Banco Central, vía mindicador.cl y contrastado con findic.cl): indicadores.json,
+     que genera un GitHub Action; si está viejo, se pide directo a mindicador.cl.
+   - Mercado (cambia durante el día): Yahoo Finance, cada 1 min con la app abierta.
+   ============================================================ */
+var IND_URL = 'https://raw.githubusercontent.com/GSosa123/Portafolio-acciones/main/indicadores.json';
+var IND_MER = [
+  { id: 'dolar', y: 'CLP=X', n: 'Dólar' }, { id: 'euro', y: 'EURCLP=X', n: 'Euro' },
+  { id: 'libra', y: 'GBPCLP=X', n: 'Libra esterlina', mas: 1 }, { id: 'real', y: 'BRLCLP=X', n: 'Real brasileño', mas: 1 },
+  { id: 'yuan', y: 'CNYCLP=X', n: 'Yuan chino', mas: 1 }, { id: 'yen', y: 'JPYCLP=X', n: 'Yen japonés', mas: 1 },
+  { id: 'cobre', y: 'HG=F', n: 'Cobre', u: 'US$/lb', usd: 1, mas: 1 }, { id: 'bitcoin', y: 'BTC-USD', n: 'Bitcoin', usd: 1, mas: 1 }
+];
+var IND = { of: {}, me: {}, ts: 0, chk: 0, chkMas: 0, enCurso: false, prev: {}, fallas: 0, act: '' };
+function indDivisasAbiertas() {
+  var d = new Date(), w = d.getUTCDay(), h = d.getUTCHours();
+  return !(w === 6 || (w === 0 && h < 22) || (w === 5 && h >= 22));
+}
+function yahooSimbolo(sym) {
+  var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) + '?range=1d&interval=5m&_=' + Math.floor(Date.now() / 60000);
+  var i = 0;
+  function intento() {
+    if (i >= PROXIES.length) return Promise.reject(new Error('proxies caídos'));
+    return getJSON(PROXIES[i++](url), 9000).then(function (d) {
+      var res = d.chart.result[0], m = res.meta;
+      if (!(m.regularMarketPrice > 0)) throw new Error('sin precio');
+      var q = (res.indicators && res.indicators.quote && res.indicators.quote[0]) || {}, cl = q.close || [], c = [], j;
+      for (j = 0; j < cl.length; j++) if (cl[j] > 0) c.push(cl[j]);
+      return { valor: m.regularMarketPrice, ant: m.chartPreviousClose || m.previousClose || 0, ts: (m.regularMarketTime || Date.now() / 1000), c: c, vivo: true };
+    }).catch(intento);
+  }
+  return intento();
+}
+function indCargar() {
+  getJSON(IND_URL + '?t=' + Date.now(), 8000).catch(function () { return null; }).then(function (j) {
+    if (j && j.oficial) IND.of = j.oficial;
+    if (j && j.mercado) for (var k in j.mercado) if (!IND.me[k] || !IND.me[k].vivo) IND.me[k] = j.mercado[k];
+    if (j && j.actualizado) IND.act = j.actualizado;
+    var uf = IND.of.uf, hoy = new Date(Date.now() - 4 * 3600000).toISOString().slice(0, 10);
+    if (uf && uf.fecha >= hoy) return;
+    /* Respaldo: directo al sitio de mindicador.cl (tiene el valor de hoy, sin el de ayer). */
+    return getJSON('https://mindicador.cl/api', 9000).then(function (d) {
+      ['dolar', 'euro', 'uf', 'utm', 'libra_cobre'].forEach(function (c) {
+        var x = d[c]; if (!x || !(x.valor > 0)) return;
+        var f = String(x.fecha).slice(0, 10), o = IND.of[c];
+        if (o && o.fecha >= f) return;
+        IND.of[c] = { valor: x.valor, fecha: f, ant: o ? o.valor : 0, fechaAnt: o ? o.fecha : '', fuente: 'Banco Central de Chile (vía mindicador.cl)' };
+      });
+    }).catch(function () {});
+  }).then(indPintar, indPintar);
+}
+function indTick(todo) {
+  if (IND.enCurso) return;
+  IND.enCurso = true;
+  var lista = IND_MER.filter(function (m) { return todo || !m.mas; }), prev = {};
+  for (var k in IND.me) prev[k] = IND.me[k].valor;
+  Promise.all(lista.map(function (m) { return yahooSimbolo(m.y).then(function (x) { return [m, x]; }, function () { return [m, null]; }); })).then(function (rs) {
+    var ok = 0;
+    rs.forEach(function (r) { if (!r[1]) return; ok++; IND.me[r[0].id] = r[1]; if (r[1].ts * 1000 > IND.ts) IND.ts = r[1].ts * 1000; });
+    IND.fallas = ok ? 0 : IND.fallas + 1;
+    IND.chk = Date.now(); if (todo) IND.chkMas = IND.chk;
+    IND.prev = prev;
+    indPintar();
+  }).then(function () { IND.enCurso = false; }, function () { IND.enCurso = false; });
+}
+function indPintar() { var el = document.getElementById('ind'); if (el) { var ab = el.querySelector('details[open]'); el.innerHTML = htmlIndIn(!!ab); } IND.prev = {}; }
+function indProgramar() {
+  clearTimeout(IND.timer);
+  if (document.visibilityState === 'hidden') return;
+  var ms = Math.min(60000 * Math.pow(2, IND.fallas), 300000);
+  IND.timer = setTimeout(function () { indTick(Date.now() - IND.chkMas > 290000); indProgramar(); }, ms);
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') { if (Date.now() - IND.chk > 55000) indTick(Date.now() - IND.chkMas > 290000); indProgramar(); }
+  else clearTimeout(IND.timer);
+});
+function indNum(v, d) {
+  var e = Math.abs(v), ent = Math.floor(e + (d ? 0 : 0.5)), s = miles(ent);
+  if (d) { var f = Math.round((e - ent) * Math.pow(10, d)); if (f >= Math.pow(10, d)) { f = 0; s = miles(ent + 1); } s += ',' + ('000000' + f).slice(-d); }
+  return (v < 0 ? '-' : '') + s;
+}
+function indVar(v, ant) {
+  if (!(v > 0) || !(ant > 0)) return '<span class="mut">—</span>';
+  var p = (v / ant - 1) * 100, c = p > 0.00005 ? 'up' : p < -0.00005 ? 'dn' : 'mut';
+  return '<span class="' + c + '">' + (c === 'up' ? '▲ +' : c === 'dn' ? '▼ −' : '') + fmtDec(Math.abs(p), Math.abs(p) < 0.1 ? 3 : 2) + '%</span>';
+}
+var MESES_C = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function indFechaC(f) { var p = String(f || '').split('-'); return p.length === 3 ? (+p[2]) + ' ' + MESES_C[+p[1] - 1] : ''; }
+function htmlIndIn(abierto) {
+  var O = IND.of, M = IND.me, h = '', vivo = indDivisasAbiertas() && M.dolar && M.dolar.vivo;
+  h += '<div class="vv-hd"><h3>Dólar y UF</h3><span class="vv-est' + (vivo ? ' on' : '') + '"><i></i>' + (vivo ? 'En vivo' : 'Mercado cerrado') + '</span></div>';
+  function tile(l, v, d, ant, sub, id) {
+    var cam = id && IND.prev[id] && M[id] && Math.abs(IND.prev[id] - M[id].valor) > 1e-6 ? (M[id].valor > IND.prev[id] ? ' fl-up' : ' fl-dn') : '';
+    return '<div class="ind-t"><div class="l">' + l + '</div><div class="v num' + cam + '">' + (v > 0 ? '$' + indNum(v, d) : '—') + '</div><div class="d num">' + indVar(v, ant) + '</div><div class="s">' + sub + '</div></div>';
+  }
+  function divisa(id, nombre, cod) {
+    var m = M[id], o = O[cod];
+    if (m && m.valor > 0) return tile(nombre, m.valor, 2, m.ant, o ? 'Oficial $' + indNum(o.valor, 2) : 'Mercado', id);
+    return tile(nombre, o ? o.valor : 0, 2, o ? o.ant : 0, o ? 'Oficial · ' + indFechaC(o.fecha) : 'sin datos');
+  }
+  h += '<div class="ind-g">';
+  h += divisa('dolar', 'Dólar', 'dolar');
+  h += divisa('euro', 'Euro', 'euro');
+  h += tile('UF', O.uf ? O.uf.valor : 0, 2, O.uf ? O.uf.ant : 0, O.uf ? 'Hoy ' + indFechaC(O.uf.fecha) + ' · vs ayer' : 'sin datos');
+  h += tile('UTM', O.utm ? O.utm.valor : 0, 0, O.utm ? O.utm.ant : 0, O.utm ? MESES_C[+O.utm.fecha.slice(5, 7) - 1] + ' · vs mes anterior' : 'sin datos');
+  h += '</div>';
+  var filas = '';
+  IND_MER.forEach(function (m) {
+    if (!m.mas) return;
+    var x = M[m.id];
+    if (m.id === 'cobre' && !(x && x.valor > 0) && O.libra_cobre) x = { valor: O.libra_cobre.valor, ant: O.libra_cobre.ant };
+    if (!x || !(x.valor > 0)) return;
+    var d = m.id === 'bitcoin' ? 0 : 2;
+    filas += '<div class="ind-r"><span>' + m.n + (m.u ? '<small>' + m.u + '</small>' : '') + '</span><b class="num">' + (m.usd ? 'US$' : '$') + indNum(x.valor, d) + '<small>' + indVar(x.valor, x.ant) + '</small></b></div>';
+  });
+  if (filas) h += '<details class="ind-mas"' + (abierto ? ' open' : '') + '><summary>Más monedas<i class="ind-ch">▾</i></summary>' + filas + '</details>';
+  var cuando = IND.ts ? horaStgo(IND.ts) : '', con = [];
+  ['dolar', 'euro', 'uf', 'utm'].forEach(function (c) {
+    var o = O[c]; if (!o || !o.contraste) return;
+    var x = o.contraste, nm = { dolar: 'Dólar', euro: 'Euro', uf: 'UF', utm: 'UTM' }[c];
+    con.push(nm + ': ' + (x.valor ? (Math.abs(x.difPct) < 0.01 ? 'coincide' : '⚠ difiere ' + fmtDec(Math.abs(x.difPct), 2) + '%') : 'sin respuesta'));
+  });
+  h += '<div class="vv-ft">' + htmlNota('Banco Central · Yahoo' + (cuando ? ' · ' + cuando : ''), 'Dólar y UF',
+    '<p><b>Dólar y euro grandes:</b> precio de mercado (Yahoo Finance), se actualiza cada 1 minuto con la app abierta, de lunes a viernes. Debajo, el <b>dólar observado</b> oficial del Banco Central, que es el que se usa en contratos.</p>' +
+    '<p><b>UF y UTM:</b> valores oficiales del Banco Central. La UF tiene un solo valor por día y la UTM uno por mes; no cambian durante el día.</p>' +
+    (con.length ? '<p><b>Contraste con findic.cl:</b> ' + con.join(' · ') + '.</p>' : '') +
+    '<p>' + (cuando ? 'Último precio de mercado: ' + cuando + '. ' : '') + (O.dolar ? 'Dólar observado del ' + fFecha(O.dolar.fecha) + '. ' : '') + (O.uf ? 'UF del ' + fFecha(O.uf.fecha) + '.' : '') + '</p>') + '</div>';
+  return h;
+}
+function htmlInd() { return '<div class="w ind" id="ind">' + htmlIndIn(false) + '</div>'; }
+
 var estatico = document.getElementById('estatico');
 if (estatico && estatico.parentNode) estatico.parentNode.removeChild(estatico);
 cargar();
 if (avanzarCredito() || S.migrado) guardar();
 render();
-if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias(); setTimeout(vivoTick, 1500); vivoProgramar(); }
+if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias(); setTimeout(vivoTick, 1500); vivoProgramar(); indCargar(); setTimeout(function () { indTick(true); }, 2500); indProgramar(); }
 </script>
 <script>
 /* Deslizar por los gráficos: funciona con dedo o mouse. Vibración suave al cambiar de mes (iPhone con iOS 18+). */
