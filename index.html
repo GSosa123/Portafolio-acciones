@@ -1219,8 +1219,8 @@ function htmlGanoCredito(k) {
     ? '<div class="banda ok">Sí. Tu ganancia cubre los intereses y te sobran ' + clp(-g.falta) + '.</div>'
     : '<div class="banda ko">No. Te faltan ' + clp(g.falta) + ' para cubrir los intereses: la cartera tendría que subir ' + fmtPct(k.valor ? g.falta / k.valor * 100 : 0, 1) + ' más.</div>';
   h += '<div class="minis" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">' +
-    '<div><div class="k">Rentabilidad anual</div><div class="v num ' + (k.anualizado >= cfg.costoCredito ? 'up' : 'dn') + '">' + fmtPct(k.anualizado, 1) + '</div><div class="n">lo que rinde hoy</div></div>' +
-    '<div><div class="k">Esperada por riesgo (CAPM)</div><div class="v num ' + (k.keCartera >= cfg.costoCredito ? 'up' : 'dn') + '">' + fmtPct(k.keCartera, 1) + '</div><div class="n">' + fmtPct(cfg.rf, 1) + ' + beta ' + fmtDec(k.beta, 2) + ' × ' + fmtPct(cfg.erp, 0) + '</div></div>' +
+    '<div><div class="k">Rentabilidad anual</div><div class="v num ' + (k.anualizado >= 0 ? 'up' : 'dn') + '">' + fmtPct(k.anualizado, 1) + '</div><div class="n">lo que rinde hoy</div></div>' +
+    '<div><div class="k">Esperada por riesgo (CAPM)</div><div class="v num ' + '' + '">' + fmtPct(k.keCartera, 1) + '</div><div class="n">' + fmtPct(cfg.rf, 1) + ' + beta ' + fmtDec(k.beta, 2) + ' × ' + fmtPct(cfg.erp, 0) + '</div></div>' +
     '<div><div class="k">Costo del crédito</div><div class="v num dn">' + fmtPct(cfg.costoCredito, 2) + '</div><div class="n">anual</div></div></div>';
   h += '<p class="expl">' + (k.keCartera < cfg.costoCredito
     ? 'Ojo: incluso en un año normal, el mercado le paga a acciones con este riesgo ' + fmtPct(k.keCartera, 1) + ', menos que el ' + fmtPct(cfg.costoCredito, 2) + ' del crédito. Para ganarle al préstamo necesitas que tus acciones lo hagan mucho mejor que el promedio.'
@@ -1789,7 +1789,7 @@ function renderDash(k) {
     h += '<div class="w s4"><h3>Riesgo</h3><div class="minis">' +
       '<div><div class="k">Sharpe</div><div class="v num ' + (m.sharpe >= 0.5 ? 'up' : m.sharpe >= 0 ? 'acc' : 'dn') + '">' + cuenta(m.sharpe, 'dec') + '</div><div class="n">mercado ' + fmtDec(m.sharpeI, 2) + '</div></div>' +
       '<div><div class="k">Volatilidad</div><div class="v num">' + cuenta(m.vol, 'pct1') + '</div><div class="n">anual · mercado ' + fmtPct(m.volI, 1) + '</div></div>' +
-      '<div><div class="k">Caída máxima</div><div class="v num ' + (m.mdd > -10 ? 'up' : m.mdd > -20 ? 'acc' : 'dn') + '">' + cuenta(m.mdd, 'pct1') + '</div><div class="n">hoy ' + fmtPct(m.ddHoy, 1) + ' del máximo</div></div>' +
+      '<div><div class="k">Caída máxima</div><div class="v num ' + (m.mdd < 0 ? 'dn' : 'up') + '">' + cuenta(m.mdd, 'pct1') + '</div><div class="n">hoy ' + fmtPct(m.ddHoy, 1) + ' del máximo</div></div>' +
       '<div><div class="k">Beta real</div><div class="v num">' + cuenta(m.beta, 'dec') + '</div><div class="n">vs mercado · supuesta ' + fmtDec(k.beta, 2) + '</div></div>' +
       '</div></div>';
   } else {
@@ -1890,7 +1890,7 @@ function renderPanel(k) {
     fmtPct(k.mwr) + ' / ' + fmtPct(k.mwrPropio),
     'Activos real Fisher ' + fmtPct(k.mwrReal) + ' · tu plata carga las ' + S.credito.pagadas + ' cuotas pagadas',
     'Activos: Σ flujo/(1+r)^t = 0 con los aportes por posición y el valor de mercado como terminal. Tu plata: aporte inicial ' + clp(k.costo - num(S.credito.montoOriginal)) + ' el ' + fFecha(S.credito.cursado) + ', menos ' + S.credito.pagadas + ' cuotas de ' + clp(k.cuota) + ', con patrimonio neto ' + clp(k.patrimonio) + ' como terminal. Real = (1+nominal)/(1+inflación) − 1, nunca resta simple.',
-    { small: true, cls: k.mwrPropio < 0 ? 'dn' : (k.mwr < cfg.capmUmbral ? 'dn' : 'up') });
+    { small: true, cls: k.mwrPropio < 0 ? 'dn' : 'up' });
 
   h += card('c4', '04', 'Fondo de contingencia',
     fmtDec(k.cuotasCub, 2) + ' de ' + S.credito.fondoCuotas + ' cuotas',
@@ -1901,7 +1901,7 @@ function renderPanel(k) {
   h += card('c5', '05', 'Spread DY−TPM vs. umbral', fmtPP(k.spread),
     'DY recurrente cartera ' + fmtPct(k.dyPond) + ' − TPM ' + fmtPct(cfg.tpm) + ' · umbral +' + fmtPct(cfg.spreadMin, 0),
     'El DY de cartera pondera por valor de mercado y solo cuenta dividendos marcados como recurrentes. Los pass-through se fuerzan a 0.',
-    { cls: k.spread > cfg.spreadMin ? 'up' : 'dn' });
+    { cls: k.spread >= 0 ? 'up' : 'dn' });
 
   var ev = eventos(true)[0];
   h += card('c6', '06', 'Próximo evento', fFecha(ev.fecha),
@@ -1960,7 +1960,7 @@ function renderPapeles(k) {
     var kep = CALC.ke(cfg.rf, p.beta, cfg.erp);
     var realP = CALC.fisher(CALC.anualizar(gpPct, Math.max(CALC.anios(p.desde, cfg.hoy), 0.0001)), cfg.inflacion);
     var sinCrit = !String(p.criterio || '').replace(/\s/g, '');
-    var cls = gpPct > cfg.costoCredito ? 'up' : 'dn';
+    var cls = gp >= 0 ? 'up' : 'dn';
     var ab = S.abiertas[p.ticker];
 
     h += '<div class="pos"><button type="button" class="pos-h" data-open="' + esc(p.ticker) + '">' +
@@ -1981,9 +1981,9 @@ function renderPapeles(k) {
     var cells = [
       ['Costo real', clp(costo), 'con comisión', ''],
       ['Valor hoy', clp(valor), 'mercado', ''],
-      ['G/P real', clpS(gp), 'nominal', gp >= 0 ? '' : 'dn'],
-      ['G/P real Fisher', fmtPct(realP), 'anualizado, sin inflación', realP > cfg.costoCredito ? 'up' : 'dn'],
-      ['Yield on cost', fmtPct(yoc), 'dividendo ÷ PPC real', yoc > cfg.tpm ? 'up' : 'dn'],
+      ['G/P real', clpS(gp), 'nominal', gp >= 0 ? 'up' : 'dn'],
+      ['G/P real Fisher', fmtPct(realP), 'anualizado, sin inflación', realP >= 0 ? 'up' : 'dn'],
+      ['Yield on cost', fmtPct(yoc), 'dividendo ÷ PPC real', yoc > 0 ? 'up' : ''],
       ['Ke CAPM', fmtPct(kep), 'Rf + β ' + fmtDec(p.beta, 2) + ' × ERP', ''],
       ['Payback dividendos', payback ? fmtDec(payback, 1) + ' años' : 'sin DY recurrente', 'al DY actual', payback && payback < 15 ? '' : 'dn'],
       ['Distancia al tope', fmtPP(cfg.topeConc - peso), 'tope ' + fmtPct(cfg.topeConc, 0), peso > cfg.topeConc ? 'dn' : ''],
@@ -2870,6 +2870,7 @@ document.addEventListener('click', function (ev) {
         /* El filtro no mueve la pantalla: el grupo de chips tocado queda en el mismo lugar. */
         var grupos = Array.prototype.slice.call(document.querySelectorAll('.emp-sel')), gi = grupos.indexOf(n.parentNode);
         var antes = gi >= 0 ? grupos[gi].getBoundingClientRect().top : null;
+        var wr = document.querySelector('.wrap'); if (wr) wr.style.minHeight = document.documentElement.scrollHeight + 'px';
         S.empSel = a; render();
         if (antes !== null) {
           var g2 = document.querySelectorAll('.emp-sel')[gi];
@@ -2877,7 +2878,7 @@ document.addEventListener('click', function (ev) {
         }
         return;
       }
-      if ((a = n.getAttribute('data-tab'))) { S.tab = a; S.animar = true; render(); window.scrollTo(0, 0); return; }
+      if ((a = n.getAttribute('data-tab'))) { var wr0 = document.querySelector('.wrap'); if (wr0) wr0.style.minHeight = ''; S.tab = a; S.animar = true; render(); window.scrollTo(0, 0); return; }
       if ((a = n.getAttribute('data-fx'))) { S.formulas[a] = !S.formulas[a]; render(); return; }
       if ((a = n.getAttribute('data-open'))) {
         S.abiertas[a] = !S.abiertas[a];
