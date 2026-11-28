@@ -2236,10 +2236,88 @@ function itemReco(it, mias) {
     (it.corredora ? '<span>· ' + esc(it.corredora) + '</span>' : '') + (esMia ? '<b style="color:var(--gold)">· tu acción</b>' : '') + '</div>' +
     '<div class="nt-t">' + esc(it.titulo) + '</div><div class="nt-m">' + fFecha(it.fecha) + ' · El Mercurio Inversiones</div></div></a>';
 }
+/* ---------- Recomendaciones con comentario: solo en este teléfono (contenido pagado, no se publica) ---------- */
+var MPRIV_KEY = 'merc_privado';
+var RECO_PAL = 'Comprar|Vender|Mantener|Neutral|Igual al mercado|Sobre el mercado|Bajo el mercado|Sobreponderar|Subponderar|Outperform|Underperform|Market Perform|Buy|Hold|Sell|Overweight|Underweight|Equalweight|Mantener posici[oó]n|En revisi[oó]n|Restringido';
+var MPRIV_ALIAS = { 'COLBÚN': 'COLBUN', 'COLBUN': 'COLBUN', 'ANDINA': 'ANDINA-B', 'BANCO DE CHILE': 'CHILE', 'LATAM': 'LTM', 'SCHWAGER': 'SCHWAGER', 'ENEL CHILE': 'ENELCHILE', 'ENTEL': 'ENTEL', 'SQM': 'SQM-B', 'CENCOSUD': 'CENCOSUD', 'FALABELLA': 'FALABELLA', 'COPEC': 'COPEC', 'CMPC': 'CMPC', 'VAPORES': 'VAPORES', 'CCU': 'CCU', 'ENGIE': 'ECL', 'PARQUE ARAUCO': 'PARAUCO', 'MALL PLAZA': 'MALLPLAZA', 'MALLPLAZA': 'MALLPLAZA', 'RIPLEY': 'RIPLEY', 'ITAÚ': 'ITAUCL', 'BCI': 'BCI', 'SANTANDER': 'BSANTANDER', 'AGUAS ANDINAS': 'AGUAS-A', 'QUIÑENCO': 'QUINENCO', 'SMU': 'SMU', 'CAP': 'CAP', 'ILC': 'ILC' };
+function mpriv() { try { return JSON.parse(localStorage.getItem(MPRIV_KEY) || '[]') || []; } catch (e) { return []; } }
+function mprivGuardar(l) { try { localStorage.setItem(MPRIV_KEY, JSON.stringify(l.slice(0, 300))); return true; } catch (e) { return false; } }
+function numCL(s) { return parseFloat(String(s).replace(/\./g, '').replace(',', '.')) || 0; }
+function hoyISO() { return new Date().toISOString().slice(0, 10); }
+/* Tabla "Acciones más recomendadas" copiada: NEMO  Corredora  Recomendación  Precio  Objetivo[ » Objetivo nuevo] */
+function mprivTabla(txt) {
+  var t = txt.replace(/\s+/g, ' '), out = [], m;
+  var re = new RegExp('\\b([A-Z][A-Z0-9\\-\\.]{1,14})\\s+([A-Za-z0-9ÁÉÍÓÚÑáéíóúñ&\\.\\- ]{2,40}?)\\s+(' + RECO_PAL + ')\\s+([\\d\\.]+,\\d+|[\\d\\.]+)\\s+([\\d\\.]+,\\d+|[\\d\\.]+)(?:\\s*»\\s*([\\d\\.]+,\\d+|[\\d\\.]+))?', 'g');
+  while ((m = re.exec(t))) {
+    var obj = numCL(m[6] || m[5]), pr = numCL(m[4]);
+    out.push({ tipo: 'tabla', ticker: m[1], corredora: m[2].trim(), reco: m[3], precio: pr, objetivo: obj,
+      objetivoAnt: m[6] ? numCL(m[5]) : 0, fecha: hoyISO() });
+  }
+  return out;
+}
+/* Abstracto pegado: primera línea = título; detecta acción y recomendación */
+function mprivAbstracto(txt) {
+  var lim = txt.trim().split(/\n+/), tit = lim[0].trim(), cuerpo = lim.slice(1).join('\n').trim(), up = txt.toUpperCase(), tk = '', k, best = 1e9;
+  for (k in MPRIV_ALIAS) { var p = up.indexOf(k); if (p >= 0 && p < best) { best = p; tk = MPRIV_ALIAS[k]; } }
+  var rm = txt.match(new RegExp('(?:a|en|recomendación(?: de)?)\\s+(' + RECO_PAL + ')\\b', 'i')) || txt.match(new RegExp('\\b(COMPRAR|VENDER|MANTENER|NEUTRAL)\\b'));
+  return { tipo: 'abstracto', ticker: tk, reco: rm ? rm[1].charAt(0).toUpperCase() + rm[1].slice(1).toLowerCase() : '', titulo: tit, texto: cuerpo, fecha: hoyISO() };
+}
+function mprivPegar() {
+  var el = document.getElementById('mprivTxt'), v = el ? el.value : '';
+  if (!v.trim()) return;
+  var l = mpriv(), filas = mprivTabla(v), msg;
+  if (filas.length >= 1 && !/\n.{200,}/.test(v)) {
+    filas.forEach(function (f) {
+      l = l.filter(function (x) { return !(x.tipo === 'tabla' && x.ticker === f.ticker && x.corredora === f.corredora); });
+      l.unshift(f);
+    });
+    msg = 'Guardé ' + filas.length + ' fila' + (filas.length > 1 ? 's' : '') + ' de la tabla.';
+  } else {
+    var a = mprivAbstracto(v);
+    l = l.filter(function (x) { return !(x.tipo === 'abstracto' && x.titulo === a.titulo); });
+    l.unshift(a);
+    msg = 'Guardé el comentario' + (a.ticker ? ' de ' + a.ticker : '') + '.';
+  }
+  NOT.mprivMsg = mprivGuardar(l) ? msg : 'No pude guardar en este teléfono.';
+  renderNoticias();
+}
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest ? ev.target.closest('[data-mpriv]') : null;
+  if (!b) return;
+  var a = b.getAttribute('data-mpriv');
+  if (a === 'pegar') mprivPegar();
+  else if (a.indexOf('del:') === 0) { var l = mpriv(); l.splice(+a.slice(4), 1); mprivGuardar(l); NOT.mprivMsg = 'Borrado.'; renderNoticias(); }
+});
+function claseReco(r) { r = String(r || ''); return /comprar|sobre|outperform|buy|overweight/i.test(r) ? 'up' : /vender|bajo|sub|underperform|sell|underweight/i.test(r) ? 'dn' : 'acc'; }
+function itemPriv(x, idx, mias) {
+  var esMia = !!mias[x.ticker], pot = x.precio && x.objetivo ? (x.objetivo / x.precio - 1) * 100 : null;
+  var cab = '<div class="nt-m" style="margin:0 0 4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">' +
+    (x.reco ? '<span class="chip ' + claseReco(x.reco) + '">' + esc(x.reco) + '</span>' : '') +
+    (x.ticker ? '<span>' + dotTk(x.ticker) + '<b>' + esc(x.ticker) + '</b></span>' : '') +
+    (x.corredora ? '<span>· ' + esc(x.corredora) + '</span>' : '') + (esMia ? '<b style="color:var(--gold)">· tu acción</b>' : '') + '</div>';
+  var cuerpo = x.tipo === 'tabla'
+    ? '<div class="nt-t num">Precio ' + precioTxt(x.precio) + ' → objetivo ' + precioTxt(x.objetivo) +
+      (pot != null ? ' · <span style="color:var(--' + (pot >= 0 ? 'up' : 'dn') + ')">' + (pot >= 0 ? '+' : '') + fmtDec(pot, 1) + '%</span>' : '') + '</div>' +
+      (x.objetivoAnt && x.objetivoAnt !== x.objetivo ? '<div class="nt-m">Objetivo anterior ' + precioTxt(x.objetivoAnt) + '</div>' : '')
+    : '<div class="nt-t">' + esc(x.titulo) + '</div>' + (x.texto ? '<details class="tech" style="margin-top:6px"><summary>Leer comentario ▾</summary><div style="font-size:13px;line-height:1.5;white-space:pre-wrap;margin-top:6px">' + esc(x.texto) + '</div></details>' : '');
+  return '<div class="nt' + (esMia ? ' cmf' : '') + '"><div style="flex:1;min-width:0">' + cab + cuerpo +
+    '<div class="nt-m">' + fFecha(x.fecha) + ' · guardado en este teléfono · <button type="button" data-mpriv="del:' + idx + '" style="color:var(--mut);text-decoration:underline;font-size:11px">borrar</button></div></div></div>';
+}
+function seccionPrivada(mias) {
+  var l = mpriv(), filtro = filtroTk(), vis = [];
+  l.forEach(function (x, i) { if (filtro === 'todas' || x.ticker === filtro) vis.push(itemPriv(x, i, mias)); });
+  return '<div class="lbl" style="margin-top:6px">Tabla y comentarios de corredoras (' + vis.length + ')</div>' +
+    '<div class="sec"><p class="i" style="margin:0 0 8px;font-size:12px">En El Mercurio abre <b>Acciones más recomendadas</b>, copia la tabla o el <b>Abstracto</b> de una fila y pégalo aquí. ' +
+    'Se guarda <b>solo en este teléfono</b> (es contenido de tu suscripción y la app es pública). Calculo el potencial al precio objetivo.</p>' +
+    '<textarea id="mprivTxt" rows="4" placeholder="Pega aquí la tabla o el abstracto"></textarea>' +
+    '<button type="button" class="btn" data-mpriv="pegar">Guardar</button>' +
+    (NOT.mprivMsg ? '<p class="i" style="margin:6px 0 0;font-size:12px">' + esc(NOT.mprivMsg) + '</p>' : '') + '</div>' +
+    vis.join('');
+}
 function seccionRecos(mias) {
   var d = new Date(); d.setDate(d.getDate() - 60);
   var corte = d.toISOString().slice(0, 10), lista = [], i;
-  for (i = 0; i < NOT.merc.length; i++) if (NOT.merc[i].recomendacion && NOT.merc[i].fecha >= corte) lista.push(NOT.merc[i]);
+  for (i = 0; i < NOT.merc.length; i++) if (NOT.merc[i].recomendacion && NOT.merc[i].fecha >= corte && (filtroTk() === 'todas' || (NOT.merc[i].tickers || []).indexOf(filtroTk()) >= 0)) lista.push(NOT.merc[i]);
   lista.sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : 0; });
   var h = '<div class="lbl" style="margin-top:6px">Recomendaciones de corredoras · últimos 2 meses (' + lista.length + ')</div>' +
     '<p class="i" style="margin:0 0 4px;font-size:12px">Según los titulares de El Mercurio Inversiones. Toca una para leer el análisis completo con tu suscripción. Borde dorado = acción de tu cartera.</p>';
@@ -2270,7 +2348,7 @@ function renderNoticias() {
     if (otras.length) h += '<details class="tech"' + (NOTF === 'prensa' ? ' open' : '') + '><summary>Otras noticias (' + otras.length + ') ▾</summary><div style="display:flex;flex-direction:column;gap:8px">' + otras.slice(0, 40).map(itemNoticia).join('') + '</div></details>';
   }
   if (NOTF === 'todo' || NOTF === 'merc') h += seccionMercurio(mias);
-  if (NOTF === 'reco') h += seccionRecos(mias);
+  if (NOTF === 'reco') h += seccionPrivada(mias) + seccionRecos(mias);
   document.getElementById('noticias').innerHTML = h;
 }
 
