@@ -1,0 +1,30 @@
+name: Sonda fuentes (temporal)
+on:
+  push:
+    branches: [claude/project-thread-xm9gmn]
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CMF y noticias
+        run: |
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+          for rut in 96505760 97004000 91144000 89862200 96766600; do
+            u="https://www.cmfchile.cl/institucional/mercados/entidad.php?mercado=V&rut=$rut&grupo=&tipoentidad=RVEMI&row=&vig=VI&control=svs&pestania=25"
+            echo "=== $rut"; curl -sL -m 40 -A "$UA" "$u" -o p_$rut.html -w "%{http_code} %{size_download}\n"
+            grep -o '<title>[^<]*' p_$rut.html | head -2
+            sed 's/<[^>]*>/ /g' p_$rut.html | tr -s ' \t\r' ' ' | grep -v '^ *$' | grep -n -i -m12 "2026\|razón social\|raz&oacute;n" | cut -c1-220
+            grep -o 'href="[^"]*\(aplic/serdoc\|ver_sgd\|documento\)[^"]*"' p_$rut.html | head -3
+          done
+          echo "=== hechos.php"; curl -sL -m 40 -A "$UA" "https://www.cmfchile.cl/institucional/hechos/hechos.php" -o h.html -w "%{http_code} %{size_download}\n"
+          sed 's/<[^>]*>/ /g' h.html | tr -s ' \t\r' ' ' | grep -v '^ *$' | head -60 | cut -c1-200
+          grep -o '<form[^>]*>' h.html; grep -o '<input[^>]*>\|<select[^>]*>' h.html | head -30
+          echo "=== gnews"; curl -sL -m 30 "https://news.google.com/rss/search?q=Colb%C3%BAn+dividendo&hl=es-419&gl=CL&ceid=CL:es-419" | grep -o '<title>[^<]*' | head -8
+          echo "=== ntfy"; curl -s -m 20 -o /dev/null -w "%{http_code}\n" https://ntfy.sh/v1/health
+      - name: OCR hecho Colbún
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y tesseract-ocr tesseract-ocr-spa poppler-utils >/dev/null
+          curl -sL -m 60 -A "Mozilla/5.0" -o c.pdf https://www.colbun.cl/docs/default-source/corporativo/inversionistas/hedivprov2026.pdf
+          ls -la c.pdf; pdfinfo c.pdf | head -12
+          pdftoppm -r 200 -png c.pdf pg
+          for f in pg*.png; do tesseract $f - -l spa 2>/dev/null; done
