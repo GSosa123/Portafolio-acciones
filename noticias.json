@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-28 00:02",
+ "actualizado": "2026-11-28 00:03",
  "usdclp": 1029.6,
  "items": [
   {
@@ -91,6 +91,66 @@
    "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxQZjMzNEF1bUxLcEFOSUlJNjFYcVEzZ1J5ejhnbUpWMEpUTzZnenNaS1VWZEE5Z05Va0s1RnNTa0VLUmd1UElUUy1vcFdTTTFHQ1lJSlhIUnB5MHlKVlMwRHNzYlBJVm55ZmNYVGRuNkZ4dERseGdQUTcxRW81bFJnSGFSZHBtN1NTejQ5Vk4wcm5fU3BHM3c5YVhzUWNQeHJvTHFIblhXNGpWZGdpQ3ZQc091MXprSTFZNnhSWldja0dzWkh6ZnV0Q212bVlycVg0bHFENlBnODFjOFNoekV5YXF0SG1BMVk?oc=5",
    "importante": true,
    "id": "AGUAS-A|Diario Estrategia|aguasandinasaumenta89suebitdaacumuladoaseptiembreydespliegainversionespor147milm"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "Diario Financiero",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "Holding del grupo Luksic eleva sus ganancias en 5% a septiembre impulsado por los resultados de Banco de Chile y Enex - Diario Financiero",
+   "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOOXdkdU9ibUlFaXQtQmlGRlRGRDNLVzVaa0hRRDZmb21ReTgyZDdFX2dQamowdzBzU2M0cnNYSEFYVGdlR09PeXdKSGo2QVdFekhHNU03eHdMLURnQW9VS0V2WXdlck1Oc2VlS1ByZERrdGUwbUt0di12TDBxOHZBVGNNR2JXOWtUd3E1dFF3T05WeWRNbWNWUGVHaVh6a3RqZzRrdnI2VDZnRzNYaVE?oc=5",
+   "importante": true,
+   "id": "CHILE|Diario Financiero|holdingdelgrupoluksicelevasusgananciasen5aseptiembreimpulsadoporlosresultadosdeb"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "LatinSpots.com",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "Entrevista a María Beatriz Parodi - Banco de Chile - El Ojo 2026 - LatinSpots.com",
+   "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNbG45b2NScnl6ZGFtbnhOOHVTRm1NTUxza2MyVnl3MERLZE5ENE9IZTk5YkNJaFNJaXF4RlhFQlpuVUNsbnNEd200UHJHeUwxajA1TTBwdWdqYkppdmQ4cEVSZ2VGYkF3OWN1ZWZ6S1lrMHV4eUN1eFotRlRlV1JZOXRDNF95TU5XR19mV09uUjQ?oc=5",
+   "importante": false,
+   "id": "CHILE|LatinSpots.com|entrevistaamaríabeatrizparodibancodechileelojo2026latinspotscom"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "DUPLOS.CL",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "Premio Mujeres que Inspiran 2026 reconoce a 30 líderes de 12 regiones: revisa quiénes fueron las ganadoras - DUPLOS.CL",
+   "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNdFRiOHhrZFM5SFBCZUNQaFN1VjRsRGVPNjBWcmZPVFMwUTJZN1ZLOWFxcXdaM3VZdWFBU0U1WFhNSXVzTGJyVjlhMi1PN1IxOGNmLWFmdEg4MHB6RWhTV0hQYmpIYjJLWlFaUncyMUJ4VlF2dmNndXJ2Rlh5SXpYdG9wcFRHZW12dFJ2aUs3Z0g1Szl3eW5SeUhTUU44Sks1b1RFS25rTFktSnhpclI4M0NQVks?oc=5",
+   "importante": false,
+   "id": "CHILE|DUPLOS.CL|premiomujeresqueinspiran2026reconocea30líderesde12regionesrevisaquiénesfueronlas"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "G5noticias",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "Rabat supera a Quiroz y Chomali juntos en cobertura de prensa - G5noticias",
+   "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQZnB3RW9nbVlZUG9yOEhnOGl3ZHV0em1CUURSbVJxUjBQU3FMOFpEYlQxYUlPZnRlSFRIS2h6c1BqbUJGcDdTdm52Z2ZUbXZpbHpMV254cm1XX2R3bkVuQndQNEs4bjAwTVZGZUpOeTkxZmlGdEdYNWEyNS1lby00aER4QlF4bk40MTVSdHJrZFAwdDIyVFpEM1dqaw?oc=5",
+   "importante": false,
+   "id": "CHILE|G5noticias|rabatsuperaaquirozychomalijuntosencoberturadeprensag5noticias"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "El Observatodo",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "¿Quieres viajar barato? LATAM lanza descuentos de hasta 63% en vuelos nacionales e internacionales - El Observatodo",
+   "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPRHhXWDVVUS1FZ3pMaTZpcDlqR3hpMjRMLW5ObTNTeXNRUTZkaGhWeTAyVWxjdHJ4UGdFaWw0M3NIdGUtZUJ3NUZZQ3dkZ19TTEMyX0NmeHBJNVA2emE0Smc1YnJ2VENlcTljYVh6aUt1U3ZGYUJ2bzNZb0hNRFR3OXhLLUpKeDlzWnhFLWtHb1o3bXUyVHZiNV94OV9kc2MtSXR2NVEzYnBubkQ1MkdUWENyTVhRS0ZCY0o1ZU9sbVNCcjdtei1Idg?oc=5",
+   "importante": false,
+   "id": "LTM|El Observatodo|quieresviajarbaratolatamlanzadescuentosdehasta63envuelosnacionaleseinternacional"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "TallyHo",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "LATAM anuncia nuevas rutas y llegará a 73 destinos en Brasil - TallyHo",
+   "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQd2NzaDVUTWtPY3d5RW9NYll6YVJOWVYyakdYWUs3ZnJzZVdPcXpBbUVUemxyQ0tKTUFBVHl0QkpkWEpvNlNEb2xTVVdiNVNxUkVickpjSGQ3SWNXWVZEcjdJWDV4SU1HT1pxc0ItTl9uZkZsdlFuTFM3UEY2bUx6NFVObWxYbEk?oc=5",
+   "importante": false,
+   "id": "LTM|TallyHo|latamanuncianuevasrutasyllegaráa73destinosenbrasiltallyho"
   },
   {
    "ticker": "ANDINA-B",
@@ -203,6 +263,140 @@
    "id": "AGUAS-A|Teletrece|derramemineroparalizóproduccióndeaguapotableteletrece"
   },
   {
+   "ticker": "CHILE",
+   "fuente": "Chócale",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Banco de Chile entrega premio 'Mujeres que Inspiran' 2026 a 30 líderes que están transformando el país a través de la educación - Chócale",
+   "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQamszV3g2SGE0Wm1PLTFBT3FDTmt6SzNMYUhrNGFPMkpzcV92Qkc0TFJHWGt0RmVqMFpvdnBWNDJqWERXOGl3TVhDODJMUkpVbFE3RW5UQ1ZpZGpPWWhCa0dmdXBPbE9zNTNjbTJobF9Zb0RzQnFVRkZBNjdxZFQ3ZXktLUlaVG1lNXY0?oc=5",
+   "importante": false,
+   "id": "CHILE|Chócale|bancodechileentregapremiomujeresqueinspiran2026a30líderesqueestántransformandoel"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "El Reportero de Iquique",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Banco de Chile entrega premio Mujeres que Inspiran 2026 a 30 líderes que están transformando el país a través de la educación - El Reportero de Iquique",
+   "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxOZkJlXzh4QkgyY0ZZcl9jYVRuQ08zVE90WGlQUGhPSmx0M01obi04bkNsdXBsb0VrSFZwaUlMbjlNOUhTR1hQYUNWVE5GLWhLeFBjai04M0x4aGdsUFJhZTV4SnpoQ0pzS1JUNUl4eTJTLVBlNzhFd2JPOVZwN0hfMnRZdUM3LUVBQWdqSUhsZkZkLVVOTThOa193d2N5UVozblNOdExYc0xUY2I5alRqUXlwQVJwVFNUTURxbVhjdFNFRVlVY09HLWZHWVJZSWNNaVNhUGYzQ3NseWN2alQ3R1F1RkstR21YbDhVcGwtTnI?oc=5",
+   "importante": false,
+   "id": "CHILE|El Reportero de Iquique|bancodechileentregapremiomujeresqueinspiran2026a30líderesqueestántransformandoel"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "Chilevisión",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Effie Awards Chile 2026 | Beatriz Parodi, gerente de Imagen y Publicidad Corporativa de Banco de Chile - Chilevisión",
+   "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNc3N5MWxDa3ZSQ1AwZGluLWFPYXp3cXdCZ0VNdkQ2SWIyM3VMcHFyYzNyZjY4U2pmRG9xaXhsRkRWUzhnbk1OTEdielpRa3lORklMcXdPWFhmS29LM3NqOEQ0djhxSDkyUFVua0JleUZpbEszS1pPN0dXaVc5ZElQV01sSF9handSVGkyODZfellaVWROZ2VDQlBRanZDUmMyakxjLTdCRFFwVzNlalNYZnFvNzRSckpMT0l3ZllQTVJ2aV8wTGl0NVJ4VmNJRzN3VzBnQlBENA?oc=5",
+   "importante": false,
+   "id": "CHILE|Chilevisión|effieawardschile2026beatrizparodigerentedeimagenypublicidadcorporativadebancodec"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "veredictum.cl",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Banco de Chile: Corte rechaza demanda por fraude - veredictum.cl",
+   "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTFB6akR4RWk4YzFwVnM0dzV6Y2hFNU41TXp2M3U4V3YzY0V5UHhYTXNIZkJmZnZ5TGZIUHg5eHRnRkJGaU9CalBsblpJR0xjNkEwR3Y0c0ZKeWpYdVFMMTJRZkRzZlU1WV9HSjJ3TUZja3RicmNJZ1l3NENn?oc=5",
+   "importante": false,
+   "id": "CHILE|veredictum.cl|bancodechilecorterechazademandaporfraudeveredictumcl"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Flightradar24",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "I'm flying to Santiago. Track my flight on Flightradar24 - Flightradar24",
+   "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE5LUkwzemhWcm9VOHlkSDMzMW9YZnpwX2cycmVHcDBXWjY2eGI5WjhkWmdGMEp0V2lQSGRKT2hMRFl1X2ZiMkZkWk1CWDVYcFhFaGtGeTRTTFptcVl6VUExZUxOTGNwZjl2Q1hFZTkxR1djelFLdTRZ?oc=5",
+   "importante": false,
+   "id": "LTM|Flightradar24|imflyingtosantiagotrackmyflightonflightradar24flightradar24"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Chócale",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Black Friday LATAM: Más de 80 destinos con hasta un 63% OFF - Chócale",
+   "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPdUlMMXdPRDJReGNvaGZ6TDljSnBaSG1HWWtVdng2U19jX1AtMjJ6ZVdub0l0X0hhbGYxaks1OXFpU25kM1NLVnpyX3BsQWkzeWtqUTZ3UXpORVJHb192M3ItQnVmMUtUOHdXTFZ2MTE0T3EwXzBobnhVTWFPdWo4bWhRVnZUeXNl?oc=5",
+   "importante": false,
+   "id": "LTM|Chócale|blackfridaylatammásde80destinosconhastaun63offchócale"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Aviación News",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "LATAM Airlines anuncia seis nuevas rutas en Brasil, con sus nuevos Embraer E195-E2 - Aviación News",
+   "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxORUhDRUxqUWxmVkNkTjdjX2d6ZVprdlFHZ2RjRm0zOGx4ZmVnaHdqT0J4U3JpZUU5U21MY0pnNTQ4MDgwRUFCd0UzT1RaY2p4UVROUHhvQ2hGX2kybzJNLVhaQklJZS1DZl92ZUdKakxOUTJ3V2ZuODU2OWhYZmd3Z1dDTWh3cklEVnhvNjNPaTYzLUg0T0YzM1hzNzhEb010b19NaGZTNm9kd0RDSG9zT3FQNkVOMHRnTEcw?oc=5",
+   "importante": false,
+   "id": "LTM|Aviación News|latamairlinesanunciaseisnuevasrutasenbrasilconsusnuevosembraere195e2aviaciónnews"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Aviacionline",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "LATAM Airlines rozó los 8 millones de pasajeros transportados en octubre - Aviacionline",
+   "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxNUlJZWnluTWxxcU9SdVN2aHJONkRJb2lBUmRvbzJPNGF1ZU5aaEZqdURteUdSYWVsR0JLMy0zZHRDNzZWY3lRdVdvLU8wVnhLSUdxRGdsN1gyaGxtX1Ztd05nU3cza291dDNVMDhYYS1ubHg4YjUwc3kzdno2TXpDTjZydGZLeVYwWXIydXhMYV9kTkJoQkJsdXFJdFQ4VG5XdnZYem1kM000RkhzUVV2NlY0R0hmVU5qUFJ3TV9XTGZmd2RDVTRtRW8waEdyYmtGSWgwalU4N0ZENXc2M25meFBrSHcta2k1MXRtLUVhTHpxeTRvaWk4WUh6dWlxeXZzT25GdVg1NlNfUGhmOGttV1h2UW8?oc=5",
+   "importante": false,
+   "id": "LTM|Aviacionline|latamairlinesrozólos8millonesdepasajerostransportadosenoctubreaviacionline"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Aviacionline",
+   "tipo": "Noticia",
+   "fecha": "2026-11-26",
+   "titulo": "Conociendo el interior de los Embraer de LATAM Airlines - Aviacionline",
+   "url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxQTnhzWGx4U2VGNnNvSU40TVl4RUxUSjFTZjQ3SVVEQlBXWW5WZDdodEJ0anJyNEJrZkdmZlhSMjBraDlnb2pvYmJDYVFldzhjbjBBUm1IRDB1djhoVlB6N0pieWo3OHloTzlrN25lQnZEN1M0dmVJQVVpTjRoWHk4ZVRUaE0zalBTbXFkeVZHb2ZqTkN2SlppWjdXdHdNZHdrX1lncU9TQTFITXNkdkZ6YUwwbnN3Wmo4VmphNVJLVk5xbFN6ZkJoeHdFNFBYdnVaNGp2T0RCZVBLWWdWcTZkQkFqbjhua3lERTg2bFhJbVNYbTYxNmJMYVROT3FLaTQ?oc=5",
+   "importante": false,
+   "id": "LTM|Aviacionline|conociendoelinteriordelosembraerdelatamairlinesaviacionline"
+  },
+  {
+   "ticker": "ANDINA-B",
+   "fuente": "CMF",
+   "tipo": "Hecho esencial",
+   "fecha": "2026-11-25",
+   "titulo": "Reparto de utilidades (pago de dividendos)",
+   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c1153b5fdaa4840ca1816e1bf4411583VFdwQmVVNXFSWGhOUkdONlQxUnJlRTlCUFQwPQ==&secuencia=-1&t=1795834991",
+   "importante": true,
+   "id": "ANDINA-B|CMF|repartodeutilidadespagodedividendos",
+   "dividendo": {
+    "moneda": "CLP",
+    "por_accion": 56.1,
+    "clase": "provisorio",
+    "pago": "2026-12-17",
+    "registro": "2026-12-10"
+   }
+  },
+  {
+   "ticker": "COLBUN",
+   "fuente": "CMF",
+   "tipo": "Hecho esencial",
+   "fecha": "2026-11-25",
+   "titulo": "Reparto de utilidades (pago de dividendos)",
+   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=0f3a5afb458bd362cf1282c1f44410b8VFdwQmVVNXFSWGhOUkdNd1RVUmpORTEzUFQwPQ==&secuencia=-1&t=1795835000",
+   "importante": true,
+   "id": "COLBUN|CMF|repartodeutilidadespagodedividendos",
+   "dividendo": {
+    "moneda": "USD",
+    "por_accion": 0.00781,
+    "clase": "provisorio",
+    "pago": "2026-12-11",
+    "registro": "2026-12-04"
+   }
+  },
+  {
+   "ticker": "AGUAS-A",
+   "fuente": "CMF",
+   "tipo": "Hecho esencial",
+   "fecha": "2026-11-25",
+   "titulo": "Reparto de utilidades (pago de dividendos)",
+   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=b4c9f25b819aada3fe4d4da796dfb94cVFdwQmVVNXFSWGhOUkdNd1RWUkJNazlSUFQwPQ==&secuencia=-1&t=1795835027",
+   "importante": true,
+   "id": "AGUAS-A|CMF|repartodeutilidadespagodedividendos"
+  },
+  {
    "ticker": "COLBUN",
    "fuente": "Diario Talca",
    "tipo": "Noticia",
@@ -293,6 +487,46 @@
    "id": "AGUAS-A|En Cancha|aguasandinasconfirmacortedeaguadehasta12horasensantiagorevisalaszonasafectadasen"
   },
   {
+   "ticker": "CHILE",
+   "fuente": "Universidad de Chile",
+   "tipo": "Noticia",
+   "fecha": "2026-11-25",
+   "titulo": "Mujeres que inspiran 2026: Decano Landerretche participó en iniciativa del Banco de Chile - Universidad de Chile",
+   "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQc1pXNUQzQWJEVVM1a0h3Y3ZFeVl2d3FQLTB5cmFLVjJacVgxZ3NyVFBRWlhDS2dJdGdTYmVHbHQ5amdjNFM1Rm9GOWJ3TEZ5QnpvbnZxZFV3ZExQNll3WDVFX2h5dWlPTTM3emlwVzhQVV83Z09zUUdoQlNNcm12U1cxLXBwa2ZpZmJEcVVGZXF6akRibHRUUUY5cnNDdVAtSkZpQmE4QTFyYmRtUC1YYQ?oc=5",
+   "importante": false,
+   "id": "CHILE|Universidad de Chile|mujeresqueinspiran2026decanolanderretcheparticipóeniniciativadelbancodechileuniv"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "Diario Sustentable",
+   "tipo": "Noticia",
+   "fecha": "2026-11-25",
+   "titulo": "30 ganadoras entre más de 2 mil postulantes: Banco de Chile entrega el premio Mujeres que Inspiran 2026 - Diario Sustentable",
+   "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQMUQ2TXNPaGswT0NlRDEwQ2dQY3gxNkpkbG8wUGxSQW9zdDltNzJtZEMzRlFUZkx6WjVPS2NnWjNpNnhtc2ktZ2VZWVBQWHRaMkFQam9WNFRqZmJWRnJsNnVQR0hGSzc0dTk0RWFtVWlhVy1KTEUwQXBuc3RHaFI3VTFaVVUzTDl3ZTl3d1dBV0xfTUZmTWdCdVd1cTVJS0lVWHBMbGJ3bW9HYlBreE1wNlhzdWRRXzNaNGZQeUpLSDRmYVhvdmMtaTBtSkVSN0oycDZtUTREYkM1dkw2Mnc?oc=5",
+   "importante": false,
+   "id": "CHILE|Diario Sustentable|30ganadorasentremásde2milpostulantesbancodechileentregaelpremiomujeresqueinspira"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "SoyChile.cl",
+   "tipo": "Noticia",
+   "fecha": "2026-11-25",
+   "titulo": "Banco de Chile premia el liderazgo de 30 mujeres que transforman sus comunidades - SoyChile.cl",
+   "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPQ25EX1M4U25nMFJHQmwyZVBmcGhPQ1BQMTBDanZpZHhuT0NkckNMOVNaUmVOQjNiV1RhWVl6bDlkQlQ0VUp5bHNtNi1pQ0xPbXp2YXY0ZW8wLUJSNDBCVGo5UXZfcVYxUm5IQnpORG1mTXQydk9qd0ZLNUEyelF6akc2QWpRWngxM3phOUtzeUNZUXdYRDlVQThRMV81c1BFOUNtQVd2bjhwc2t4QlM4?oc=5",
+   "importante": false,
+   "id": "CHILE|SoyChile.cl|bancodechilepremiaelliderazgode30mujeresquetransformansuscomunidadessoychilecl"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Aviacionline",
+   "tipo": "Noticia",
+   "fecha": "2026-11-25",
+   "titulo": "LATAM Airlines presenta la tripulación de su histórico primer vuelo con un Embraer - Aviacionline",
+   "url": "https://news.google.com/rss/articles/CBMiowJBVV95cUxQZ2tjSG9Ld0s3eW5mTmcwNjFuTEFUSW0xdllNTmljZl9ucEhYZEFBRjAzV2FQcUt1akNjdExUcjZkVUZyNnpidmk3ZE1yTG1CenM1ZHJMMkp1MHJKN3NJeS03UXE5bGt5eHZjNThDOGNBRjQ3QWlNNTFBa2xqWFkwczBldTNzbUV5b2tWWG0xY1M1VzBib2M2d0NsRTZYT1pscEM1ZC1qUXRwOVk1T19yZElqSDUtbWdGQ3I1b1ZNU3JQaW9OdEpNMjZQTlNpOU9HWXpBN1gwQ2o4UXh4S1RoLUMtWU9KMjRLLTlLNVNHWUZNLTNyS1d2cWVxRFZ1OWk5eVo2Y25IMVIxYk9OVjZqNUw1UWRTU29EX084MWZHRFZqR2c?oc=5",
+   "importante": false,
+   "id": "LTM|Aviacionline|latamairlinespresentalatripulacióndesuhistóricoprimervueloconunembraeraviacionli"
+  },
+  {
    "ticker": "ANDINA-B",
    "fuente": "Godoy Cruz - Municipalidad",
    "tipo": "Noticia",
@@ -371,6 +605,26 @@
    "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxOYVFEVjQ2aTZoQnVJS01KQjI2R250WE5Jd2I5MUE4YzN6aUhsZ01XdjE3TTgxLWkzODJrbW1VR2ZkLTRCb3A2QnpoT2dRMDVtNFQwVUI2Yk1PQ2x2LS0xRWZTeGVzUTlvOVJqWDRRRmNFXzduVFVUWVl5ZmVja1hpMXVyemM4RHVqSl9TamRTNHJHZ2RVWHloNTNlUS1HY3lvMThIVDB3M1hucGZOZzBhVllib0dYNE5EMlZmN0ZibGtMdWZNZllKRU8weGNZbE5xbGhzWlRVOVQ0eUhRME82MG5DWjBlNTNYRjVhMdIB8gFBVV95cUxQbW5fbFFYNTZsQThTbUd0bm4wVWk1bWc1bFgtVVNDY09EWXUtMVB0LWU0dk9LT2lPYUdJdVRtNEZ0d1lIZVVUUEVrYzdGZlkwRDlMM2cwc0FCOGg3QUsxY0VxSUd2QXB0cHdRanFvWHNJVFFwZ1c2YzVsR0pYZTEwLUYyZ3lQT2ZUY296ZHZfX0EtOWl5MUZaQ1RVdkN4WGFwWjhqUGxQcEdLN0o0dU5wakFPaHp5c21JaHBITi1jQ0otZ1VNMVJYbGpzbjlYUTFISURudnEyYjNKVlJkUW0xZWFpMDBHWk1fWmpKX2E4TjI4UQ?oc=5",
    "importante": false,
    "id": "AGUAS-A|Rock&Pop|informancortesdeaguadeemergenciaporhasta15horasencomunasdelaregiónmetropolitanah"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "LATAM Airlines",
+   "tipo": "Noticia",
+   "fecha": "2026-11-24",
+   "titulo": "LATAM Airlines Colombia anuncia descuentos de hasta el 63% en vuelos nacionales e internacionales por Black Friday - LATAM Airlines",
+   "url": "https://news.google.com/rss/articles/CBMimgJBVV95cUxNSmZvcktIZk41SFB3NjFOS0luMG56clhvT2RqQkpRT3g2dTh4dGlmaXFfd2VHYThJQWFDTGVpUktSN3NqQXBxOVZabUlHakpHRE9kT3NaZlVmTlZwcUEydVc3eEZCYi0xd3AxTEhpUXVrN2NpR2UwN053WFgyOXB6YnNkSUpNQ0E1OEx3ZFI1QmlyWm1BSU93b1FZY2pqVnF1aXZWNG8yenE1dmFBSFR5VGlESHRGRnlSbndmYTFVMGpwOHhDdHZ2eTlYYWJXVTFnRW9GQ2ZZZldNNkVmWjAyQmNDdWlMRFBnTzJjX3FzYkVwMnBRZmhFRjlubzZielVoSUxHZmtrVnZsUmROUlFkWjFIckt2VFBDbHc?oc=5",
+   "importante": false,
+   "id": "LTM|LATAM Airlines|latamairlinescolombiaanunciadescuentosdehastael63envuelosnacionaleseinternaciona"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Flightradar24",
+   "tipo": "Noticia",
+   "fecha": "2026-11-24",
+   "titulo": "I'm flying to Iquique. Track my flight on Flightradar24 - Flightradar24",
+   "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBDYmIwUEdmN191VXpZODJwam9pbEhybEpqcExTZjAwNm5VSGY5ZVgzZHcwc3VpTWVXalZfUXFmSWdnM2lvMEZRYzQ4eExfRE1jc1BWTHJPYTNDaVRtdnFZQWVBdWN0Z1VIdFNlenBKSF80LWM2YXhSeg?oc=5",
+   "importante": false,
+   "id": "LTM|Flightradar24|imflyingtoiquiquetrackmyflightonflightradar24flightradar24"
   },
   {
    "ticker": "COLBUN",
@@ -453,6 +707,26 @@
    "id": "AGUAS-A|La Tercera|traslimpiarelmapochoelproyectoquepreparaaguasandinasparareutilizarelagualatercer"
   },
   {
+   "ticker": "CHILE",
+   "fuente": "Ministerio de Economía, Fomento y Turismo",
+   "tipo": "Noticia",
+   "fecha": "2026-11-23",
+   "titulo": "Garantías Corfo alcanzan cifras récord y movilizan más de $1,3 billones en financiamiento para empresas al cierre de octubre - Ministerio de Economía, Fomento y Turismo",
+   "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxQLXdEY1paOXBLOTJOT2hVYkxncXF2M0p6anpBSXlVNkcxOGJ1ZE5qamctYklQSFc5S2kwdVdiWnpDMEREN0wxLThtMFZaV09KbUFRWjF3YWpuV3JHaEN0WHo3aDFZNDZOWFJLel83anQ3RzJSYjF2WkRyN2RUdU1mRWlmWGFpQlNLVXFBdEN6NUo0bWtxaEdyUmlHRmdObHZLNll6dEoxcFJXSHBxV1cyZjJMNTVIY2hiWlRwbFFjVU1aSEozZUVXTzdYVktWcmJ2X0ZyYlUwOEVlNExxeE1jMTkyVnI2WDRXOHctb18tWW9lQ0VZNUFzYg?oc=5",
+   "importante": false,
+   "id": "CHILE|Ministerio de Economía, Fomento y Turismo|garantíascorfoalcanzancifrasrécordymovilizanmásde13billonesenfinanciamientoparae"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "Aviacionline",
+   "tipo": "Noticia",
+   "fecha": "2026-11-23",
+   "titulo": "El primer vuelo comercial de LATAM Airlines con un avión Embraer unirá São Paulo y Vitória - Aviacionline",
+   "url": "https://news.google.com/rss/articles/CBMirgJBVV95cUxPVE5KY09FRHJMMldudU9mNndPUkZMU2JCc1NtajNOMGhvNE5heGRQQnJjRkZjcmIwWmJvWUdORlR1dmtZSnhpd2JFSFFOWlBUSzdPeDF6cm1UX2l5UTZuQ1JfTXVpQ29QS1ZGVE02TEJWVGMwNUl3dlkxb3hVeG1laGt4ZUJZZ2dlVUVfYWxBNjNfU0tFdG85THMxSllZVm83R1NyZWhoRDdJTTJmMUNYUHdVV1U1c1lJaGcwcjhqbjVUNDlzRDZJSk5yMnI4SnBMbjA4aGdqdE5FVnJTaGJkeGZZYWxON0lNZ2J0N0hWcnhpcTBZYVY4WS1mUzZxcXpjYmQ3ZS1WWEd3anZJTmJhbEZfQ05NblRPVXlxOHVqZXB3el90Z01Sdk9oYWFyQQ?oc=5",
+   "importante": false,
+   "id": "LTM|Aviacionline|elprimervuelocomercialdelatamairlinesconunaviónembraerunirásãopauloyvitóriaaviac"
+  },
+  {
    "ticker": "COLBUN",
    "fuente": "RadioGennesis",
    "tipo": "Noticia",
@@ -481,15 +755,27 @@
    "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPLVZNejZDUnJoWkViT0xoU3ZtdlJkNlMtUWJKNHp1V2lGbWRJeE1xLU1BbVBBYXBQVjVyWG5iTnozUlFfWUVBd1Y1ekdZZjJUd0lNcW9oa3FrUi0yYzdmOGs1OTZFeVFrbHRsY0JLVXc4Yl9VU3pfeUFMQ2lyeXE1SWwzLTdVYS0teUVUNFRrMzh2enNEMWRqSzVPOHVIMWx4dmlPbjZGWEJkMzEyU3o5N2lQU3J4c2lyc1Z0LWpmR0RfYmptZlZuVmJJbWJPVWhTbHBDNXVMVjNjVnozMHlRVFhSWXNCUWtPZDBwZWJR0gHzAUFVX3lxTFB0T3hBVHpENFhqeWhZelYzNFRuREpnM0lHSzdiaG55RTdoeDVFRmNSdV9ua1R3MlJTeDM5M3FYSnQ2WURUTlBERzJVUlc2YUU4MHh4X3BMRk56ckxNUVVud0FlZ2x4Mzg4YzZUSWVSalpxTWZMMzJ4U3Q2V2JlZkFjVTdIdEgxTkRGTDV4cElrNWl0VDlaRmthWHpSTFR0aEhETUFuQy1SWWpnbTgtMUF0Z1h2RHM0VUQ1MkVMbkxCQjNiNEFxUlk1RmVRZjdibnltSFJORWhudkt5NkltcExCbWduU2E4WWctRDAwLVF6aWloYw?oc=5",
    "importante": false,
    "id": "AGUAS-A|Rock&Pop|aguasandinasinformacortesdeaguadeemergenciaporhasta6horasenestacomunadesantiagoh"
+  },
+  {
+   "ticker": "LTM",
+   "fuente": "CMF",
+   "tipo": "Hecho esencial",
+   "fecha": "2026-11-18",
+   "titulo": "SuscripciÃ³n o renegociaciÃ³n de crÃ©ditos",
+   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c96cb869140fbbca5d25c6b0c6730116VFdwQmVVNXFSWGhOUkdONVQxUlpORTFSUFQwPQ==&secuencia=-1&t=1795835011",
+   "importante": true,
+   "id": "LTM|CMF|suscripciã³norenegociaciã³ndecrãditos"
+  },
+  {
+   "ticker": "AGUAS-A",
+   "fuente": "CMF",
+   "tipo": "Hecho esencial",
+   "fecha": "2026-11-04",
+   "titulo": "AGUAS ANDINAS S.A.",
+   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=7e9a82bc644922c1d8b9b48f44c9605bVFdwQmVVNXFSWGhOUkdOM1RrUmpOVTFSUFQwPQ==&secuencia=-1&t=1795835027",
+   "importante": true,
+   "id": "AGUAS-A|CMF|aguasandinassa"
   }
  ],
- "errores": [
-  "CHILE hechos_cmf: HTTP Error 403: Forbidden",
-  "CHILE noticias_google: HTTP Error 429: Too Many Requests",
-  "ANDINA-B hechos_cmf: HTTP Error 403: Forbidden",
-  "COLBUN hechos_cmf: HTTP Error 403: Forbidden",
-  "LTM hechos_cmf: HTTP Error 403: Forbidden",
-  "SCHWAGER hechos_cmf: HTTP Error 403: Forbidden",
-  "AGUAS-A hechos_cmf: HTTP Error 403: Forbidden"
- ]
+ "errores": []
 }
