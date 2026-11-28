@@ -310,6 +310,16 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 :root[data-tema="claro"] #barra{background:rgba(255,252,245,.92)}
 :root[data-tema="claro"] #barra button.on{color:var(--brand)}
 @media(min-width:900px){#barra{left:50%;right:auto;transform:translateX(-50%);width:520px;bottom:14px;border:1px solid var(--line);border-radius:22px;padding:6px}}
+
+.emp{border-left:6px solid var(--tc)!important;margin-top:14px;padding-top:0!important;overflow:hidden}
+.emp-hd{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 -16px 4px -16px;padding:14px 16px;background:color-mix(in srgb,var(--tc) 20%,transparent);border-bottom:1px solid color-mix(in srgb,var(--tc) 45%,transparent)}
+.emp-hd b{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.emp-hd small{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--mut)}
+.emp-tk{padding:3px 9px;border-radius:8px;background:var(--tc);color:#0b0b0b;font-size:11px;font-weight:900;letter-spacing:.04em}
+.emp-sel{display:flex;flex-wrap:wrap;gap:6px}
+.emp-sel button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);font-size:12px;font-weight:800;color:var(--mut)}
+.emp-sel button i{width:9px;height:9px;border-radius:3px;background:var(--tc)}
+.emp-sel button.on{color:var(--tx);border-color:var(--tc,var(--gold));background:color-mix(in srgb,var(--tc,#d6a94a) 22%,transparent)}
 </style>
 <script>
 /* Si hay una versión nueva publicada, la app se recarga sola (evita la caché del iPhone). */
@@ -1585,14 +1595,20 @@ function htmlEeff(tk) {
 function renderEmpresas(k) {
   var h = '', i, NOM = { ok: 'bien', md: 'atención', ko: 'mal', nd: 'sin dato' };
   h += '<div class="dash"><div class="w"><h3>Salud de cada empresa <small>últimos datos públicos</small></h3><p class="expl" style="margin-top:6px">Ratios del último reporte trimestral de cada empresa, cada uno con su propio semáforo y la regla usada. Verde bien, amarillo atención, rojo mal, gris sin dato público.</p></div>';
+  var sel = S.empSel || 'todas';
+  if (sel !== 'todas' && !S.posiciones.some(function (q) { return q.ticker === sel; })) sel = 'todas';
+  h += '<div class="emp-sel"><button type="button" data-emp="todas" class="' + (sel === 'todas' ? 'on' : '') + '">Todas</button>' +
+    S.posiciones.map(function (q) { return '<button type="button" data-emp="' + esc(q.ticker) + '" class="' + (sel === q.ticker ? 'on' : '') + '" style="--tc:' + colorTk(q.ticker) + '"><i></i>' + esc(q.ticker) + '</button>'; }).join('') + '</div>';
   for (i = 0; i < S.posiciones.length; i++) {
     var p = S.posiciones[i], f = FUND[p.ticker];
-    if (!f) { h += '<div class="w s6 emp"><h3>' + esc(p.ticker) + '</h3><p class="expl">Sin ficha pública cargada.</p>' + htmlEeff(p.ticker) + '</div>'; continue; }
+    if (sel !== 'todas' && p.ticker !== sel) continue;
+    var tc = colorTk(p.ticker);
+    if (!f) { h += '<div class="w s6 emp" style="--tc:' + tc + '"><div class="emp-hd"><b>' + esc(p.ticker) + '</b></div><p class="expl">Sin ficha pública cargada.</p>' + htmlEeff(p.ticker) + '</div>'; continue; }
     var c = { ok: 0, md: 0, ko: 0, nd: 0 };
     f.ratios.forEach(function (r) { c[r.s]++; });
     var est = c.ko ? 'ko' : c.md ? 'md' : 'ok';
     var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
-    h += '<div class="w s6 emp"><h3>' + esc(p.nombre || p.ticker) + ' <small>' + esc(p.ticker) + ' · pesa ' + fmtPct(w, 1) + '</small></h3>' +
+    h += '<div class="w s6 emp" id="emp-' + esc(p.ticker) + '" style="--tc:' + tc + '"><div class="emp-hd"><span class="emp-tk">' + esc(p.ticker) + '</span><b>' + esc(p.nombre || p.ticker) + '</b><small>pesa ' + fmtPct(w, 1) + '</small></div>' +
       '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
       '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
     f.ratios.forEach(function (r) {
@@ -2672,6 +2688,7 @@ document.addEventListener('click', function (ev) {
   var n = ev.target, a;
   while (n && n !== document) {
     if (n.getAttribute) {
+      if ((a = n.getAttribute('data-emp'))) { S.empSel = a; render(); window.scrollTo(0, 0); return; }
       if ((a = n.getAttribute('data-tab'))) { S.tab = a; S.animar = true; render(); window.scrollTo(0, 0); return; }
       if ((a = n.getAttribute('data-fx'))) { S.formulas[a] = !S.formulas[a]; render(); return; }
       if ((a = n.getAttribute('data-open'))) {
