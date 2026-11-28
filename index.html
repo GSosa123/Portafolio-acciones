@@ -2188,6 +2188,33 @@ function itemNoticia(it) {
       esc(String(dv.por_accion).replace('.', ',')) + ' por acción · fecha límite ' + fFecha(dv.registro) + ' · pago ' + fFecha(dv.pago) + '</div>' : '') +
     '<div class="nt-m">' + fFecha(it.fecha) + ' · ' + esc(it.fuente === 'CMF' ? 'Hecho esencial CMF' : it.fuente) + '</div></div></a>';
 }
+var NOTF = 'todo';
+var NOTF_OPC = [['todo', 'Todo'], ['cmf', 'Hechos CMF'], ['prensa', 'Prensa'], ['merc', 'Mercurio'], ['reco', 'Recomendaciones']];
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest ? ev.target.closest('[data-notf]') : null;
+  if (!b) return;
+  NOTF = b.getAttribute('data-notf');
+  renderNoticias();
+});
+function itemReco(it, mias) {
+  var p = it.postura || 'Cambio de visión', cls = /^Comprar/.test(p) ? 'up' : /^Vender/.test(p) ? 'dn' : 'acc', esMia = false, j;
+  for (j = 0; j < (it.tickers || []).length; j++) if (mias[it.tickers[j]]) esMia = true;
+  var tks = (it.tickers || []).map(function (t) { return dotTk(t) + '<b>' + esc(t) + '</b>'; }).join(' ');
+  return '<a class="nt' + (esMia ? ' cmf' : '') + '" href="' + esc(it.url) + '" target="_blank" rel="noopener"><div style="flex:1;min-width:0">' +
+    '<div class="nt-m" style="margin:0 0 4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">' +
+    '<span class="chip ' + cls + '">' + esc(p) + '</span>' + (tks ? '<span>' + tks + '</span>' : '') +
+    (it.corredora ? '<span>· ' + esc(it.corredora) + '</span>' : '') + (esMia ? '<b style="color:var(--gold)">· tu acción</b>' : '') + '</div>' +
+    '<div class="nt-t">' + esc(it.titulo) + '</div><div class="nt-m">' + fFecha(it.fecha) + ' · El Mercurio Inversiones</div></div></a>';
+}
+function seccionRecos(mias) {
+  var d = new Date(); d.setDate(d.getDate() - 60);
+  var corte = d.toISOString().slice(0, 10), lista = [], i;
+  for (i = 0; i < NOT.merc.length; i++) if (NOT.merc[i].recomendacion && NOT.merc[i].fecha >= corte) lista.push(NOT.merc[i]);
+  lista.sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : 0; });
+  var h = '<div class="lbl" style="margin-top:6px">Recomendaciones de corredoras · últimos 2 meses (' + lista.length + ')</div>' +
+    '<p class="i" style="margin:0 0 4px;font-size:12px">Según los titulares de El Mercurio Inversiones. Toca una para leer el análisis completo con tu suscripción. Borde dorado = acción de tu cartera.</p>';
+  return h + (lista.length ? lista.map(function (x) { return itemReco(x, mias); }).join('') : '<p class="i">Aún no hay recomendaciones registradas.</p>');
+}
 function renderNoticias() {
   var mias = {}, i, h = '', cmf = [], imp = [], otras = [];
   for (i = 0; i < S.posiciones.length; i++) mias[S.posiciones[i].ticker] = 1;
@@ -2196,15 +2223,23 @@ function renderNoticias() {
     if (!mias[it.ticker]) continue;
     (it.fuente === 'CMF' ? cmf : it.importante ? imp : otras).push(it);
   }
-  h += '<div class="sec"><div class="lbl">Seguimiento automático</div><p class="i" style="margin:8px 0 0">' +
+  h += '<div class="seg" style="flex-wrap:wrap;margin:0 0 4px">' + NOTF_OPC.map(function (o) {
+    return '<button type="button" data-notf="' + o[0] + '" class="' + (NOTF === o[0] ? 'on' : '') + '" style="flex:1 1 auto;min-height:36px">' + o[1] + '</button>';
+  }).join('') + '</div>';
+  if (NOTF === 'todo') h += '<div class="sec"><div class="lbl">Seguimiento automático</div><p class="i" style="margin:8px 0 0">' +
     esc(NOT.estado || ('Revisado ' + NOT.actualizado + '. Se revisa la CMF y la prensa cada 2 horas.')) + '</p>' +
     '<p class="i" style="margin:6px 0 0;font-size:12px">Avisos al celular: instala la app <b>ntfy</b> y suscríbete a <b>' + NTFY_TOPIC + '</b>.</p></div>';
-  h += '<div class="lbl" style="margin-top:6px">Hechos esenciales (CMF)</div>';
-  h += cmf.length ? cmf.slice(0, 25).map(itemNoticia).join('') : '<p class="i">Sin hechos esenciales recientes.</p>';
-  h += '<div class="lbl" style="margin-top:6px">Prensa relevante</div>';
-  h += imp.length ? imp.slice(0, 25).map(itemNoticia).join('') : '<p class="i">Sin noticias relevantes esta semana.</p>';
-  if (otras.length) h += '<details class="tech"><summary>Otras noticias (' + otras.length + ') ▾</summary><div style="display:flex;flex-direction:column;gap:8px">' + otras.slice(0, 40).map(itemNoticia).join('') + '</div></details>';
-  h += seccionMercurio(mias);
+  if (NOTF === 'todo' || NOTF === 'cmf') {
+    h += '<div class="lbl" style="margin-top:6px">Hechos esenciales (CMF)</div>';
+    h += cmf.length ? cmf.slice(0, 25).map(itemNoticia).join('') : '<p class="i">Sin hechos esenciales recientes.</p>';
+  }
+  if (NOTF === 'todo' || NOTF === 'prensa') {
+    h += '<div class="lbl" style="margin-top:6px">Prensa relevante</div>';
+    h += imp.length ? imp.slice(0, 25).map(itemNoticia).join('') : '<p class="i">Sin noticias relevantes esta semana.</p>';
+    if (otras.length) h += '<details class="tech"' + (NOTF === 'prensa' ? ' open' : '') + '><summary>Otras noticias (' + otras.length + ') ▾</summary><div style="display:flex;flex-direction:column;gap:8px">' + otras.slice(0, 40).map(itemNoticia).join('') + '</div></details>';
+  }
+  if (NOTF === 'todo' || NOTF === 'merc') h += seccionMercurio(mias);
+  if (NOTF === 'reco') h += seccionRecos(mias);
   document.getElementById('noticias').innerHTML = h;
 }
 

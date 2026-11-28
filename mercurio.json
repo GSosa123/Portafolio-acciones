@@ -1,13 +1,17 @@
 {
- "actualizado": "2026-11-28 03:23",
+ "actualizado": "2026-11-28 03:38",
  "items": [
   {
    "fecha": "2026-11-27",
    "titulo": "Jefferies mantiene apuesta por ILC y el envejecimiento de Chile",
    "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/27/1074645/jefferies-mantiene-apuesta-ilc.aspx",
-   "tickers": [],
+   "tickers": [
+    "ILC"
+   ],
    "mia": false,
-   "recomendacion": true
+   "recomendacion": true,
+   "corredora": "Jefferies",
+   "postura": "Comprar / sube"
   },
   {
    "fecha": "2026-11-27",
@@ -53,7 +57,9 @@
    "fecha": "2026-11-27",
    "titulo": "Quiñenco anota utilidades por $249.000 millones en el tercer trimestre",
    "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/27/1074629/quinenco-aumenta-utilidades-trimestrales.aspx",
-   "tickers": [],
+   "tickers": [
+    "QUINENCO"
+   ],
    "mia": false,
    "recomendacion": false
   },
@@ -77,7 +83,19 @@
    "fecha": "2026-11-27",
    "titulo": "Viña Concha y Toro anuncia dos dividendos provisorios",
    "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/27/1074634/concha-y-toro-dividendos-provisorios.aspx",
-   "tickers": [],
+   "tickers": [
+    "CONCHATORO"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-27",
+   "titulo": "SalfaCorp se adjudica montaje de nuevo taller de camiones mineros en Escondida",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/27/1074635/salfacorp-taller-camiones-escondida.aspx",
+   "tickers": [
+    "SALFACORP"
+   ],
    "mia": false,
    "recomendacion": false
   },
@@ -89,7 +107,9 @@
     "CAP"
    ],
    "mia": false,
-   "recomendacion": true
+   "recomendacion": true,
+   "corredora": "Credicorp Capital",
+   "postura": "Vender / baja"
   },
   {
    "fecha": "2026-11-26",
@@ -98,6 +118,1163 @@
    "tickers": [],
    "mia": false,
    "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-26",
+   "titulo": "Las alertas no frenaron a las AFP: su riesgo en swaps casi se triplicó tras la primera advertencia del regulador",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/26/1074592/alertas-no-frenaron-afp-cfa.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "La nueva visión de Barclays y Goldman Sachs en LATAM Airlines",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074547/barclays-goldman-sachs-latam-airlines.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": true,
+   "corredora": "Goldman Sachs",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Colbún informa reparto de dividendo provisorio por US$ 137 millones",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074558/colbun-reparte-dividendo-provisorio.aspx",
+   "tickers": [
+    "COLBUN"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Embotelladora Andina anuncia reparto de dividendo provisorio",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074521/andina-reparto-dividendo-provisorio.aspx",
+   "tickers": [
+    "ANDINA-B"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Comprar Mall Plaza cuando las AFP salen: la tesis ganadora del CFA Research Challenge en Chile",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074544/comprar-mallplaza-cuando-afp-salen.aspx",
+   "tickers": [
+    "MALLPLAZA"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "MBI Corredores de Bolsa sube el precio objetivo de Ripley",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074527/mbi-ripley-recomendacion.aspx",
+   "tickers": [
+    "RIPLEY"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "MBI",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Las AFP recortaron sus swaps en EE.UU. y ahora salen a buscar bonos largos de empresas chilenas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074525/afp-swaps-bonos-locales-largos.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Las 4 balas que el Banco Central podría ocupar para detener el desplome del peso",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074522/4-balas-central-desplome-peso.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Huang dice a su equipo que está en terapia y pide disculpas en reunión general de Nvidia",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074541/huang-jensen-nvidia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Por qué el IPSA borró una caída de 1,5% y terminó la jornada entre los mejores desempeños del mundo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074556/por-que-ipsa-revirtio-caida.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Los aranceles vuelven. Y el momento no podría ser peor",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074548/aranceles-estados-unidos-china.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Celulosa Arauco emite acciones para aumento de capital",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074543/celulosa-arauco-emite-acciones-pago.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "El oro se ha desplomado 36%. ¿Para qué sirve tenerlo?",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074549/oro-desplome-ia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "EuroAmerica compra acciones de Clínica Las Condes",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074519/euroamerica-compra-acciones--clinicalascondes.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-25",
+   "titulo": "Un manual de inversión defensiva para el volátil mercado actual",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/25/1074538/inversion-defensiva-portafolio.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-24",
+   "titulo": "Las cinco claves de Vapores: un dividendo de 4% hoy y una incógnita desde 2027",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/24/1074483/nueva-perspectiva-para-vapores-hapaglloyd.aspx",
+   "tickers": [
+    "VAPORES"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Las aseguradoras se deshacen de Bci y Santander y redoblan su apuesta por SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074406/portafolio-acciones-aseguradoras-tercer-trimestre.aspx",
+   "tickers": [
+    "SQM-B",
+    "BCI"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Scotiabank cambia precio objetivo de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074381/scotiabank-cambia-precio-objetivo-sqm.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Scotiabank",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Bank of America apuesta por el peso chileno y ve al dólar en $920 en 2027",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074413/por-que-bofa-apuesta-peso.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Bci Group nace con una apuesta: que su banco en Florida pese más que el castigo del mercado",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074415/mudanza-bci-group-vapor-riesgos.aspx",
+   "tickers": [
+    "BCI"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Jensen Huang vuelve a Nvidia con el respaldo de Trump. Pero los problemas no han terminado",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074420/jensen-huang-vuelve-a-nvidia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Jensen y Lori Huang han acumulado una inmensa fortuna. Así se distribuye su patrimonio",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074418/jensen-huang-nvidia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Por qué las acciones de Anthropic se quedan al margen del gran repunte de Nvidia",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074419/anthropic-barrons-nvidia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Real brasileño supera 6 por dólar y profundiza caída tras reelección de Lula",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074412/real-brasileno-lula-dolar.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Bloomberg: Heredero de una fortuna de US$45.000 millones redefine a la derecha mientras Chile rechaza la política de Kast",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074385/max-luksic-derecha.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Fondo de Inversión Patio Oficinas II prorroga plazo de duración por seis meses",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074399/patio-oficinas-ii-prorroga-plazo.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-23",
+   "titulo": "Austriaca Plansee lanza OPA por hasta el 23,36% de Molymet",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/23/1074372/austriaca-plansee-lanza-opa-molymet.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-22",
+   "titulo": "Por qué el mercado ve dos bosques distintos en Copec y CMPC",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/22/1074361/empresas-copec-cmpc-ventas-activos.aspx",
+   "tickers": [
+    "CMPC",
+    "COPEC"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Por qué comprar dólares sobre $1.000 puede salir caro",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074299/apuesta-extranjeros-peso-dolar-1000.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Sanofi evalúa comprar la farmacéutica estadounidense Insmed",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074301/sanofi-farmaceutica-estadounidense-insmed.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Por qué el mega dividendo de Entel comienza a incomodar al mercado antes de aprobarse",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074294/mega-dividendo-entel-incomodo-mercado.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Las AFP llegaron a tener más de US$10.000 millones en garantías y fondos en tránsito en plena crisis de los swaps",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074298/llamados-margen-swaps.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "El nuevo plan de Entel en Chile una vez que salga de Perú",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074285/investor-day-entel.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "La otra cara de las utilidades de SQM: la cuenta del litio con el fisco aún podría sumar al menos US$379 millones",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074280/sqm-cuenta-fisco-litio.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Anthropic debuta con salto de 34%, pero devuelve más de la mitad del avance en su primera sesión",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074291/anthropic-claude-inteligencia-artificial.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Cómo las inversiones en Anthropic distorsionan las utilidades de las grandes tecnológicas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074303/inversiones-en-anthropic-grandes-tecnologicas.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "JPMorgan, Visa y Mastercard sufren filtración de datos de clientes en ciberataque",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074300/jpmorgan-visa-mastercard-hackeo.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "La industria electrónica enfrenta una escasez mundial de placas de circuito impreso",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074302/data-centers-ia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Menos capex y más caja: el giro financiero de Entel ante su salida de Perú",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074293/capex-entel-analisis-investor-day.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "S&P ve un 50% de probabilidad de que Entel pierda el Grado de Inversión tras venta de Perú",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074290/sp-probalididad-entel-bono-especulativo.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-19",
+   "titulo": "Nvidia es el banco central de la economía circular de la IA: hacia dónde va el dinero",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/19/1074297/nvidia-inteligencia-artificial.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-18",
+   "titulo": "La recompensa que LATAM Airlines se aseguró si alcanza el grado de inversión",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/18/1074257/latam-airlines-refuerza-colchon-financiero.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "CMF multa a suegro de ejecutivo de Banco de Chile por transar acciones en periodo de bloqueo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074124/multa-suegro-banco-chile-bloqueo.aspx",
+   "tickers": [
+    "CHILE"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "Por qué los analistas aplauden el plan de Falabella pero no corren a comprar la acción",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074148/aplauso-plan-falabella-no-comprar.aspx",
+   "tickers": [
+    "FALABELLA"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "Goldman Sachs cambia precio objetivo de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074132/goldman-cambia-precio-objetivo-sqm.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Goldman Sachs",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "El dividendo de 42% que llevó a J.P. Morgan a recomendar Entel tras años de castigo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074113/dividendo-entel-jpmorgan-recomendar-castigo.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "J.P. Morgan",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "El rebalanceo del FTSE apunta a Falabella: compras pasivas por más de seis días de volumen",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074140/flujos-rebalanceo-ftse-acciones-chilenas.aspx",
+   "tickers": [
+    "FALABELLA"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "Entel se dispara 18%, a su mayor nivel en siete años, tras sellar acuerdo de venta en Perú",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074126/entel-trepa-mayor-nivel-peru.aspx",
+   "tickers": [
+    "ENTEL"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "CMPC vende su operación forestal en Argentina por US$170 millones",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074131/cmpc-vende-operacion-forestal-argentina.aspx",
+   "tickers": [
+    "CMPC"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "EE.UU. limita acceso remoto a chips de IA de Nvidia para frenar el acceso de China",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074144/estados-unidos-chips-semiconductores.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-16",
+   "titulo": "Warsh afirma que la Fed está evaluando cómo la IA podría transformar la economía",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/16/1074141/kevin-warsh-fed-ia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-13",
+   "titulo": "Beneficio tributario para los fondos extranjeros o protección para los locales: la pelea de MK4 en el Senado",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/13/1074094/debate-fondos-extranjeros-mk4.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-13",
+   "titulo": "Por qué la rebaja de impuestos recortó las utilidades de los bancos del IPSA",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/13/1074092/ajuste-rebaja-tributaria-bancos-ipsa.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-13",
+   "titulo": "La fórmula de CAP para salir de la crisis",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/13/1074091/como-cap-busca-salir-crisis.aspx",
+   "tickers": [
+    "CAP"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Atención Vapores: Hapag-Lloyd actualiza estimaciones anuales y sorprende a los más optimistas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073957/hapaglloyd-actualiza-estimaciones-anuales-vapores.aspx",
+   "tickers": [
+    "VAPORES"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Juan Andrés Camus advierte que la bolsa chilena no puede vivir de su historia",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073959/juan-andres-camus-de-nuam.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Pablo Tagle Quiroz liquida 110 mil acciones de Watt's por cambio de sociedad conyugal",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073966/cfo-liquida-acciones-watts.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Quiroz dice que la recesión en Chile será corta y el repunte vendrá rápido",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073960/jorge-quiroz-hacienda.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Falabella abre al alza tras divulgar resultados sobre lo esperado",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073961/falabella-abre-alza-tras-resultados.aspx",
+   "tickers": [
+    "FALABELLA"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-11",
+   "titulo": "Wall Street repunta mientras CoreWeave reactiva las apuestas por la IA",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/11/1073955/resumen-de-mercados-wall-street.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-10",
+   "titulo": "Las dos utilidades de los malls: la que destacan las empresas y la que miran los analistas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/10/1073932/revalorizacion-malls-analisis.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-10",
+   "titulo": "Quiénes pagan más y quiénes menos: el ránking de dividendos del IPSA en 2026",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/10/1073944/temporada-dividendos-2026-ipsa-historia.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-10",
+   "titulo": "Las acciones chilenas que las AFP sueltan mes a mes y las pocas que siguen comprando",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/10/1073943/portafolio-acciones-chilenas-afp-octubre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-10",
+   "titulo": "Tres edificios en Talca y Curauma y la cuenta de la pandemia: el fondo inmobiliario que cerrará en rojo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/10/1073926/problemas-edificios-perdida-fondo-inmobiliario.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-09",
+   "titulo": "Morgan Stanley y BTG Pactual actualizan precio objetivo de LATAM Airlines",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/09/1073878/btg-morgan-stanley-actualizan-latam.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": true,
+   "corredora": "BTG Pactual",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Dos bandos frente a LATAM: la mayor apuesta al alza del mercado choca con cortos que no ceden",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073828/ventas-cortas-simultaneas-bolsa-santiago.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "JP Morgan cambia recomendación de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073799/jp-morgan-cambia-recomendacion-sqm.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "J.P. Morgan",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Las AFP dieron vuelta la página: de comprador récord a vendedor neto de la bolsa chilena",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073812/afp-dieron-vuelta-la-pagina.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Fondo Nevasa Inmobiliario VII reconoce pérdida de unos $650 millones por incobrabilidad de créditos",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073841/fondo-nevasa-reconoce-perdidas.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "La excusa que ahora tiene el Banco Central para mantener la tasa",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/newsmercado/2026/11/06/1073819/ipc-octubre-argumentos-mantener-tasa.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Atención Copec: Arauco coloca bono y modifica su política de dividendos",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073837/arauco-coloca-bono-hibrido-sustentable.aspx",
+   "tickers": [
+    "COPEC"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Cencosud salta en Bolsa y anota su mejor alza diaria en más de cinco meses",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073829/cencosud-salta-mejor-alza-ano.aspx",
+   "tickers": [
+    "CENCOSUD"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "La deuda mundial alcanza niveles récord: seis formas de proteger su cartera",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073833/deuda-mundial-portafolio.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-06",
+   "titulo": "Familia Larraín compra acciones de Concha y Toro",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/06/1073821/familia-larrain-compra-acciones-conchatoro.aspx",
+   "tickers": [
+    "CONCHATORO"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-05",
+   "titulo": "Citi cambia precio objetivo de LATAM Airlines",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/05/1073730/citi-rebaja-precio-objetivo-latam.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": true,
+   "corredora": "Citi",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-05",
+   "titulo": "Las acciones chilenas favoritas para noviembre: corredoras premian a las que más cayeron",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/05/1073782/acciones-favoritas-corredoras-bolsa-noviembre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Cartera recomendada"
+  },
+  {
+   "fecha": "2026-11-05",
+   "titulo": "Las acciones más caras y baratas desde la última racha alcista del IPSA",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/05/1073779/acciones-caras-baratas-utimo-rally.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-05",
+   "titulo": "Las Cortes de Apelaciones cierran la puerta a los recursos contra las AFP por los swaps y los afiliados van a la Suprema",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/05/1073786/cortes-inadmisibloe-recursos-afp-swaps.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-04",
+   "titulo": "Renta4 cambia precio objetivo de LATAM Airlines",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/04/1073718/renta4-cambia-precio-objetivo-latam.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": true,
+   "corredora": "Renta4",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Cortez: Si las AFP \\\"hubieran conformado una cartera con la duración que correspondía no tendríamos este problema\\\"",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073642/cortez-afp-fondo-e-duracion.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Octubre da vuelta el orden de los multifondos y el fondo E lidera las alzas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073640/retornos-multifondos-afp-octubre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Qué nos enseñan 150 años de burbujas sobre el boom de la inteligencia artificial",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073639/burbujas-inteligencia-artificial.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Cómo Nvidia recuperó el trono de Apple como la empresa más valiosa del mundo en solo cuatro días",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073637/nvidia-apple-empresa-valorizacion.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Los centros de datos de IA llegan a las urnas: siete acciones que enfrentan riesgos",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073638/centros-de-datos-inteligencia-artificial.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-03",
+   "titulo": "Oro cae tras repunte del petróleo ante falta de avances en acuerdo entre EE.UU. e Irán",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/03/1073636/oro-petroleo-acuerdo-estados-unidos.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-02",
+   "titulo": "MBI cambia recomendación de la acción de Parque Arauco",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/02/1073608/mbi-cambia-recomendacion-precio-objetivo.aspx",
+   "tickers": [
+    "PARAUCO"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "MBI",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-11-02",
+   "titulo": "Dólar: el otro remezón que podrían sentir los fondos de pensiones",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/02/1073607/otro-remezon-fondos-pensiones.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-02",
+   "titulo": "El dólar bajo $900 o de vuelta en $1.000: la apuesta que se juega en el petróleo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/02/1073618/venta-dolares-hacienda-game-changer.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-11-02",
+   "titulo": "El trimestre en que las corredoras ganaron 17% menos y solo nueve lograron crecer",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/11/02/1073590/resultados-corredoras-bolsa-tercer-trimestre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-30",
+   "titulo": "HSBC cambia precio objetivo de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/30/1073534/hsbc-cambia-precio-objetivo-sqm.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "HSBC",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-30",
+   "titulo": "¿Eliminar la libertad de elección para mejorar la rentabilidad de todos?",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/30/1073558/eliminar-la-libertad-de-eleccion.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Bradesco cambia precio objetivo de LATAM Airlines Group",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073489/bradesco-cambia-precio--latam.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": true,
+   "corredora": "Bradesco",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Scotiabank cambia precio objetivo de Engie Energía Chile",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073497/scotiabank-cambia-precio-objetivo-engie.aspx",
+   "tickers": [
+    "ECL"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Scotiabank",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "S&P rebaja calificación de CAP y advierte probabilidad de incumplimiento de convenants",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073511/sp-rebaja-la-clasificacion-cap.aspx",
+   "tickers": [
+    "CAP"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "S&P",
+   "postura": "Vender / baja"
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "La bolsa chilena cayó más que casi todo el mundo y el problema no es solo externo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073510/bolsa-chilena-peores-del-mundo.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Los malls chilenos tienen todo a su favor menos el precio, según BofA",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073509/mall-chilenos-bien-salvo-precio.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "La defensa del fondo E que hizo el presidente de AFP Habitat y el debate que abrieron sus cifras",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073488/habitat-defiende-estrategia-e-debate.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "El absurdo interminable del mercado mundial de petróleo",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073507/absurdo-interminable-petroleo.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Atención SQM: futuros del litio se desploman en China",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073487/atencion-sqm-se-desploman.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Coca-Cola Embonor eleva su utilidad gracias a Bolivia",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073498/cocacola-embonor--utilidad-gracias.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-29",
+   "titulo": "Banca chilena ganó US$1.171 millones en el tercer trimestre",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/29/1073496/banca-chilena-resultados-tercer-trimestre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-28",
+   "titulo": "Concentran su apuesta: tres gestoras ya manejan 54% de lo que las AFP tienen en fondos locales",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/28/1073438/fondos-favoritos-afp-tercer-trimestre.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-28",
+   "titulo": "Lo que los afiliados ya no recuperarán de los swaps de las AFP aunque bajen las tasas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/28/1073442/parte-perdida-fondo-e-irrecuperable.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-27",
+   "titulo": "Deutsche Bank cambia precio objetivo de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/27/1073372/deutsche-bank-cambia-precio-objetivo.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Deutsche Bank",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Acciones de LATAM Airlines se desploman tras victoria de Lula en Brasil",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073308/adr-latam-airlines-se-desploma.aspx",
+   "tickers": [
+    "LTM"
+   ],
+   "mia": true,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Las acciones de Tesla",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073330/tesla-acciones-recomendacion.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Triunfo de Lula desarma los mercados; IPSA borra lo ganado en 2026; las acciones que suelen caer antes de fin de año y las que suben",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/newsmercado/2026/10/26/1073319/mercado-apuesta-brasil.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Resultados de las grandes tecnológicas, la Fed y las elecciones: las próximas dos semanas podrían definir el rumbo de Wall Street",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073312/resultados-tecnologicas-fed-elecciones-mercados.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "MK4: La pugna por el capital de riesgo que se abre en la discusión",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073299/mk4-capital-de-riesgo.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Cae el stock de viviendas nuevas en la RM y la mitad está en Santiago, La Florida y Ñuñoa",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073298/viviendas-nuevas-chile.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-26",
+   "titulo": "Las claves del plan que sacó a Tottus de una década de malos resultados",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/26/1073302/tottus-plan-resultados.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-23",
+   "titulo": "Las acciones chilenas que las AFP tendrían que vender y comprar antes de abril",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/23/1073294/acciones-chilenas-afp-compraran-venderan.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Mixta"
+  },
+  {
+   "fecha": "2026-10-23",
+   "titulo": "Tres acciones chilenas tocan un récord de apuestas en contra: este es el refugio que encontraron los alcistas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/23/1073283/ventas-cortas-simultaneas-bolsa-santiago.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "",
+   "postura": "Comprar / sube"
+  },
+  {
+   "fecha": "2026-10-23",
+   "titulo": "Lo que Morgan Stanley ve en la bolsa chilena: un mercado barato que sus controladores no sueltan",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/23/1073270/bolsa-chilena-controladores-no-sueltan.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-23",
+   "titulo": "El auto que trabaja de noche",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/23/1073279/auto-que-trabaja-de-noche.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-21",
+   "titulo": "Morgan Stanley empeora su visión de Cencosud y mejora la de Falabella",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/21/1073174/morgan-stanley-cencosud-falabella.aspx",
+   "tickers": [
+    "FALABELLA",
+    "CENCOSUD"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Morgan Stanley",
+   "postura": "Mixta"
+  },
+  {
+   "fecha": "2026-10-21",
+   "titulo": "Por qué las históricas lluvias de octubre remecerían a las acciones más expuestas a El Niño",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/21/1073195/lluvias-ipsa-acciones-impacto.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-21",
+   "titulo": "Atención Vapores:",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/21/1073191/vapores-ubs-degrada-recomendacion-maersk.aspx",
+   "tickers": [
+    "VAPORES"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-20",
+   "titulo": "JPMorgan cambia precio objetivo de Empresas Copec",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/20/1073116/jpmorgan-cambia-precio-objetivo-copec.aspx",
+   "tickers": [
+    "COPEC"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "J.P. Morgan",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-19",
+   "titulo": "BICE Inversiones actualiza su visión de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/19/1073077/bice-inversiones-actualiza-vision-sqm.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "BICE",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-06",
+   "titulo": "BMO Capital cambia precio objetivo de SQM",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/06/1072653/bmo-capital-cambia-precio-objetivo.aspx",
+   "tickers": [
+    "SQM-B"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "BMO",
+   "postura": "Cambio de visión"
+  },
+  {
+   "fecha": "2026-10-05",
+   "titulo": "Itaú Corredores de Bolsa hace múltiples cambios a su cartera recomendada",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/05/1072621/itau-hace-cambios-cartera-recomendada.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Itaú",
+   "postura": "Cartera recomendada"
+  },
+  {
+   "fecha": "2026-10-05",
+   "titulo": "MBI inicia cobertura deBci",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/05/1072614/mbi-corredores-bci-accion.aspx",
+   "tickers": [
+    "BCI"
+   ],
+   "mia": false,
+   "recomendacion": false
+  },
+  {
+   "fecha": "2026-10-01",
+   "titulo": "Los múltiples cambios que impulsó Credicorp Capital en sus carteras recomendadas",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/10/01/1072521/multiples-cambios-credicorp-carteras-recomendadas.aspx",
+   "tickers": [],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Credicorp Capital",
+   "postura": "Cartera recomendada"
+  },
+  {
+   "fecha": "2026-09-30",
+   "titulo": "Itaú BBA subió el precio objetivo de Falabella",
+   "url": "https://www.elmercurio.com/Inversiones/Noticias/Analisis/2026/09/30/1072480/mallplaza-falabella-itau-bba.aspx",
+   "tickers": [
+    "FALABELLA"
+   ],
+   "mia": false,
+   "recomendacion": true,
+   "corredora": "Itaú BBA",
+   "postura": "Comprar / sube"
   }
  ]
 }
