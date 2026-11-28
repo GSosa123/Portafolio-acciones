@@ -199,6 +199,16 @@ class Maestro:
         cuerpo = (cuerpo.rstrip(",") + ",\n" if cuerpo.strip() else "\n") + item
         self.html = self.html[:i] + "rotaciones: [" + cuerpo + self.html[j:]
 
+    def agregar_item(self, lista, item, clave):
+        """Agrega una línea a una lista de MAESTRO (operaciones, dividendos) si no está ya (por clave)."""
+        i = self.html.index(lista + ": [", self.html.index("var MAESTRO = {"))
+        j = self.html.index("\n  ]", i)
+        cuerpo = self.html[i + len(lista + ": ["):j].rstrip()
+        if clave in cuerpo:
+            return
+        cuerpo = (cuerpo.rstrip(",") + ",\n" if cuerpo.strip() else "\n") + "    " + item
+        self.html = self.html[:i] + lista + ": [" + cuerpo + self.html[j:]
+
     def set_cfg(self, campo, valor, texto=False):
         i = self.html.index("cfg: {", self.html.index("var MAESTRO = {"))
         j = self.html.index("}", i)
@@ -226,6 +236,11 @@ def linea_nueva(tk, acciones, ppc, pcb, precio, fecha):
 def aplicar(M, dato, notas):
     if dato["tipo"] == "factura":
         for o in dato["ops"]:
+            if o.get("fecha"):
+                q = o["cantidad"] if o["tipo"] == "compra" else -o["cantidad"]
+                m = -o["monto"] if o["tipo"] == "compra" else o["monto"]
+                M.agregar_item("operaciones", "{ f: '%s', tk: '%s', q: %s, m: %s }" % (o["fecha"], o["ticker"], fmt(q), fmt(m, 0)),
+                               "f: '%s', tk: '%s', q: %s," % (o["fecha"], o["ticker"], fmt(q)))
             l = M.buscar(o["ticker"])
             if o["tipo"] == "compra":
                 if l:
@@ -255,6 +270,10 @@ def aplicar(M, dato, notas):
         if not dato["ops"]:
             notas.append("Factura sin acciones (p. ej. dólares o fondos): no cambia la cartera.")
     elif dato["tipo"] == "dividendo":
+        if dato.get("fecha"):
+            M.agregar_item("dividendos", "{ fecha: '%s', ticker: '%s', monto: %s, acciones: %s }" % (
+                dato["fecha"], dato["ticker"], fmt(dato["monto"], 0), fmt(dato["acciones"], 0)),
+                "fecha: '%s', ticker: '%s'," % (dato["fecha"], dato["ticker"]))
         l = M.buscar(dato["ticker"])
         if l:
             M.reemplazar(dato["ticker"], M.set(l, "divAcum", M.get(l, "divAcum") + dato["monto"]))
