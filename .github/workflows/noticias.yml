@@ -1,0 +1,39 @@
+name: Hechos esenciales y noticias
+
+on:
+  schedule:
+    # Cada 2 horas entre ~8:00 y ~22:00 de Chile, todos los días
+    - cron: "10 11-23/2 * * *"
+    - cron: "10 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: noticias
+  cancel-in-progress: false
+
+jobs:
+  noticias:
+    runs-on: ubuntu-latest
+    env:
+      # Canal de avisos al celular (app ntfy). Suscríbete a este mismo nombre en la app.
+      NTFY_TOPIC: cartera-gsosa-7k3q9xw2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Lector de PDF y OCR
+        run: sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y poppler-utils tesseract-ocr tesseract-ocr-spa >/dev/null
+      - run: python scripts/noticias.py
+      - name: Guardar si hay cambios
+        run: |
+          if [ -n "$(git status --porcelain noticias.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+            git add noticias.json
+            git commit -m "Noticias $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
+          fi
