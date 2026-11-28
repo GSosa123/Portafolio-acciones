@@ -713,7 +713,7 @@ function esc(s) {
    ============================================================ */
 var KEY = 'cartera_apalancada';
 var MAESTRO = {
-  version: '2026-11-27',
+  version: '2026-11-28',
   cfg: {
     hoy: '2026-11-26', costoCredito: 19.87, tasaMensual: 1.52, wacc: 16.92,
     rf: 5.6, erp: 6, capmUmbral: 9.38, spreadMin: 2, comision: 0.7,
@@ -730,7 +730,7 @@ var MAESTRO = {
   posiciones: [
     { ticker: 'CHILE', nombre: 'Banco de Chile', acciones: 24268, ppc: 185.07, pcb: 182.89, precio: 190.60, beta: 1.04, tipo: 'Core', desde: '2026-02-09', est: true, dy: 6.5, dyTipo: 'recurrente', divAcum: 183555, min52: 0, criterio: '', gpPer: 184437 },
     { ticker: 'ANDINA-B', nombre: 'Embotelladora Andina B', acciones: 896, ppc: 4602.81, pcb: 4563.65, precio: 4610.10, beta: 0.97, tipo: 'Core', desde: '2026-02-09', est: true, dy: 4.6, dyTipo: 'recurrente', divAcum: 188223, min52: 0, criterio: '', gpPer: -44710 },
-    { ticker: 'COLBUN', nombre: 'Colbún', acciones: 16730, ppc: 132.76, pcb: 131.98, precio: 154.40, beta: 0.55, tipo: 'Core', desde: '2026-02-09', est: true, dy: 5.2, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 56882 },
+    { ticker: 'COLBUN', nombre: 'Colbún', acciones: 16730, ppc: 132.76, pcb: 131.98, precio: 154.40, beta: 0.55, tipo: 'Core', desde: '2026-06-19', est: true, dy: 5.2, dyTipo: 'recurrente', divAcum: 0, min52: 0, criterio: '', gpPer: 56882 },
     { ticker: 'LTM', nombre: 'LATAM Airlines Group', acciones: 32497, ppc: 21.7185, pcb: 21.59, precio: 24.34, beta: 1, tipo: 'En revisión', desde: '2026-10-26', est: false, dy: 0, dyTipo: 'extraordinario', divAcum: 0, min52: 0, criterio: '', gpPer: 124464 },
     { ticker: 'SCHWAGER', nombre: 'Schwager', acciones: 219047, ppc: 5.2813, pcb: 5.25, precio: 4.59, beta: 1, tipo: 'En revisión', desde: '2026-09-15', est: false, dy: 0, dyTipo: 'extraordinario', divAcum: 6571, min52: 0, criterio: '', gpPer: 92000 }
   ],
@@ -787,6 +787,38 @@ var MAESTRO = {
     { fecha: '2026-10-29', ticker: 'ANDINA-B', monto: 35974, acciones: 896 },
     { fecha: '2026-11-20', ticker: 'SCHWAGER', monto: 6571, acciones: 219047 }
   ],
+  /* Operaciones ejecutadas (facturas Banchile): q + compra / − venta, m = caja neta con comisiones (− paga, + recibe). */
+  operaciones: [
+    { f: '2025-10-06', tk: 'ANDINA-B', q: 12, m: -49138 },
+    { f: '2025-10-07', tk: 'CHILE', q: 200, m: -35238 },
+    { f: '2025-10-08', tk: 'ANDINA-B', q: 12, m: -48689 },
+    { f: '2025-10-09', tk: 'CHILE', q: 300, m: -50038 },
+    { f: '2025-10-14', tk: 'BSANTANDER', q: 1000, m: -69612 },
+    { f: '2025-10-14', tk: 'CHILE', q: 700, m: -103390 },
+    { f: '2025-11-03', tk: 'CHILE', q: 800, m: -140697 },
+    { f: '2025-11-04', tk: 'CFMITNIPSA', q: 40, m: -184609 },
+    { f: '2025-12-18', tk: 'CFMITNIPSA', q: 40, m: -198946 },
+    { f: '2025-12-22', tk: 'VAPORES', q: 3500, m: -173108 },
+    { f: '2025-12-24', tk: 'VAPORES', q: 16688, m: -800018 },
+    { f: '2026-02-06', tk: 'CHILE', q: 16360, m: -3159810 },
+    { f: '2026-02-09', tk: 'ANDINA-B', q: 872, m: -4026294 },
+    { f: '2026-03-30', tk: 'CHILE', q: 1108, m: -189617 },
+    { f: '2026-04-21', tk: 'VAPORES', q: -20188, m: 1037509 },
+    { f: '2026-04-23', tk: 'LTM', q: 45038, m: -1028899 },
+    { f: '2026-05-15', tk: 'LTM', q: -45038, m: 973748 },
+    { f: '2026-05-19', tk: 'ENELGXCH', q: 2336, m: -1214898 },
+    { f: '2026-06-01', tk: 'CHILE', q: 4800, m: -806825 },
+    { f: '2026-06-16', tk: 'ENELGXCH', q: -2336, m: 1246968 },
+    { f: '2026-06-16', tk: 'CFMITNIPSA', q: -80, m: 401040 },
+    { f: '2026-06-16', tk: 'BSANTANDER', q: -1000, m: 73162 },
+    { f: '2026-06-19', tk: 'COLBUN', q: 16730, m: -2221163 },
+    { f: '2026-08-14', tk: 'VAPORES', q: 8274, m: -405714 },
+    { f: '2026-09-15', tk: 'SCHWAGER', q: 219047, m: -1156840 },
+    { f: '2026-10-01', tk: 'VAPORES', q: -8274, m: 410318 },
+    { f: '2026-10-05', tk: 'AGUAS-A', q: 1241, m: -410187 },
+    { f: '2026-10-26', tk: 'LTM', q: 32497, m: -705785 },
+    { f: '2026-11-24', tk: 'AGUAS-A', q: -1241, m: 391056 }
+  ],
   decisiones: []
 };
 var DY_TIPOS = [
@@ -816,7 +848,7 @@ function clon(o) { return JSON.parse(JSON.stringify(o)); }
 var S = {
   cfg: clon(MAESTRO.cfg), credito: clon(MAESTRO.credito),
   posiciones: clon(MAESTRO.posiciones), eventos: clon(MAESTRO.eventos),
-  rotaciones: clon(MAESTRO.rotaciones), decisiones: [], dividendos: clon(MAESTRO.dividendos), eeff: {},
+  rotaciones: clon(MAESTRO.rotaciones), decisiones: [], dividendos: clon(MAESTRO.dividendos), operaciones: clon(MAESTRO.operaciones || []), eeff: {},
   tab: 'panel', abiertas: {}, formulas: {}, sinMaq: false, verAlertas: false,
   prepago: 1000000, test: { ticker: '', monto: '1000000', dy: '', retorno: '', comision: '5640' },
   justificacion: '', rot: { ticker: '', monto: '', fecha: '2026-11-26' },
@@ -845,6 +877,7 @@ function cargar() {
     S.rotaciones = d.rotaciones || [];
     S.decisiones = d.decisiones || [];
     S.hist = d.hist || {};
+    limpiarHist();
     S.eeff = d.eeff || {};
     S.estudio = d.estudio || [];
     if (d.dividendos && d.dividendos.length) {
@@ -887,7 +920,7 @@ function migrarCartola(d) {
   for (i = 0; i < MAESTRO.posiciones.length; i++) {
     var m = clon(MAESTRO.posiciones[i]), v = viejas[m.ticker];
     if (v) {
-      ['criterio', 'beta', 'dy', 'dyTipo', 'tipo', 'nombre', 'min52', 'desde', 'est', 'hist'].forEach(function (f) { if ((f === 'desde' || f === 'est') && m.est === false) return; if (v[f] !== undefined && v[f] !== '') m[f] = v[f]; });
+      ['criterio', 'beta', 'dy', 'dyTipo', 'tipo', 'nombre', 'min52', 'est', 'hist'].forEach(function (f) { if (f === 'est' && m.est === false) return; if (v[f] !== undefined && v[f] !== '') m[f] = v[f]; });
       m.divAcum = Math.max(num(v.divAcum), num(m.divAcum));
       if (num(v.ppc) > 0 && Math.abs(v.acciones - m.acciones) < 0.5) m.ppc = v.ppc;
     }
@@ -1025,6 +1058,112 @@ function card(id, n, label, valor, sub, formula, o) {
    Serie de la cartera por retorno encadenado (TWR) con las
    acciones actuales, desde la fecha de entrada de cada papel.
    ============================================================ */
+/* ============================================================
+   Limpieza de precios de Yahoo: Yahoo a veces repite el último precio durante semanas
+   (días sin dato) o trae un pico de un solo día que se devuelve al siguiente.
+   - Tramo congelado: 5+ días con el mismo precio, o 3+ días congelados a la vez en 3+ acciones.
+     Se reparte el movimiento entre el último precio real y el siguiente (interpolación geométrica).
+   - Pico falso: salto > 8% que se devuelve en más de 60% al día siguiente → promedio de los vecinos.
+   ============================================================ */
+function limpiarHist() {
+  var H = S.hist || {}, tks = Object.keys(H).filter(function (t) { return t.charAt(0) !== '^' && H[t] && H[t].c && H[t].c.length > 5; });
+  var cong = {};
+  tks.forEach(function (t) { var h = H[t]; for (var i = 1; i < h.c.length; i++) if (h.c[i] === h.c[i - 1]) cong[h.t[i]] = (cong[h.t[i]] || 0) + 1; });
+  S.histFix = {}; S.histMalos = {};
+  tks.forEach(function (t) {
+    var h = H[t], c = h.c, n = c.length, i, s = 0, fix = 0;
+    for (i = 1; i <= n; i++) {
+      if (i < n && c[i] === c[s]) continue;
+      var largo = i - s, comun = false, k;
+      for (k = s + 1; k < i; k++) if (cong[h.t[k]] >= 3) comun = true;
+      if (i < n && (largo >= 5 || (largo >= 3 && comun))) {
+        var a = c[s], b = c[i], pasos = i - s;
+        for (k = s + 1; k < i; k++) { c[k] = a * Math.pow(b / a, (k - s) / pasos); S.histMalos[h.t[k]] = 1; }
+        S.histMalos[h.t[i]] = 1;
+        fix += largo - 1;
+      }
+      s = i;
+    }
+    for (i = 1; i < n - 1; i++) {
+      var r1 = c[i] / c[i - 1] - 1, r2 = c[i + 1] / c[i] - 1;
+      if (Math.abs(r1) > 0.08 && r1 * r2 < 0 && Math.abs(c[i + 1] / c[i - 1] - 1) < Math.abs(r1) * 0.4) { c[i] = Math.sqrt(c[i - 1] * c[i + 1]); S.histMalos[h.t[i]] = 1; S.histMalos[h.t[i + 1]] = 1; fix++; }
+    }
+    if (fix) S.histFix[t] = fix;
+  });
+}
+function avisoHistFix(tk) {
+  var F = S.histFix || {}, ks = tk ? (F[tk] ? [tk] : []) : Object.keys(F);
+  if (!ks.length) return '';
+  if (tk) return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó ' + F[tk] + ' días de precio de esta acción (repitió el anterior o trajo un dato malo). En el gráfico se rellenaron entre el último precio real y el siguiente.</p>';
+  return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó precios reales en ' + Object.keys(S.histMalos || {}).length + ' días del último año (repitió el precio anterior o trajo un pico falso). Se rellenaron entre el último precio real y el siguiente, y esos días no se usan para medir el riesgo.</p>';
+}
+/* ============================================================
+   Motor de rentabilidad con las tenencias reales de cada día (desde las operaciones):
+   r = (valor final + ventas + dividendos − valor inicial − compras) / (valor inicial + compras).
+   Las compras entran a su costo real con comisión; las ventas salen por lo recibido.
+   Papeles sin historia de precios (ya vendidos): precio estimado entre su compra y su venta.
+   ============================================================ */
+function opsCartera() {
+  var ops = (S.operaciones || []).map(function (o) { return { f: String(o.f), tk: o.tk, q: num(o.q), m: num(o.m) }; });
+  ops.sort(function (a, b) { return a.f < b.f ? -1 : a.f > b.f ? 1 : 0; });
+  var q = {}, cost = {}, ultF = {};
+  ops.forEach(function (o) {
+    var q0 = q[o.tk] || 0;
+    if (o.q > 0) cost[o.tk] = (cost[o.tk] || 0) - o.m; else if (q0 > 0) cost[o.tk] = (cost[o.tk] || 0) * (1 + o.q / q0);
+    q[o.tk] = q0 + o.q; ultF[o.tk] = o.f;
+  });
+  var hoy = String(S.cfg.hoy || hoyLocal()), vig = {};
+  S.posiciones.forEach(function (p) {
+    vig[p.ticker] = 1;
+    var d = num(p.acciones) - (q[p.ticker] || 0);
+    if (d > 0.5) { var f = String(p.desde || hoy); if (ultF[p.ticker] && ultF[p.ticker] > f) f = ultF[p.ticker]; ops.push({ f: f, tk: p.ticker, q: d, m: -d * num(p.ppc) }); }
+    else if (d < -0.5) ops.push({ f: hoy, tk: p.ticker, q: d, m: -d * num(p.precio) });
+  });
+  Object.keys(q).forEach(function (tk) {
+    if (vig[tk] || q[tk] < 0.5) return;
+    var r = (S.rotaciones || []).filter(function (x) { return String(x.ticker).replace(/\s*\(.*\)$/, '') === tk && String(x.fecha) >= (ultF[tk] || ''); }).pop();
+    ops.push({ f: r ? String(r.fecha) : hoy, tk: tk, q: -q[tk], m: (cost[tk] || 0) + (r ? num(r.monto) : 0) });
+  });
+  ops.sort(function (a, b) { return a.f < b.f ? -1 : a.f > b.f ? 1 : 0; });
+  return ops;
+}
+function motorCartera(conDiv) {
+  var H = S.hist || {}, ip = H['^IPSA'];
+  if (!ip || !ip.t || ip.t.length < 20 || !(S.operaciones || []).length) return null;
+  var F = ip.t, ops = opsCartera(), tks = {}, P = {}, j, k;
+  ops.forEach(function (o) { tks[o.tk] = 1; });
+  Object.keys(tks).forEach(function (tk) {
+    var h = H[tk], a = [];
+    if (h && h.t && h.t.length > 5) {
+      var m = 0, ult = h.c[0];
+      for (j = 0; j < F.length; j++) { while (m < h.t.length && h.t[m] <= F[j]) { ult = h.c[m]; m++; } a.push(ult); }
+    } else {
+      var pts = ops.filter(function (o) { return o.tk === tk && o.q; }).map(function (o) { return { t: CALC.fecha(o.f).getTime(), v: Math.abs(o.m / o.q) }; });
+      for (j = 0; j < F.length; j++) {
+        var t = CALC.fecha(F[j]).getTime(), v = pts[0].v;
+        for (k = 0; k < pts.length; k++) {
+          if (t >= pts[k].t) v = pts[k].v;
+          if (k + 1 < pts.length && t >= pts[k].t && t < pts[k + 1].t) { v = pts[k].v * Math.pow(pts[k + 1].v / pts[k].v, (t - pts[k].t) / (pts[k + 1].t - pts[k].t)); break; }
+        }
+        a.push(v);
+      }
+    }
+    P[tk] = a;
+  });
+  var qty = {}, io = 0, divs = conDiv ? (S.dividendos || []).map(function (d) { return { f: String(d.fecha), m: num(d.monto) }; }) : [];
+  while (io < ops.length && ops[io].f <= F[0]) { qty[ops[io].tk] = (qty[ops[io].tk] || 0) + ops[io].q; io++; }
+  function valor(j) { var v = 0; for (var t in qty) if (qty[t] > 0.5) v += qty[t] * P[t][j]; return v; }
+  var r = {}, idx = [100];
+  for (j = 1; j < F.length; j++) {
+    var v0 = valor(j - 1), compras = 0, ventas = 0, dv = 0;
+    while (io < ops.length && ops[io].f <= F[j]) { var o = ops[io++]; qty[o.tk] = (qty[o.tk] || 0) + o.q; if (o.m < 0) compras -= o.m; else ventas += o.m; }
+    divs.forEach(function (d) { if (d.f > F[j - 1] && d.f <= F[j]) dv += d.m; });
+    var v1 = valor(j), den = v0 + compras;
+    r[F[j]] = den > 0 ? (v1 + ventas + dv - v0 - compras) / den : 0;
+    idx.push(idx[j - 1] * (1 + r[F[j]]));
+  }
+  return { fechas: F.slice(), idx: idx, r: r };
+}
 function metricas() {
   var H = S.hist || {}, ip = H['^IPSA'];
   if (!ip || !ip.t || ip.t.length < 30) return null;
@@ -1041,6 +1180,7 @@ function metricas() {
   var ipm = {};
   for (j = 0; j < ip.t.length; j++) ipm[ip.t[j]] = ip.c[j];
   var ult = pos.map(function () { return 0; });
+  var E = motorCartera(false);
   var idx = [100], ipx = [100], rs = [], ri = [], ip0 = ipm[fechas[0]];
   for (i = 0; i < pos.length; i++) if (mapas[i][fechas[0]]) ult[i] = mapas[i][fechas[0]];
   for (j = 1; j < fechas.length; j++) {
@@ -1050,11 +1190,15 @@ function metricas() {
       if (c0 > 0 && String(pos[i].desde) <= f0) { var wi = pos[i].acciones * c0; w += wi; acc += wi * (c1 / c0 - 1); }
       if (mapas[i][f1]) ult[i] = mapas[i][f1];
     }
-    var r = w ? acc / w : 0, rI = ipm[f1] / ipm[f0] - 1;
+    var r = E ? (E.r[f1] || 0) : (w ? acc / w : 0), rI = ipm[f1] / ipm[f0] - 1;
     rs.push(r); ri.push(rI);
     idx.push(idx[idx.length - 1] * (1 + r));
     ipx.push(ipm[f1] / ip0 * 100);
   }
+  /* Para volatilidad, VaR, beta y Sharpe se usan solo los días con precios reales (sin tramos rellenados). */
+  var malos = S.histMalos || {}, rs2 = [], ri2 = [];
+  for (j = 0; j < rs.length; j++) if (!malos[fechas[j + 1]]) { rs2.push(rs[j]); ri2.push(ri[j]); }
+  if (rs2.length >= 60) { rs = rs2; ri = ri2; }
   var n = rs.length, mu = 0, muI = 0;
   for (j = 0; j < n; j++) { mu += rs[j]; muI += ri[j]; }
   mu /= n; muI /= n;
@@ -1062,7 +1206,7 @@ function metricas() {
   for (j = 0; j < n; j++) { v += (rs[j] - mu) * (rs[j] - mu); vI += (ri[j] - muI) * (ri[j] - muI); cov += (rs[j] - mu) * (ri[j] - muI); }
   v /= (n - 1); vI /= (n - 1); cov /= (n - 1);
   var retTot = idx[idx.length - 1] - 100, retI = ipx[ipx.length - 1] - 100;
-  var anios = n / 252;
+  var anios = (idx.length - 1) / 252;
   var retAn = (Math.pow(idx[idx.length - 1] / 100, 1 / anios) - 1) * 100;
   var retAnI = (Math.pow(ipx[ipx.length - 1] / 100, 1 / anios) - 1) * 100;
   var vol = Math.sqrt(v) * Math.sqrt(252) * 100, volI = Math.sqrt(vI) * Math.sqrt(252) * 100;
@@ -1158,6 +1302,8 @@ function dotTk(tk) { return '<i class="tkdot" style="background:' + colorTk(tk) 
 function serieTWR() {
   /* Rentabilidad real de toda la cartera: acciones actuales desde su compra (al costo real con comisiones),
      dividendos de todas las acciones (también las vendidas) y resultado de las ventas cerradas, cada uno en su fecha. */
+  var E = motorCartera(true);
+  if (E) return { fechas: E.fechas, idx: E.idx };
   var H = S.hist || {}, ip = H['^IPSA'], pos = S.posiciones, i, j;
   if (!ip || !ip.t || ip.t.length < 20) return null;
   var fechas = ip.t.slice(), mapas = pos.map(function (p) { var h = H[p.ticker], m = {}; if (h) for (var x = 0; x < h.t.length; x++) m[h.t[x]] = h.c[x]; return m; });
@@ -1210,7 +1356,7 @@ function htmlMisInv(k) {
     function cel(t, r) { return '<div><span>' + t + '</span><b class="num ' + (r >= 0 ? 'up' : 'dn') + '">' + (r >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(r)) + '</b></div>'; }
     h += '<div class="mi-3">' + cel(MESES_L[mesN], rM) + cel(y, rA) + cel('Últimos 12 meses', r12) + '</div>';
   }
-  h += '<p class="expl" style="margin-top:10px">Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale. Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p></div>';
+  h += '<p class="expl" style="margin-top:10px">Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale. Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + avisoHistFix() + '</div>';
   return h;
 }
 /* ============================================================
@@ -1243,7 +1389,7 @@ function svgPrecio(tk) {
     '<svg data-sc="' + id + '" viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block">' +
     '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="3" stroke-linejoin="round"/>' +
     '<text x="' + pl + '" y="' + (Hh - 8) + '" font-size="21" style="fill:var(--mut)">' + fFecha(h.t[0]) + '</text><text x="' + (W - pr) + '" y="' + (Hh - 8) + '" font-size="21" text-anchor="end" style="fill:var(--mut)">' + fFecha(h.t[n - 1]) + '</text>' +
-    scCapa(id) + '</svg><div class="sc-tip"></div></div>';
+    scCapa(id) + '</svg><div class="sc-tip"></div>' + avisoHistFix(tk) + '</div>';
 }
 function svgRent(xs, vs) {
   var W = 640, Hh = 300, pl = 78, pr = 10, pt = 14, pb = 40, n = vs.length;
@@ -1469,7 +1615,7 @@ function htmlGanoCredito(k) {
     '<div><div class="k">Esperada por riesgo (CAPM)</div><div class="v num ' + '' + '">' + fmtPct(k.keCartera, 1) + '</div><div class="n">' + fmtPct(cfg.rf, 1) + ' + beta ' + fmtDec(k.beta, 2) + ' × ' + fmtPct(cfg.erp, 0) + '</div></div>' +
     '<div><div class="k">Costo del crédito</div><div class="v num dn">' + fmtPct(cfg.costoCredito, 2) + '</div><div class="n">anual</div></div></div>';
   h += '<p class="expl">' + (k.keCartera < cfg.costoCredito
-    ? 'Ojo: incluso en un año normal, el mercado le paga a acciones con este riesgo ' + fmtPct(k.keCartera, 1) + ', menos que el ' + fmtPct(cfg.costoCredito, 2) + ' del crédito. Para ganarle al préstamo necesitas que tus acciones lo hagan mucho mejor que el promedio.'
+    ? '⚠️ Incluso en un año normal, el mercado le paga a acciones con este riesgo ' + fmtPct(k.keCartera, 1) + ', menos que el ' + fmtPct(cfg.costoCredito, 2) + ' del crédito. Para ganarle al préstamo necesitas que tus acciones lo hagan mucho mejor que el promedio.'
     : 'Lo que el mercado paga por este riesgo alcanza a cubrir el crédito.') + '</p>';
   h += '<h3 style="margin-top:16px">Precio de equilibrio por acción <small>cubre compra + comisiones + su parte de intereses</small></h3><div class="tb"><table><thead><tr><th>Acción</th><th>Precio hoy</th><th>Equilibrio</th><th>Distancia</th><th>Comisión pagada</th></tr></thead><tbody>';
   for (i = 0; i < g.filas.length; i++) {
@@ -1856,9 +2002,9 @@ var VAL = {
     obj: { pu: 11.5 }, hist: 'Últimos 5 años: P/U ~10,5–12x y P/VL ~1,9–2,1x.',
     notas: 'Banco: se valora por su capacidad de generar retorno sobre el patrimonio (ROE) y por dividendos, no por EBITDA.',
     fuentes: [['Investing.com ratios', 'https://www.investing.com/equities/banco-de-chile-(sn)-ratios'], ['MarketScreener', 'https://www.marketscreener.com/quote/stock/BANCO-DE-CHILE-6492973/valuation-dividend/'], ['KoalaGains (históricos)', 'https://koalagains.com/stocks/NYSE/BCH/fair-value']] },
-  'ANDINA-B': { tipo: 'empresa', fecha: 'LTM a sep-26', acc: 946.57, util: 297489, pat: 1157655, ebitda: 685292, dn: 684715, dps: 96.25, g: 0.04,
+  'ANDINA-B': { tipo: 'empresa', fecha: 'LTM a sep-26', acc: 946.57, util: 297489, pat: 1157655, ebitda: 685292, dn: 684715, dps: 208.45, g: 0.04,
     obj: { ev: 8, pu: 15 }, hist: 'Pares embotelladores de Latinoamérica transan ~8x EV/EBITDA y ~15x P/U. Consenso 2026: P/U 14,8x, dividendo 4,7%.',
-    notas: 'Dividendo: solo los pagos 2026 conocidos (ago y oct); el año completo suele ser mayor. Precio de la serie B aplicado a todas las acciones (A+B).',
+    notas: 'Dividendo: pagos de 2026 (may $112,20 + ago $56,10 + oct $40,15 = $208,45 por acción). Precio de la serie B aplicado a todas las acciones (A+B).',
     fuentes: [['Infobae 3T26', 'https://www.infobae.com/america/agencias/2026/10/28/embotelladora-andina-gana-1794-millones-de-euros-hasta-septiembre-un-171-mas/'], ['MarketScreener', 'https://www.marketscreener.com/quote/stock/EMBOTELLADORA-ANDINA-S-A-15789405/finances/']] },
   'COLBUN': { tipo: 'empresa', fecha: 'LTM a sep-26 (US$ × ' + 970 + ')', acc: 17536.6, util: 160310, pat: 3282868, ebitda: 631179, dn: 1494091, dps: 4.93, g: 0.03,
     obj: { ev: 7.5, pu: 13 }, hist: 'Eléctricas chilenas transan ~7–8x EV/EBITDA. Consenso: P/U a 12 meses 11,6x. BCI precio objetivo $170; Credicorp rebajó a Mantener.',
@@ -1928,7 +2074,7 @@ function htmlValor(D, precio, beta, tk) {
     h += '<p class="expl" style="margin-top:6px">Valor justo = promedio de los métodos.' + (D.tipo === 'banco' ? ' Costo de capital (Ke, CAPM) = ' + fmtPct(S.cfg.rf, 1) + ' + β ' + fmtDec(beta || 1, 2) + ' × ' + fmtPct(S.cfg.erp, 1) + ' = ' + fmtPct(R.ke * 100, 1) + '. Crecimiento de largo plazo g = ' + fmtPct(R.g * 100, 1) + ' (nominal, cerca de la inflación).' : ' Los múltiplos objetivo son los típicos de empresas comparables del sector (ver Referencia).') + '</p>' +
       '<p class="expl" style="margin-top:6px">Regla: Barata si el valor justo supera el precio en 15% o más (margen de seguridad); Cara si está 10% o más bajo el precio; entre medio, Precio justo.</p>';
     if (D.hist) h += '<p class="expl" style="margin-top:6px"><b>Referencia:</b> ' + esc(D.hist) + '</p>';
-    if (D.notas) h += '<p class="expl" style="margin-top:6px"><b>Ojo:</b> ' + esc(D.notas) + '</p>';
+    if (D.notas) h += '<p class="expl" style="margin-top:6px"><b>⚠️ Atención:</b> ' + esc(D.notas) + '</p>';
     h += '<p class="expl" style="margin-top:6px;font-size:11px">Cifras ' + esc(D.fecha || '') + (D.fuentes ? '. Fuentes: ' + D.fuentes.map(function (f) { return '<a href="' + esc(f[1]) + '" target="_blank" rel="noopener">' + esc(f[0]) + '</a>'; }).join(' · ') : '') + '. No es recomendación de inversión.</p></div></details>';
   }
   return h + '</details></div>';
@@ -3517,7 +3663,8 @@ function yahooProxy(tk) {
 function aplicarPrecios(q, fuente, manual) {
   var n = 0, i, ult = 0, tk;
   S.hist = S.hist || {};
-  for (tk in q) if (q[tk] && q[tk].t && q[tk].c && q[tk].t.length > 1) S.hist[tk] = { t: q[tk].t, c: q[tk].c };
+  for (tk in q) if (q[tk] && q[tk].t && q[tk].c && q[tk].t.length > 1) S.hist[tk] = { t: q[tk].t, c: q[tk].c.slice() };
+  limpiarHist();
   for (i = 0; i < S.posiciones.length; i++) {
     var p = S.posiciones[i], x = q[p.ticker];
     if (!x || !(x.precio > 0)) continue;

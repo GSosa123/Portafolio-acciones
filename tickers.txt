@@ -1,3 +1,9 @@
 # Tickers extra a cotizar (además de los de index.html), uno por línea, sin ".SN".
 # Ejemplo:
 # SQM-B
+# Papeles ya vendidos: su historia de precios mejora el cálculo de rentabilidad
+VAPORES
+ENELGXCH
+CFMITNIPSA
+BSANTANDER
+AGUAS-A
