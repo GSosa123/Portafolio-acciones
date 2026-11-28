@@ -12,12 +12,12 @@ jobs:
           u="https://www.cmfchile.cl/institucional/mercados/entidad.php?mercado=V&rut=96505760&grupo=&tipoentidad=RVEMI&row=&vig=VI&control=svs&pestania=25"
           curl -sL -m 40 -A "$UA" "$u" -o p.html
           python3 -c "import re;h=open('p.html',encoding='latin-1').read();i=h.find('name = \"form1\"');print(re.findall(r'<(?:input|select)[^>]*name=\"[^\"]+\"',h[i:i+20000]))"
-          curl -sL -m 40 -A "$UA" -X POST "$u" --data "dd=###&mm=###&aa=###&dd2=###&mm2=###&aa2=###&dias=90" -o q.html -w "%{http_code} %{size_download}\n"
+          curl -sL -m 40 -A "$UA" -X POST "$u" --data "dd=%23%23%23&mm=%23%23%23&aa=%23%23%23&dd2=%23%23%23&mm2=%23%23%23&aa2=%23%23%23&dias=120&entidad=COLBUN+S.A.&rut=96505760+&formulario=1" -o q.html -w "%{http_code} %{size_download}\n"
           python3 - <<'PY'
           import re
           h=open('q.html',encoding='latin-1').read()
-          i=h.find('Por los documentos')
+          i=h.find('end inc/hechos_e.php')
           j=h.find('<table', i)
           print('table idx', j)
-          print(h[j:j+5000] if j>0 else h[i:i+3000])
+          print(h[j:j+6000] if j>0 else h[i-200:i+3000])
           PY
