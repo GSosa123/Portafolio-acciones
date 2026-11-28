@@ -241,17 +241,49 @@ def avisar(item, topic):
         print("  aviso falló:", e)
 
 
+def arreglar(t):
+    """Corrige tildes rotas (texto UTF-8 leído como Latin-1)."""
+    if "Ã" in t or "Â" in t:
+        try:
+            return t.encode("latin-1").decode("utf-8")
+        except Exception:
+            pass
+    return t
+
+
+def tickers_cartera():
+    """Acciones que hoy están en la cartera (posiciones de MAESTRO en index.html)."""
+    html = (RAIZ / "index.html").read_text(encoding="utf-8")
+    bloque = html.split("posiciones: [", 1)[1].split("]", 1)[0]
+    return re.findall(r"\{\s*ticker:\s*'([A-Z0-9.\-]+)'", bloque)
+
+
+def util(it, emp):
+    """Descarta avisos sin contenido (p. ej. la materia es solo el nombre de la empresa)."""
+    t = re.sub(r"[\W_]+", " ", it["titulo"].lower()).strip()
+    nom = re.sub(r"[\W_]+", " ", (emp.get("razon") or emp["nombre"]).lower()).strip()
+    return len(t) > 8 and t not in (nom, nom.replace(" s a", "").strip(), "hecho esencial")
+
+
 def clave(it):
     return it["ticker"] + "|" + it["fuente"] + "|" + re.sub(r"\W+", "", it["titulo"].lower())[:80]
 
 
 def main():
     prev = json.loads(SALIDA.read_text(encoding="utf-8")) if SALIDA.exists() else {}
-    vistos = {it["id"]: it for it in prev.get("items", [])}
+    vistos = {}
+    for it in prev.get("items", []):
+        it["titulo"] = arreglar(it["titulo"])
+        it["id"] = clave(it)  # recalcula con el título corregido para no repetir avisos
+        vistos[it["id"]] = it
+    vigentes = tickers_cartera()
+    print("Acciones vigentes:", ", ".join(vigentes))
     primera = not prev
     nuevos, errores = [], []
 
     for tk, emp in EMPRESAS.items():
+        if tk not in vigentes:
+            continue
         for fn in (hechos_cmf, noticias_google):
             try:
                 lista = fn(tk, emp)
@@ -289,7 +321,8 @@ def main():
         errores.append(f"dólar: {e}")
 
     corte = (datetime.now(CL) - timedelta(days=120)).strftime("%Y-%m-%d")
-    items = sorted((i for i in vistos.values() if i["fecha"] >= corte or i.get("dividendo")),
+    items = sorted((i for i in vistos.values()
+                    if i["ticker"] in vigentes and (i["fecha"] >= corte or i.get("dividendo"))),
                    key=lambda i: (i["fecha"], i["fuente"] == "CMF"), reverse=True)[:300]
     SALIDA.write_text(json.dumps({
         "actualizado": datetime.now(CL).strftime("%Y-%m-%d %H:%M"), "usdclp": usdclp,
@@ -300,8 +333,12 @@ def main():
 
     topic = os.environ.get("NTFY_TOPIC", "").strip()
     if topic and not primera:
+        enviados = set()
         for it in nuevos:
-            if it.get("importante"):
+            emp = EMPRESAS.get(it["ticker"], {"nombre": ""})
+            k = it["ticker"] + "|" + it["fecha"] + "|" + it["titulo"].lower()
+            if it.get("importante") and it["ticker"] in vigentes and util(it, emp) and k not in enviados:
+                enviados.add(k)
                 avisar(it, topic)
     elif topic and primera:
         print("Primera corrida: se guardan sin avisar para no llenar el celular.")
