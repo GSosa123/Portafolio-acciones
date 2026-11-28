@@ -226,6 +226,28 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .esfsel-todas{display:block;margin:6px auto 0;min-width:150px;min-height:44px;border-radius:22px;border:1px solid rgba(227,178,60,.6);background:transparent;color:var(--acc);font:inherit;font-weight:800}
 .esfsel-todas.on{background:var(--acc);color:#0b0b0b}
 :root[data-tema="claro"] .esfsel-hoja{background:#fbf6ec}
+.nota-i{display:inline-flex;align-items:center;gap:5px;background:none;border:0;padding:4px 0;font:inherit;font-size:12px;color:var(--mut);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nota-i svg{width:14px;height:14px;opacity:.8}
+.nota-txt{margin:12px 0 6px;font-size:14px;line-height:1.5;color:var(--txt);max-height:50vh;overflow:auto}.nota-txt p{margin:0 0 10px}
+.giro-pista{position:absolute;left:50%;bottom:6px;width:54px;height:54px;margin-left:-27px;border-radius:50%;z-index:400;pointer-events:none;
+background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.05) 55%,rgba(227,178,60,.10));backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+border:1px solid rgba(255,255,255,.28);box-shadow:inset 0 1px 1px rgba(255,255,255,.45),inset 0 -6px 12px rgba(0,0,0,.18),0 8px 22px rgba(0,0,0,.35);
+display:flex;align-items:center;justify-content:center;transition:opacity .45s,transform .45s;animation:pistaIn .6s ease both .4s}
+.giro-pista svg{width:30px;height:30px;fill:none;stroke:rgba(255,255,255,.9);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(227,178,60,.55));animation:pistaGiro 2.4s cubic-bezier(.45,.05,.35,1) infinite}
+.giro-pista.fuera{animation:none;opacity:0;transform:scale(.6)}
+@keyframes pistaGiro{0%{transform:rotate(0)}55%{transform:rotate(200deg)}100%{transform:rotate(360deg)}}
+@keyframes pistaIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+:root[data-tema="claro"] .giro-pista svg{stroke:rgba(120,90,20,.85)}
+.esfsel-t{align-items:center}
+.seg{display:inline-flex;padding:2px;border-radius:9px;background:rgba(255,255,255,.08)}
+.seg button{text-transform:none;letter-spacing:0;border:0;background:transparent;color:var(--mut);font:inherit;font-size:13px;font-weight:600;padding:6px 14px;border-radius:7px;min-height:32px}
+.seg button.on{background:rgba(255,255,255,.16);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.esfsel.v-lista .esfsel-st{display:none}.esfsel.v-esfera .sl{display:none}
+.sl{margin:12px 0 4px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04)}
+.sl-f{display:grid;grid-template-columns:14px 1fr auto 22px;gap:12px;align-items:center;width:100%;min-height:50px;padding:0 14px;border:0;border-bottom:1px solid rgba(255,255,255,.07);background:transparent;color:var(--txt);font:inherit;font-size:15px;text-align:left}
+.sl-f:last-child{border-bottom:0}.sl-f i{width:12px;height:12px;border-radius:4px}.sl-f span{font-weight:700;font-size:14px}.sl-f span.up{color:var(--up)}.sl-f span.dn{color:var(--dn)}
+.sl-f em{font-style:normal;color:var(--acc);font-weight:800}
+:root[data-tema="claro"] .seg{background:rgba(0,0,0,.06)}:root[data-tema="claro"] .seg button.on{background:#fff}:root[data-tema="claro"] .sl{background:rgba(0,0,0,.04)}
 .flip-ojo{color:var(--acc);list-style:none;margin-left:-18px;display:flex;gap:8px;align-items:flex-start}.flip-ojo svg{flex:0 0 18px;width:18px;height:18px;margin-top:1px}
 .al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
 .al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
@@ -1117,12 +1139,38 @@ function limpiarHist() {
     if (fix) S.histFix[t] = fix;
   });
 }
-function avisoHistFix(tk) {
+function avisoHistTxt(tk) {
   var F = S.histFix || {}, ks = tk ? (F[tk] ? [tk] : []) : Object.keys(F);
   if (!ks.length) return '';
-  if (tk) return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó ' + F[tk] + ' días de precio de esta acción (repitió el anterior o trajo un dato malo). En el gráfico se rellenaron entre el último precio real y el siguiente.</p>';
-  return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó precios reales en ' + Object.keys(S.histMalos || {}).length + ' días del último año (repitió el precio anterior o trajo un pico falso). Se rellenaron entre el último precio real y el siguiente, y esos días no se usan para medir el riesgo.</p>';
+  if (tk) return 'En ' + F[tk] + ' días la fuente de precios repitió el precio anterior o trajo un dato malo. Esos días se completaron entre el último precio real y el siguiente.';
+  return 'En ' + Object.keys(S.histMalos || {}).length + ' días del último año la fuente de precios (Yahoo) repitió el precio anterior o trajo un pico falso. Esos días se completaron entre el último precio real y el siguiente, y no se usan para medir el riesgo.';
 }
+function avisoHistFix(tk) {
+  var t = avisoHistTxt(tk);
+  return t ? htmlNota('Precios depurados', 'Precios depurados', '<p>' + t + '</p>') : '';
+}
+/* Nota discreta: una línea gris con ⓘ; al tocarla se abre una hoja estilo iPhone con la explicación completa. */
+var NOTAS = {}, NOTA_N = 0;
+function htmlNota(corto, titulo, cuerpo) {
+  var id = 'n' + (++NOTA_N); NOTAS[id] = { t: titulo, h: cuerpo };
+  return '<button type="button" class="nota-i" data-nota="' + id + '">' + corto + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".6" fill="currentColor"/></svg></button>';
+}
+function abrirNota(id) {
+  var n = NOTAS[id]; if (!n) return;
+  cerrarEsfSel(true);
+  var d = document.createElement('div');
+  d.id = 'esfSel'; d.className = 'esfsel';
+  d.innerHTML = '<div class="esfsel-fondo"></div><div class="esfsel-hoja nota-hoja" role="dialog" aria-label="' + n.t + '"><div class="esfsel-asa"></div><div class="esfsel-t"><b>' + n.t + '</b></div><div class="nota-txt">' + n.h + '</div><button type="button" class="esfsel-todas on">Listo</button></div>';
+  document.body.appendChild(d);
+  d.querySelector('.esfsel-fondo').addEventListener('click', function () { cerrarEsfSel(); });
+  d.querySelector('.esfsel-todas').addEventListener('click', function () { cerrarEsfSel(); });
+  requestAnimationFrame(function () { d.classList.add('ab'); });
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('[data-nota]');
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation(); abrirNota(b.getAttribute('data-nota'));
+}, true);
 /* ============================================================
    Motor de rentabilidad con las tenencias reales de cada día (desde las operaciones):
    r = (valor final + ventas + dividendos − valor inicial − compras) / (valor inicial + compras).
@@ -1382,7 +1430,7 @@ function htmlMisInv(k) {
     function cel(t, r) { return '<div><span>' + t + '</span><b class="num ' + (r >= 0 ? 'up' : 'dn') + '">' + (r >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(r)) + '</b></div>'; }
     h += '<div class="mi-3">' + cel(MESES_L[mesN], rM) + cel(y, rA) + cel('Últimos 12 meses', r12) + '</div>';
   }
-  h += '<p class="expl" style="margin-top:10px">Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale. Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + avisoHistFix() + '</div>';
+  h += '<div style="margin-top:10px">' + htmlNota('Rentabilidad ponderada por tiempo', 'Cómo se calcula', '<p>Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale.</p><p>Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   return h;
 }
 /* ============================================================
@@ -2319,13 +2367,14 @@ function htmlOrbe(k) {
   };
   var nom = { cartera: 'Ratios', credito: 'Crédito', empresas: 'Empresas', estudio: 'En estudio', noticias: 'Noticias', agenda: 'Agenda', cartola: 'Cartola', ajustes: 'Ajustes' };
   for (var t in ic) it.push('<button type="button" class="ob ob-s" data-tab="' + t + '" style="--d:40px" aria-label="' + nom[t] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ic[t] + '</svg><em>' + nom[t] + '</em></button>');
-  return '<div class="w esf"><div class="esf-h"><b>Tu cartera en 3D</b><span>desliza de lado para girar</span></div><div class="esf-st" id="orbeSt">' + it.join('') + '</div><div class="esf-pie">Toca una acción para ver su ficha</div></div>';
+  return '<div class="w esf"><div class="esf-h"><b>Tu cartera</b></div><div class="esf-st" id="orbeSt">' + it.join('') + '<div class="giro-pista" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M38 24a14 14 0 0 1-24.5 9.3"/><path d="M10 24a14 14 0 0 1 24.5-9.3"/><path d="M13 38.5l.5-5.2 5.1.9"/><path d="M35 9.5l-.5 5.2-5.1-.9"/></svg></div>' + '</div></div>';
 }
 /* Motor de esfera giratoria, reutilizable: st = escenario, O = estado del giro, R = radio, tap = qué hacer al tocar. */
 function esfGirar(st, O, R, tap, soloLado) {
   cancelAnimationFrame(O.raf);
   var bs = st.querySelectorAll('.ob'), n = bs.length, P = [], i;
-  for (i = 0; i < n; i++) { // reparto uniforme sobre la esfera (Fibonacci)
+  if (O.anillo) { for (i = 0; i < n; i++) P.push([Math.cos(i * 2 * Math.PI / n), 0, Math.sin(i * 2 * Math.PI / n)]); }
+  else for (i = 0; i < n; i++) { // reparto uniforme sobre la esfera (Fibonacci)
     var y = 1 - (i + 0.5) / n * 2, r = Math.sqrt(1 - y * y), th = i * 2.39996;
     P.push([Math.cos(th) * r, y, Math.sin(th) * r]);
   }
@@ -2355,11 +2404,19 @@ function esfGirar(st, O, R, tap, soloLado) {
     if (!drag) {
       O.ay += O.vy; O.ax += O.vx;
       O.vy = O.vy * 0.95 + 0.004 * 0.05; // la inercia frena hasta un giro lento
-      O.vx *= 0.95; O.ax += (-0.35 - O.ax) * 0.01;
+      O.vx *= 0.95; O.ax += ((O.base || -0.35) - O.ax) * 0.01;
     }
     pintar();
     if (!quieto || drag) O.raf = requestAnimationFrame(paso);
   }
+  var pista = st.querySelector('.giro-pista'), yaGiro = false;
+  try { yaGiro = localStorage.getItem('cartera_giro') === '1'; } catch (er) {}
+  if (pista && yaGiro) pista.remove();
+  st.addEventListener('pointerdown', function () {
+    var pz = st.querySelector('.giro-pista'); if (!pz) return;
+    pz.classList.add('fuera'); setTimeout(function () { pz.remove(); }, 500);
+    try { localStorage.setItem('cartera_giro', '1'); } catch (er) {}
+  });
   st.addEventListener('pointerdown', function (e) { drag = true; mov = 0; lx = e.clientX; ly = e.clientY; lt = performance.now(); O.vx = O.vy = 0; if (!soloLado || e.pointerType === 'mouse') try { st.setPointerCapture(e.pointerId); } catch (er) {} if (quieto) O.raf = requestAnimationFrame(paso); });
   st.addEventListener('pointermove', function (e) {
     if (!drag) return;
@@ -2393,7 +2450,7 @@ function orbeInit() {
   }, true);
 }
 /* Filtro "Acción": al tocarlo se abre una hoja con una mini esfera de acciones que gira; "Todas" queda al centro. */
-var ESFSEL = { ax: -0.35, ay: 0, vx: 0, vy: 0.012, raf: 0 };
+var ESFSEL = { ax: -0.62, base: -0.62, anillo: true, ay: 0, vx: 0, vy: 0.012, raf: 0 };
 function abrirEsfSel(sel) {
   cerrarEsfSel(true);
   var ops = Array.prototype.slice.call(sel.options), it = '', v = sel.value;
@@ -2403,11 +2460,19 @@ function abrirEsfSel(sel) {
     it += '<button type="button" class="ob ob-a' + (o.value === v ? ' on' : '') + '" data-v="' + esc(o.value) + '" style="--c:' + colorTk(o.value) + ';--d:66px"><b' + (nm.length > 6 ? ' style="font-size:9px"' : '') + '>' + esc(nm) + '</b>' +
       (vd ? '<i class="' + (vd.pct >= 0 ? 'up' : 'dn') + '">' + (vd.pct >= 0 ? '+' : '') + fmtDec(vd.pct, 1) + '%</i>' : '') + '</button>';
   });
+  var vista = 'esfera';
+  try { vista = localStorage.getItem('cartera_selvista') || 'esfera'; } catch (er) {}
+  var li = ops.filter(function (o) { return o.value !== 'todas'; }).map(function (o) {
+    var p = S.posiciones.filter(function (q) { return q.ticker === o.value; })[0], vd = p ? varDia(p) : null;
+    return '<button type="button" class="sl-f' + (o.value === v ? ' on' : '') + '" data-v="' + esc(o.value) + '"><i style="background:' + colorTk(o.value) + '"></i><b>' + esc(o.value) + '</b>' +
+      (vd ? '<span class="' + (vd.pct >= 0 ? 'up' : 'dn') + '">' + (vd.pct >= 0 ? '+' : '') + fmtDec(vd.pct, 1) + '%</span>' : '<span></span>') + '<em>' + (o.value === v ? '✓' : '') + '</em></button>';
+  }).join('');
   var d = document.createElement('div');
-  d.id = 'esfSel'; d.className = 'esfsel';
+  d.id = 'esfSel'; d.className = 'esfsel v-' + vista;
   d.innerHTML = '<div class="esfsel-fondo"></div><div class="esfsel-hoja" role="dialog" aria-label="Elegir acción"><div class="esfsel-asa"></div>' +
-    '<div class="esfsel-t"><b>Elige una acción</b><span>gira con el dedo</span></div>' +
-    '<div class="esf-st esfsel-st">' + it + '</div>' +
+    '<div class="esfsel-t"><b>Elige una acción</b><div class="seg" role="tablist"><button type="button" data-vista="esfera"' + (vista === 'esfera' ? ' class="on"' : '') + '>Esfera</button><button type="button" data-vista="lista"' + (vista === 'lista' ? ' class="on"' : '') + '>Lista</button></div></div>' +
+    '<div class="sl">' + li + '</div>' +
+    '<div class="esf-st esfsel-st">' + it + '<div class="giro-pista" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M38 24a14 14 0 0 1-24.5 9.3"/><path d="M10 24a14 14 0 0 1 24.5-9.3"/><path d="M13 38.5l.5-5.2 5.1.9"/><path d="M35 9.5l-.5 5.2-5.1-.9"/></svg></div>' + '</div>' +
     '<button type="button" class="esfsel-todas' + (v === 'todas' ? ' on' : '') + '">Todas</button></div>';
   document.body.appendChild(d);
   var elegir = function (val) {
@@ -2416,8 +2481,17 @@ function abrirEsfSel(sel) {
   };
   d.querySelector('.esfsel-fondo').addEventListener('click', function () { cerrarEsfSel(); });
   d.querySelector('.esfsel-todas').addEventListener('click', function () { elegir('todas'); });
+  Array.prototype.forEach.call(d.querySelectorAll('.sl-f'), function (b) { b.addEventListener('click', function () { elegir(b.getAttribute('data-v')); }); });
+  Array.prototype.forEach.call(d.querySelectorAll('[data-vista]'), function (b) {
+    b.addEventListener('click', function () {
+      var nv = b.getAttribute('data-vista');
+      try { localStorage.setItem('cartera_selvista', nv); } catch (er) {}
+      d.className = 'esfsel ab v-' + nv;
+      Array.prototype.forEach.call(d.querySelectorAll('[data-vista]'), function (x) { x.classList.toggle('on', x === b); });
+    });
+  });
   ESFSEL.vy = 0.05; // entra girando y frena por inercia
-  esfGirar(d.querySelector('.esfsel-st'), ESFSEL, 92, function (b) { elegir(b.getAttribute('data-v')); });
+  esfGirar(d.querySelector('.esfsel-st'), ESFSEL, 112, function (b) { elegir(b.getAttribute('data-v')); });
   requestAnimationFrame(function () { d.classList.add('ab'); });
 }
 function cerrarEsfSel(ya) {
@@ -2576,7 +2650,7 @@ function renderDash(k) {
       '<div><div class="k">Information ratio</div><div class="v num ' + (m.ir >= 0 ? 'up' : 'dn') + '">' + fmtDec(m.ir, 2) + '</div><div class="n">exceso ÷ tracking error</div></div>' +
       '<div><div class="k">VaR 95% · 1 mes</div><div class="v num dn">' + clp(m.varM * k.valor / 100) + '</div><div class="n">' + fmtPct(m.varM, 1) + ' · CVaR ' + clp(m.cvarM * k.valor / 100) + '</div></div>' : '') +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
-    '</div><p class="expl" style="font-size:11px">Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA. Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
+    '</div><div style="margin-top:8px">' + htmlNota('Cómo se calcula', 'Cómo se calcula', '<p>Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA.</p><p>Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel.</p><p>Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   cortar('rent');
   var OPC = [['credito', '¿Le gano al crédito?'], ['riesgo', 'Riesgo de mercado'], ['costos', '¿Rinde más de lo que cuesta?'], ['gp', 'Ganancia por acción'],
     ['comp', 'Composición'], ['prestamo', 'Préstamo'], ['divs', 'Dividendos cobrados'], ['ind', 'Todos los indicadores'], ['rent', 'Rentabilidad en detalle']].filter(function (o) { return D[o[0]]; });
