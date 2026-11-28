@@ -64,19 +64,27 @@ def historia(res):
 
 
 def mercado_chile():
-    """Referencia de mercado chileno: Yahoo no publica la historia del IPSA (^IPSA da 404 y el ETF local
-    casi no transa). Se usa el ETF MSCI Chile (ECH, en USD) convertido a pesos con el dólar del día."""
-    ech, fx = cotizar("ECH_"), cotizar("CLP_")
-    m = dict(zip(fx["t"], fx["c"]))
-    t, c, ult = [], [], None
-    for f, v in zip(ech["t"], ech["c"]):
-        ult = m.get(f, ult)
-        if ult:
-            t.append(f)
-            c.append(round(v * ult, 2))
-    return {"precio": c[-1], "ant": c[-2] if len(c) > 1 else 0, "min52": 0, "fecha": t[-1],
-            "ts": ech["ts"], "max": 0, "min": 0, "vol": 0, "t": t, "c": c,
-            "nombre": "MSCI Chile en pesos (ECH × dólar)"}
+    """Referencia de mercado: S&P IPSA, cierre oficial diario de la Bolsa de Santiago, desde findic.cl
+    (gratis, sin clave). Se piden el año actual y el anterior para tener al menos 12 meses.
+    Si falla, main() conserva el último dato válido de precios.json."""
+    hoy = datetime.now(timezone(timedelta(hours=-3)))
+    serie = {}
+    for anio in (hoy.year - 1, hoy.year):
+        url = f"https://findic.cl/api/ipsa/{anio}"
+        with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30) as r:
+            d = json.load(r)
+        for x in d.get("serie", []):
+            v = float(x.get("valor") or 0)
+            if v > 0:
+                serie[str(x["fecha"])[:10]] = round(v, 2)
+        time.sleep(1)
+    t = sorted(serie)
+    if len(t) < 50:
+        raise ValueError("IPSA: muy pocos datos")
+    c = [serie[f] for f in t]
+    return {"precio": c[-1], "ant": c[-2], "min52": min(c[-250:]), "fecha": t[-1],
+            "ts": int(time.time()), "max": 0, "min": 0, "vol": 0, "t": t, "c": c,
+            "nombre": "S&P IPSA (Bolsa de Santiago, vía findic.cl)"}
 
 
 def main():

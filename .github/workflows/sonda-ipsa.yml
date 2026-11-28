@@ -1,0 +1,21 @@
+name: Sonda IPSA (temporal)
+on:
+  push:
+    branches: [claude/project-thread-nz9ey4]
+    paths: [.github/workflows/sonda-ipsa.yml, scripts/precios.py]
+permissions:
+  contents: write
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/precios.py
+      - run: |
+          python3 -c "import json;d=json.load(open('precios.json'))['precios']['^IPSA'];print(d['nombre'],d['fecha'],d['precio'],len(d['t']),d['t'][0])"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add precios.json && git commit -m "Precios con IPSA real" && git push || true
