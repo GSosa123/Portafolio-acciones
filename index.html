@@ -2302,10 +2302,9 @@ function itemNoticia(it) {
 }
 var NOTF = 'todo';
 var NOTF_OPC = [['todo', 'Todo'], ['cmf', 'Hechos CMF'], ['prensa', 'Prensa'], ['merc', 'Mercurio'], ['reco', 'Recomendaciones']];
-document.addEventListener('click', function (ev) {
-  var b = ev.target.closest ? ev.target.closest('[data-notf]') : null;
-  if (!b) return;
-  NOTF = b.getAttribute('data-notf');
+document.addEventListener('change', function (ev) {
+  if (!ev.target || ev.target.id !== 'notfSel') return;
+  NOTF = ev.target.value;
   renderNoticias();
 });
 function itemReco(it, mias) {
@@ -2414,9 +2413,9 @@ function renderNoticias() {
     if (!mias[it.ticker]) continue;
     (it.fuente === 'CMF' ? cmf : it.importante ? imp : otras).push(it);
   }
-  h += '<div class="seg" style="flex-wrap:wrap;margin:0 0 4px">' + NOTF_OPC.map(function (o) {
-    return '<button type="button" data-notf="' + o[0] + '" class="' + (NOTF === o[0] ? 'on' : '') + '" style="flex:1 1 auto;min-height:36px">' + o[1] + '</button>';
-  }).join('') + '</div>';
+  h += '<div style="display:flex;align-items:center;gap:10px;margin:0 0 8px"><span class="lbl" style="margin:0">Ver</span>' +
+    '<select id="notfSel" style="flex:1;min-height:40px;padding:0 12px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);color:var(--tx);font-size:14px;font-weight:700;text-transform:none;letter-spacing:0">' +
+    NOTF_OPC.map(function (o) { return '<option value="' + o[0] + '"' + (NOTF === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>';
   if (NOTF === 'todo') h += '<div class="sec"><div class="lbl">Seguimiento automático</div><p class="i" style="margin:8px 0 0">' +
     esc(NOT.estado || ('Revisado ' + NOT.actualizado + '. Se revisa la CMF y la prensa cada 2 horas.')) + '</p>' +
     '<p class="i" style="margin:6px 0 0;font-size:12px">Avisos al celular: instala la app <b>ntfy</b> y suscríbete a <b>' + NTFY_TOPIC + '</b>.</p></div>';
