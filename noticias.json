@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-28 00:10",
+ "actualizado": "2026-11-28 00:11",
  "usdclp": 1029.6,
  "items": [
   {
@@ -141,6 +141,16 @@
    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQd2NzaDVUTWtPY3d5RW9NYll6YVJOWVYyakdYWUs3ZnJzZVdPcXpBbUVUemxyQ0tKTUFBVHl0QkpkWEpvNlNEb2xTVVdiNVNxUkVickpjSGQ3SWNXWVZEcjdJWDV4SU1HT1pxc0ItTl9uZkZsdlFuTFM3UEY2bUx6NFVObWxYbEk?oc=5",
    "importante": false,
    "id": "LTM|TallyHo|latamanuncianuevasrutasyllegaráa73destinosenbrasiltallyho"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "La Tercera",
+   "tipo": "Noticia",
+   "fecha": "2026-11-27",
+   "titulo": "Quiñenco, del grupo Luksic, anota alza en sus ganancias ante positivo aporte de su filial de combustibles - La Tercera",
+   "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxPR3d0ODByOV9zazBlX1E1azgwQ0h5X2owQTcteHpxaHl4Y1A4a2FuOW1WQ3ZzMkVWLVktSWNaZXY3dGgwd3pqcGhzaTRtQ0dhN3pxNk9zMGZSUmxOWWFGMHZNWHIzZENNdjVnYXF6bGxaXzg2UVBFVF9yanZPQTJIVEU3LW56NTdEc3FNeG45VjVVdV9LWTFSc2NGcTI0Rl93NlZ0bjh5MXRQbmc1R25qRlFLZHpQY0M4RDJKZGRHc1JxM2lzMnVRVk1uRUU5ZHJGSzV5X2piUlpVbkx60gH-AUFVX3lxTFBjYlZGa2wyX1NEaDJWNTVIeUlpZndDQmtUZGtaVGZnbXQ0VkE5MDFaQ0tsZHRXa09iRm80RTk0YzNaTHdscWJ0NTJORHc2TFRxTUdkZndVYlZTLTRBT19iLTRhNHRkeUl6SEJZNHhGQ2wtZF9aOHBvcC1Eb1BfazVGdS1TbEtZekdBRWFERFluc1RwLU1RTTV3TGU0SzBPdlluWmpXSmE3WEpCcWpEOE9ndVZvNDQ1ZVdpZzZYSXBDQlFXYWR5d0xRUE9yMlFSUXZuOE1tSGFqMWoxN1ZzbkJUalhRbjloellPdFdKeTh0ZWJMd2VrUVRxN3FGQVh3?oc=5",
+   "importante": true,
+   "id": "CHILE|La Tercera|quiñencodelgrupoluksicanotaalzaensusgananciasantepositivoaportedesufilialdecombu"
   },
   {
    "ticker": "ANDINA-B",
