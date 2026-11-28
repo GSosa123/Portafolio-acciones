@@ -48,10 +48,10 @@ def cotizar(tk):
     r2 = lambda v: round(float(v or 0), 4)
     return {"precio": r2(precio), "min52": r2(min52), "fecha": fecha, "ts": int(ts),
             "ant": r2(ant), "max": r2(m.get("regularMarketDayHigh")), "min": r2(m.get("regularMarketDayLow")),
-            "vol": int(m.get("regularMarketVolume") or 0), **historia(res)}
+            "vol": int(m.get("regularMarketVolume") or 0), **historia(res, fecha, precio)}
 
 
-def historia(res):
+def historia(res, fecha=None, precio=None):
     """Cierres diarios del último año: {"t": [fechas], "c": [cierres]} (para IPSA, Sharpe, caída máxima)."""
     ts = res.get("timestamp") or []
     cl = (res.get("indicators", {}).get("quote", [{}])[0].get("close") or [])
@@ -60,6 +60,13 @@ def historia(res):
         if v:
             t.append(datetime.fromtimestamp(x, timezone(timedelta(hours=-3))).strftime("%Y-%m-%d"))
             c.append(round(float(v), 4))
+    # Yahoo a veces omite el último cierre (sobre todo fines de semana): se agrega el precio del día.
+    if fecha and precio:
+        if not t or fecha > t[-1]:
+            t.append(fecha)
+            c.append(round(float(precio), 4))
+        elif fecha == t[-1]:
+            c[-1] = round(float(precio), 4)
     return {"t": t, "c": c}
 
 

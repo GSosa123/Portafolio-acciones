@@ -3893,7 +3893,12 @@ function yahooProxy(tk) {
 function aplicarPrecios(q, fuente, manual) {
   var n = 0, i, ult = 0, tk;
   S.hist = S.hist || {};
-  for (tk in q) if (q[tk] && q[tk].t && q[tk].c && q[tk].t.length > 1) S.hist[tk] = { t: q[tk].t, c: q[tk].c.slice() };
+  for (tk in q) if (q[tk] && q[tk].t && q[tk].c && q[tk].t.length > 1) {
+    var ht = q[tk].t.slice(), hc = q[tk].c.slice(), fq = String(q[tk].fecha || ''), pq = num(q[tk].precio);
+    /* Yahoo a veces omite el último cierre en la historia: se agrega el precio del día. */
+    if (pq > 0 && fq) { if (fq > ht[ht.length - 1]) { ht.push(fq); hc.push(pq); } else if (fq === ht[ht.length - 1]) hc[hc.length - 1] = pq; }
+    S.hist[tk] = { t: ht, c: hc };
+  }
   limpiarHist();
   for (i = 0; i < S.posiciones.length; i++) {
     var p = S.posiciones[i], x = q[p.ticker];
