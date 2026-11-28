@@ -6,25 +6,18 @@ jobs:
   sonda:
     runs-on: ubuntu-latest
     steps:
-      - name: CMF tabla hechos
+      - name: CMF POST
         run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
           u="https://www.cmfchile.cl/institucional/mercados/entidad.php?mercado=V&rut=96505760&grupo=&tipoentidad=RVEMI&row=&vig=VI&control=svs&pestania=25"
           curl -sL -m 40 -A "$UA" "$u" -o p.html
+          python3 -c "import re;h=open('p.html',encoding='latin-1').read();i=h.find('name = \"form1\"');print(re.findall(r'<(?:input|select)[^>]*name=\"[^\"]+\"',h[i:i+20000]))"
+          curl -sL -m 40 -A "$UA" -X POST "$u" --data "dd=###&mm=###&aa=###&dd2=###&mm2=###&aa2=###&dias=90" -o q.html -w "%{http_code} %{size_download}\n"
           python3 - <<'PY'
           import re
-          h=open('p.html',encoding='latin-1').read()
-          i=h.find('<table')
-          print('tables at', [m.start() for m in re.finditer('<table',h)][:10])
-          for m in re.finditer('<table',h):
-              seg=h[m.start():m.start()+4000]
-              if 'echa' in seg or 'ateria' in seg:
-                  print(seg); break
-          print('---- links')
-          for l in sorted(set(re.findall(r'href="([^"]+)"',h))):
-              if 'pestania' not in l and ('doc' in l.lower() or 'sgd' in l.lower() or 'pdf' in l.lower()): print(l)
-          print('---- forms'); print(re.findall(r'<form[^>]*>',h))
-          print(re.findall(r'<select[^>]*>.{0,300}',h,re.S)[:3])
+          h=open('q.html',encoding='latin-1').read()
+          i=h.find('Por los documentos')
+          j=h.find('<table', i)
+          print('table idx', j)
+          print(h[j:j+5000] if j>0 else h[i:i+3000])
           PY
-          for s in "2026&semestre=2" "&anio=2026"; do curl -sL -m 40 -A "$UA" "$u&dia=&mes=&anio=2026" -o q.html; done
-          python3 -c "import re;h=open('q.html',encoding='latin-1').read();t=re.sub('<[^>]+>',' ',h);t=re.sub(r'\s+',' ',t);i=t.find('Fecha');print(t[i:i+2500])"
