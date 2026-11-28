@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-28 00:11",
+ "actualizado": "2026-11-28 00:17",
  "usdclp": 1029.6,
  "items": [
   {
@@ -308,7 +308,7 @@
    "tipo": "Hecho esencial",
    "fecha": "2026-11-25",
    "titulo": "Reparto de utilidades (pago de dividendos)",
-   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c1153b5fdaa4840ca1816e1bf4411583VFdwQmVVNXFSWGhOUkdONlQxUnJlRTlCUFQwPQ==&secuencia=-1&t=1795834991",
+   "url": "https://gsosa123.github.io/Portafolio-acciones/hechos/ANDINA-B_2026-11-25_f304d7d7.pdf",
    "importante": true,
    "id": "ANDINA-B|CMF|repartodeutilidadespagodedividendos",
    "dividendo": {
@@ -317,7 +317,9 @@
     "clase": "provisorio",
     "pago": "2026-12-17",
     "registro": "2026-12-10"
-   }
+   },
+   "url_cmf": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c1153b5fdaa4840ca1816e1bf4411583VFdwQmVVNXFSWGhOUkdONlQxUnJlRTlCUFQwPQ==&secuencia=-1&t=1795834991",
+   "archivo": "ANDINA-B_2026-11-25_f304d7d7.pdf"
   },
   {
    "ticker": "COLBUN",
@@ -325,7 +327,7 @@
    "tipo": "Hecho esencial",
    "fecha": "2026-11-25",
    "titulo": "Reparto de utilidades (pago de dividendos)",
-   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=0f3a5afb458bd362cf1282c1f44410b8VFdwQmVVNXFSWGhOUkdNd1RVUmpORTEzUFQwPQ==&secuencia=-1&t=1795835000",
+   "url": "https://gsosa123.github.io/Portafolio-acciones/hechos/COLBUN_2026-11-25_5ffff40a.pdf",
    "importante": true,
    "id": "COLBUN|CMF|repartodeutilidadespagodedividendos",
    "dividendo": {
@@ -334,7 +336,9 @@
     "clase": "provisorio",
     "pago": "2026-12-11",
     "registro": "2026-12-04"
-   }
+   },
+   "url_cmf": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=0f3a5afb458bd362cf1282c1f44410b8VFdwQmVVNXFSWGhOUkdNd1RVUmpORTEzUFQwPQ==&secuencia=-1&t=1795835000",
+   "archivo": "COLBUN_2026-11-25_5ffff40a.pdf"
   },
   {
    "ticker": "COLBUN",
@@ -527,6 +531,16 @@
    "id": "LTM|Flightradar24|imflyingtoiquiquetrackmyflightonflightradar24flightradar24"
   },
   {
+   "ticker": "CHILE",
+   "fuente": "BioBioChile",
+   "tipo": "Noticia",
+   "fecha": "2026-11-24",
+   "titulo": "Amplio operativo policial en Santiago por presencia de personas en el techo de un banco - BioBioChile",
+   "url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxNZkxMVzR6QWRMLTZZOVFQeHlmYXV5dmw0LTRTbm9QZnFKa1pCRmZVVEdQMHFwUy1kYXE0WHNjTEt6b1gwX2lSc0VPTmQyTk1Qcjg0Rm9iUk1zUzZzZXptd01ieGl0QWtpY1NrMVprTWlYa3F4RWQ2c2pQUFdhYk1OZHk2UDU2dW5mVTdodm8xUlh0UUhjU2xqLUxqRjRsR2tyeFl0WXduZUg0YUJjelNXbUVDc1JsWlBFZ05SbTZuZ0F2TXY5bXFTZ09fTGFadnphZVNrS2wxVzVGc2xLXzRSSTBuOEJBZ2RMUVlmZjNVUlhJNDd6RzE2UENtYkVQNWs?oc=5",
+   "importante": false,
+   "id": "CHILE|BioBioChile|ampliooperativopolicialensantiagoporpresenciadepersonaseneltechodeunbancobiobioc"
+  },
+  {
    "ticker": "COLBUN",
    "fuente": "Supermercado Al Día",
    "tipo": "Noticia",
@@ -617,6 +631,26 @@
    "id": "LTM|Aviacionline|elprimervuelocomercialdelatamairlinesconunaviónembraerunirásãopauloyvitóriaaviac"
   },
   {
+   "ticker": "CHILE",
+   "fuente": "La Tercera",
+   "tipo": "Noticia",
+   "fecha": "2026-11-23",
+   "titulo": "Banca y sector estatal concentran la mayor superficie en el mapa de oficinas corporativas en la Región Metropolitana - La Tercera",
+   "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQWlM3WnZmeW9UVGtjVVBYRnRnNkJwN2lmNk41ZmRCR2xRWTMtSHJIQ1h2bm15eW9XN0ZyVklBZ3pVTktpaVV4UjV3aTBJTFN3c25JNEptazhYWE1uWEV2OGlKOFU5R29PamYxSGJHMlBiY21XZHMyLWpULXBnMnphRDMySFpreHNsSlliTXBveFk5RjdoUlVSVWtSRjZCNVNDejBsSDVNMXF4eGF5WVJvU1liNzlUa2RNeVJmZjZqZTNfeXpzRnJrZVZBX0F3MTVhZG5MNFBMbFNMY1JqaUNvUC1JLTA1UDktOG12SVdR0gGPAkFVX3lxTE80YlBZNHlmMVU2MERzOTlqbGJOWEZVYXBnVmJGMDRnTldwc1NUN2p3Rk1jX05hTV94cXdjcEtYU2hSOGcyYlBDSDd2OEV1QUFJWElScGlWV3JERE9ZcmNwczFXbnNQTE9uRTJmcV82ZXpfdmVzbms3cjYyUkhaMkNza3ZtX3ltZk5hR3JxeFhCU2x2M0dybGNWUXV5cHlwMWhRRFhfeFlMMC1OTWpfTWJFX2V1TEhQOHFmUjhpNGtYTExURmxMcTNYMUVKNnljNTJvQ1FNcXFlT0RVTnBkc19uWEdnT1Y2ZXdCVVFtMFd0OC1kTnpKaTdmSFlzTmtfQWU3X2xSLU9UUmNSSHUyeXM?oc=5",
+   "importante": false,
+   "id": "CHILE|La Tercera|bancaysectorestatalconcentranlamayorsuperficieenelmapadeoficinascorporativasenla"
+  },
+  {
+   "ticker": "CHILE",
+   "fuente": "DUPLOS.CL",
+   "tipo": "Noticia",
+   "fecha": "2026-11-23",
+   "titulo": "Faith No More abre su preventa en Chile: precios y descuento bancario - DUPLOS.CL",
+   "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQMUwtSGxnYjZBNVFvM1VnNTRTT2lFT3ZfQW5jVWljRlJ5ZFRjWkdVTll2Wm53bE11V0tRdWR3TkhEckY0SXA1WHJpc1RzWXFrV2xHUlZJOVNMcUN6M25WQUliX3ctaHAyaW4waUN5bWhUbm9yNmtPZVg4OXc1SS1TZkFPUzE3WXljcm0tby13WHFUN09QWXJIWjJoUUd6TkJhSVdHNTNSYmFmRVRsTDRDMHR4MFRRZDN4bUNsOXQ3RThLZTQ?oc=5",
+   "importante": false,
+   "id": "CHILE|DUPLOS.CL|faithnomoreabresupreventaenchilepreciosydescuentobancarioduploscl"
+  },
+  {
    "ticker": "COLBUN",
    "fuente": "RadioGennesis",
    "tipo": "Noticia",
@@ -642,9 +676,11 @@
    "tipo": "Hecho esencial",
    "fecha": "2026-11-18",
    "titulo": "Suscripción o renegociación de créditos",
-   "url": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c96cb869140fbbca5d25c6b0c6730116VFdwQmVVNXFSWGhOUkdONVQxUlpORTFSUFQwPQ==&secuencia=-1&t=1795835011",
+   "url": "https://gsosa123.github.io/Portafolio-acciones/hechos/LTM_2026-11-18_4398abc9.pdf",
    "importante": true,
-   "id": "LTM|CMF|suscripciónorenegociacióndecréditos"
+   "id": "LTM|CMF|suscripciónorenegociacióndecréditos",
+   "url_cmf": "https://www.cmfchile.cl/sitio/aplic/serdoc/ver_sgd.php?s567=c96cb869140fbbca5d25c6b0c6730116VFdwQmVVNXFSWGhOUkdONVQxUlpORTFSUFQwPQ==&secuencia=-1&t=1795835011",
+   "archivo": "LTM_2026-11-18_4398abc9.pdf"
   }
  ],
  "errores": []
