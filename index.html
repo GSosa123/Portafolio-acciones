@@ -392,6 +392,7 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 @media(max-width:420px){.g4{grid-template-columns:1fr 1fr}.fr{grid-template-columns:1fr}.hb-r{grid-template-columns:108px 1fr 66px}.luz{width:60px;height:60px;font-size:24px}.hero .ver{font-size:22px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}svg .draw{stroke-dashoffset:0}}
 
+.maq.gear{width:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}.maq.gear svg{width:17px;height:17px}.maq.gear.on{color:var(--brand2);border-color:var(--brand2)}
 .hd-b{display:flex;gap:6px;flex:none;align-items:center}
 .maq.tema{letter-spacing:.02em;text-transform:none;font-size:12px;padding:0 11px}
 .dd-n{position:relative;display:inline-flex;align-items:center;gap:6px}.dd-n:after{content:'';width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
@@ -423,7 +424,7 @@ details.tech>div{display:flex;flex-direction:column;gap:12px}
 
 body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:var(--bg);z-index:40;pointer-events:none}
 
-#barra{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:rgba(10,10,10,.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+#barra{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:rgba(10,10,10,.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 #barra button{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:50px;justify-content:center;color:var(--mut2);font-size:10.5px;font-weight:700;transition:color .2s}
 #barra button svg{width:24px;height:24px}
 #barra button.on{color:var(--brand2)}
@@ -540,7 +541,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 <h1>Mi Cartera</h1>
 <div class="kick"><span class="lg">Panel de asignación de capital · </span><span id="hoyTxt">—</span></div>
 </div>
-<div class="hd-b"><div class="maq tema dd-n"><span id="bTema">◐ Auto</span><select id="selTema" aria-label="Tema día o noche"><option value="auto">◐ Automático</option><option value="claro">☀ Día</option><option value="oscuro">☾ Noche</option></select></div></div>
+<div class="hd-b"><div class="maq tema dd-n"><span id="bTema">◐ Auto</span><select id="selTema" aria-label="Tema día o noche"><option value="auto">◐ Automático</option><option value="claro">☀ Día</option><option value="oscuro">☾ Noche</option></select></div><button type="button" class="maq gear" id="bGear" data-tab="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
 </div>
 </div>
 
@@ -3628,9 +3629,11 @@ function render() {
   navEl.style.gridTemplateColumns = 'repeat(' + sc.tabs.length + ',1fr)';
   for (i = 0; i < SECC.length; i++) {
     var sx = SECC[i];
+    if (sx.id === 'ajustes') continue; // Ajustes va arriba, como engranaje
     bb += '<button type="button" class="' + (sx === sc ? 'on' : '') + '" data-tab="' + (SECC_ULT[sx.id] || sx.tabs[0]) + '">' + sx.ic + '<span>' + sx.label + '</span></button>';
   }
   document.getElementById('barra').innerHTML = bb;
+  var gr = document.getElementById('bGear'); if (gr) gr.classList.toggle('on', sc.id === 'ajustes');
   for (i = 0; i < TABS.length; i++) {
     document.getElementById('p-' + TABS[i].id).className = 'pane' + (S.tab === TABS[i].id ? ' on' : '');
   }
