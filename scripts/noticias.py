@@ -117,22 +117,44 @@ def hechos_cmf(tk, emp, dias=30):
 
 
 # ---------------------------------------------------------------- PDF -> texto
-def texto_pdf(url):
+PAGES = "https://gsosa123.github.io/Portafolio-acciones/"
+CARPETA_HECHOS = RAIZ / "hechos"
+
+
+def bajar_pdf(url):
+    """Descarga el documento del hecho esencial. Devuelve bytes del PDF o None."""
     try:
         pdf = get(url, timeout=60)
     except Exception as e:
         print("  pdf no disponible:", e)
-        return ""
+        return None
     if not pdf.startswith(b"%PDF"):
         # La CMF a veces entrega una página intermedia con el link real al PDF
-        m = re.search(rb'href="([^"]+\.pdf[^"]*)"', pdf, re.I) or re.search(rb'href="([^"]*ver_sgd[^"]*)"', pdf, re.I)
+        m = re.search(rb'href="([^"]+\.pdf[^"]*)"', pdf, re.I) or re.search(rb'(?:href|src)="([^"]*(?:ver_sgd|serdoc)[^"]*)"', pdf, re.I)
         if not m:
-            return limpio(pdf.decode("latin-1", "replace"))
+            return None
         u2 = urllib.parse.urljoin(url, H.unescape(m.group(1).decode("latin-1")))
         try:
             pdf = get(u2, timeout=60)
         except Exception:
-            return ""
+            return None
+    return pdf if pdf.startswith(b"%PDF") else None
+
+
+def archivar(it, pdf):
+    """Guarda una copia del PDF en el sitio de la app: el link de la CMF no abre fuera de su página."""
+    import hashlib
+    CARPETA_HECHOS.mkdir(exist_ok=True)
+    nombre = f"{it['ticker']}_{it['fecha']}_{hashlib.sha1(pdf).hexdigest()[:8]}.pdf"
+    (CARPETA_HECHOS / nombre).write_bytes(pdf)
+    it["url_cmf"] = it.get("url_cmf") or it["url"]
+    it["url"] = PAGES + "hechos/" + nombre
+    it["archivo"] = nombre
+
+
+def texto_pdf(pdf):
+    if not pdf:
+        return ""
     with tempfile.TemporaryDirectory() as d:
         p = Path(d) / "doc.pdf"
         p.write_bytes(pdf)
@@ -281,6 +303,16 @@ def main():
     primera = not prev
     nuevos, errores = [], []
 
+    # Hechos ya guardados sin copia propia: bajar su PDF (los links de la CMF no abren directo)
+    for it in vistos.values():
+        if it["fuente"] == "CMF" and not it.get("archivo") and it["ticker"] in vigentes and "ver_sgd" in it["url"]:
+            pdf = bajar_pdf(it["url"])
+            if pdf:
+                archivar(it, pdf)
+            else:
+                it["url_cmf"] = it["url"]
+                it["url"] = CMF_URL.format(rut=EMPRESAS[it["ticker"]]["rut"])
+
     for tk, emp in EMPRESAS.items():
         if tk not in vigentes:
             continue
@@ -294,10 +326,16 @@ def main():
                 it["id"] = clave(it)
                 if it["id"] in vistos:
                     continue
-                if it["fuente"] == "CMF" and re.search(r"dividend", it["titulo"], re.I):
-                    dv = leer_dividendo(texto_pdf(it["url"]), tk.split("-")[1] if "-" in tk else "")
-                    if dv:
-                        it["dividendo"] = dv
+                if it["fuente"] == "CMF":
+                    pdf = bajar_pdf(it["url"])
+                    if pdf:
+                        archivar(it, pdf)
+                    else:
+                        it["url"] = CMF_URL.format(rut=emp["rut"])  # respaldo: listado de hechos de la empresa
+                    if pdf and re.search(r"dividend", it["titulo"], re.I):
+                        dv = leer_dividendo(texto_pdf(pdf), tk.split("-")[1] if "-" in tk else "")
+                        if dv:
+                            it["dividendo"] = dv
                 vistos[it["id"]] = it
                 nuevos.append(it)
             time.sleep(3)
