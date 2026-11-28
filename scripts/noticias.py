@@ -27,7 +27,7 @@ EMPRESAS = {
     "CHILE":    {"rut": "97004000", "nombre": "Banco de Chile", "q": '"Banco de Chile"'},
     "ANDINA-B": {"rut": "91144000", "nombre": "Embotelladora Andina", "q": '"Embotelladora Andina" OR "Coca-Cola Andina"'},
     "COLBUN":   {"rut": "96505760", "nombre": "Colbún", "q": 'Colbún'},
-    "LTM":      {"rut": "89862200", "nombre": "LATAM Airlines", "q": '"LATAM Airlines" OR "Latam" acciones'},
+    "LTM":      {"rut": "89862200", "nombre": "LATAM Airlines", "q": '"LATAM Airlines"'},
     "SCHWAGER": {"rut": "96766600", "nombre": "Schwager", "q": 'Schwager'},
     "AGUAS-A":  {"rut": "61808000", "nombre": "Aguas Andinas", "q": '"Aguas Andinas"'},
 }
@@ -45,10 +45,23 @@ MESES = {m: i + 1 for i, m in enumerate(
 MESES["setiembre"] = 9
 
 
-def get(url, data=None, timeout=40):
-    req = urllib.request.Request(url, data=data, headers=UA)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+def get(url, data=None, timeout=40, intentos=3):
+    """Descarga con curl (la CMF rechaza clientes que no parecen navegador); reintenta si hay 429/5xx."""
+    cmd = ["curl", "-sSL", "--compressed", "-m", str(timeout), "-A", UA["User-Agent"],
+           "-H", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+           "-H", "Accept-Language: es-CL,es;q=0.9", "-w", "\n%{http_code}", url]
+    if data is not None:
+        cmd[1:1] = ["--data-binary", data.decode("latin-1"), "-H", "Referer: " + url]
+    for k in range(intentos):
+        r = subprocess.run(cmd, capture_output=True, timeout=timeout + 10)
+        cuerpo, _, cod = r.stdout.rpartition(b"\n")
+        if r.returncode == 0 and cod.strip() == b"200":
+            return cuerpo
+        err = f"HTTP {cod.decode().strip() or r.stderr.decode()[:80]}"
+        if cod.strip() not in (b"429", b"500", b"502", b"503", b"504"):
+            break
+        time.sleep(8 * (k + 1))
+    raise RuntimeError(err)
 
 
 def limpio(s):
@@ -248,7 +261,7 @@ def main():
                         it["dividendo"] = dv
                 vistos[it["id"]] = it
                 nuevos.append(it)
-            time.sleep(1)
+            time.sleep(3)
 
     # Dividendos anunciados que se cargan a mano (respaldo si la CMF no responde)
     extra = RAIZ / "dividendos_anunciados.json"
