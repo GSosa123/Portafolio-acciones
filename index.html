@@ -2784,7 +2784,17 @@ document.addEventListener('click', function (ev) {
   var n = ev.target, a;
   while (n && n !== document) {
     if (n.getAttribute) {
-      if ((a = n.getAttribute('data-emp'))) { S.empSel = a; render(); window.scrollTo(0, 0); return; }
+      if ((a = n.getAttribute('data-emp'))) {
+        /* El filtro no mueve la pantalla: el grupo de chips tocado queda en el mismo lugar. */
+        var grupos = Array.prototype.slice.call(document.querySelectorAll('.emp-sel')), gi = grupos.indexOf(n.parentNode);
+        var antes = gi >= 0 ? grupos[gi].getBoundingClientRect().top : null;
+        S.empSel = a; render();
+        if (antes !== null) {
+          var g2 = document.querySelectorAll('.emp-sel')[gi];
+          if (g2) window.scrollBy(0, g2.getBoundingClientRect().top - antes);
+        }
+        return;
+      }
       if ((a = n.getAttribute('data-tab'))) { S.tab = a; S.animar = true; render(); window.scrollTo(0, 0); return; }
       if ((a = n.getAttribute('data-fx'))) { S.formulas[a] = !S.formulas[a]; render(); return; }
       if ((a = n.getAttribute('data-open'))) {
