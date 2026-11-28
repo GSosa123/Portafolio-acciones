@@ -193,6 +193,14 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .sc-tip{position:absolute;top:-6px;transform:translate(-50%,-100%);pointer-events:none;display:none;white-space:nowrap;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--mut);box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:5}
 .sc-tip b{display:block;font-size:15px;font-weight:900;color:var(--tx)}
 .sc-tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.flip{perspective:1400px;touch-action:manipulation}
+.flip-in{position:relative;display:grid;transition:transform .65s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d;-webkit-transform-style:preserve-3d}
+.flip-f,.flip-b{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;margin:0}
+.flip-b{position:absolute;inset:0;transform:rotateY(180deg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.flip-hint{margin-top:10px;font-size:11.5px;color:var(--mut);text-align:center}
+.flip-l{margin:8px 0 0;padding-left:16px;font-size:12.5px;line-height:1.45;color:var(--tx)}.flip-l li{margin-bottom:6px}.flip-l li b{font-weight:800}
+.flip-ojo{color:var(--acc)}
 .al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
 .al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
 .emp-vig{margin-top:8px;font-size:13px;line-height:1.45;color:var(--tx);padding-left:10px;border-left:3px solid var(--acc)}
@@ -2154,9 +2162,19 @@ function renderDash(k) {
   h += htmlLimites(k, m);
   // Cartera vs IPSA
   if (m) {
-    h += '<div class="w s8"><h3>Tu cartera vs. el mercado chileno <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
-      '<div class="leg"><span><i style="background:' + '#e3b85c' + '"></i>Tu cartera ' + pp(m.retTot) + '</span><span><i style="background:#a7a7a7"></i>Mercado chileno ' + pp(m.retI) + '</span>' +
-      '<span class="chip ' + (m.alfa >= 0 ? 'up' : 'dn') + '">' + (m.alfa >= 0 ? 'Le ganas por ' : 'Pierdes por ') + fmtDec(Math.abs(m.alfa), 2) + ' pp</span></div></div>';
+    var Tq = serieTWR(), r9 = Tq ? retDesde(Tq, String(S.cfg.hoy).slice(0, 4) + '-01-01').r : null;
+    h += '<div class="flip s8" data-flip><div class="flip-in"><div class="w flip-f"><h3>Tu cartera vs. el mercado chileno <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
+      '<div class="leg"><span><i style="background:' + '#e3b85c' + '"></i>Tu cartera ' + pp(m.retTot) + '</span><span><i style="background:#a7a7a7"></i>MSCI Chile en pesos ' + pp(m.retI) + '</span>' +
+      '<span class="chip ' + (m.alfa >= 0 ? 'up' : 'dn') + '">' + (m.alfa >= 0 ? 'Le ganas por ' : 'Pierdes por ') + fmtDec(Math.abs(m.alfa), 2) + ' pp</span></div>' +
+      '<div class="flip-hint">Toca dos veces para ver de dónde sale ↻</div></div>' +
+      '<div class="w flip-b"><h3>¿De dónde sale esto? <small>desliza para leer más</small></h3><ul class="flip-l">' +
+      '<li><b>Ventaja:</b> ' + pp(m.retTot) + ' − (' + pp(m.retI) + ') = ' + fmtDec(m.alfa, 2) + ' pp.</li>' +
+      '<li class="flip-ojo"><b>Ojo:</b> el MSCI en pesos cayó más que el IPSA. Al 24/11 el MSCI iba −5,3% en el año y el IPSA −1,4%. Contra el IPSA, tu ventaja desde febrero ronda <b>8 pp</b>, no 11. Igual le ganas, pero por menos.</li>' +
+      '<li><b>Tu cartera (' + pp(m.retTot) + '):</b> precio de cierre de cada día de tus ' + S.posiciones.length + ' acciones actuales, cada una desde que la compraste y con las acciones que tienes hoy. Solo precio: sin dividendos, sin ventas cerradas y sin comisiones.</li>' +
+      '<li><b>Mercado (' + pp(m.retI) + '):</b> fondo iShares MSCI Chile (ECH), que cotiza en dólares, pasado a pesos con el dólar de cada día. También solo precio, sin dividendos. Se usa porque Yahoo no entrega la historia del IPSA.</li>' +
+      '<li><b>Desde ' + fFecha(m.fechas[0]) + ':</b> el día de tu primera compra que sigue en cartera.</li>' +
+      (r9 != null ? '<li><b>¿Por qué Inicio dice ' + fmtPct(r9) + ' en ' + String(S.cfg.hoy).slice(0, 4) + '?</b> Allá se suman dividendos y ventas cerradas y se parte del precio real de compra con comisión. Acá es solo precio, para comparar parejo con el índice.</li>' : '') +
+      '</ul><div class="flip-hint">Toca dos veces para volver ↻</div></div></div></div>';
     ini();
     h += '<div class="w s4"><h3>Riesgo de mercado</h3><div class="minis">' +
       '<div><div class="k">Sharpe</div><div class="v num ' + (m.sharpe >= 0.5 ? 'up' : m.sharpe >= 0 ? 'acc' : 'dn') + '">' + cuenta(m.sharpe, 'dec') + '</div><div class="n">mercado ' + fmtDec(m.sharpeI, 2) + '</div></div>' +
@@ -3597,6 +3615,19 @@ if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias()
   document.addEventListener('pointermove', function (ev) { if (act) mover(ev); });
   document.addEventListener('pointerup', soltar);
   document.addEventListener('pointercancel', soltar);
+})();
+</script>
+<script>
+/* Tocar dos veces una tarjeta con data-flip la da vuelta como una carta. */
+(function () {
+  var ult = 0, ux = 0, uy = 0;
+  document.addEventListener('pointerup', function (ev) {
+    var c = ev.target.closest && ev.target.closest('[data-flip]'); if (!c) return;
+    var t = Date.now();
+    if (t - ult < 330 && Math.abs(ev.clientX - ux) < 30 && Math.abs(ev.clientY - uy) < 30) { c.classList.toggle('on'); ult = 0; return; }
+    ult = t; ux = ev.clientX; uy = ev.clientY;
+  });
+  document.addEventListener('dblclick', function (ev) { if (ev.target.closest && ev.target.closest('[data-flip]')) ev.preventDefault(); });
 })();
 </script>
 </body>
