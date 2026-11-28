@@ -2017,12 +2017,45 @@ function eventos(futuros) {
    ============================================================ */
 var NOTICIAS_URL = 'https://raw.githubusercontent.com/GSosa123/Portafolio-acciones/main/noticias.json';
 var NTFY_TOPIC = 'cartera-gsosa-7k3q9xw2';
-var NOT = { items: [], usdclp: 0, actualizado: '', estado: 'Cargando hechos esenciales y noticias…' };
+var NOT = { items: [], usdclp: 0, actualizado: '', estado: 'Cargando hechos esenciales y noticias…', merc: [] };
+var MERC_URL = 'https://raw.githubusercontent.com/GSosa123/Portafolio-acciones/main/mercurio.json';
+var MERC_LINKS = [
+  ['Bolsas en línea', 'https://www.elmercurio.com/inversiones/acciones/index.aspx'],
+  ['Recomendaciones de acciones', 'https://www.elmercurio.com/inversiones/herramientas/recomendaciones.aspx'],
+  ['Acciones más recomendadas', 'https://www.elmercurio.com/Inversiones/buscador/index.aspx?tema=287'],
+  ['Carteras recomendadas', 'https://www.elmercurio.com/Inversiones/buscador/index.aspx?tema=288'],
+  ['Portada EM Inversiones', 'https://www.elmercurio.com/inversiones/_portada/index.aspx']
+];
 function cargarNoticias() {
   getJSON(NOTICIAS_URL + '?t=' + Date.now(), 10000).then(function (j) {
     NOT.items = j.items || []; NOT.usdclp = num(j.usdclp); NOT.actualizado = j.actualizado || ''; NOT.estado = '';
     calcCache = null; render();
   }, function () { NOT.estado = 'No pude cargar las noticias ahora. Reintenta más tarde.'; if (S.tab === 'noticias') render(); });
+  getJSON(MERC_URL + '?t=' + Date.now(), 10000).then(function (j) { NOT.merc = j.items || []; if (S.tab === 'noticias') render(); }, function () {});
+}
+function itemMerc(it) {
+  var tks = (it.tickers || []).map(function (t) { return dotTk(t) + '<b>' + esc(t) + '</b> · '; }).join('');
+  return '<a class="nt" href="' + esc(it.url) + '" target="_blank" rel="noopener"><div style="flex:1;min-width:0">' +
+    '<div class="nt-t">' + tks + esc(it.titulo) + '</div><div class="nt-m">' + fFecha(it.fecha) + ' · El Mercurio Inversiones' +
+    (it.recomendacion ? ' · <b style="color:var(--acc)">Recomendación</b>' : '') + '</div></div></a>';
+}
+function seccionMercurio(mias) {
+  var h = '<div class="lbl" style="margin-top:6px">El Mercurio Inversiones</div><div class="sec">' +
+    '<p class="i" style="margin:0 0 8px">Se abre con tu sesión de suscriptor (inicia sesión una vez en el navegador).</p>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">' + MERC_LINKS.map(function (l) {
+      return '<a class="btn o" style="margin:0;padding:7px 11px;font-size:12px;text-decoration:none" target="_blank" rel="noopener" href="' + l[1] + '">' + esc(l[0]) + '</a>';
+    }).join('') + '</div></div>';
+  var mi = [], reco = [], otros = [], i;
+  for (i = 0; i < NOT.merc.length; i++) {
+    var it = NOT.merc[i], esMia = false, j;
+    for (j = 0; j < (it.tickers || []).length; j++) if (mias[it.tickers[j]]) esMia = true;
+    (esMia ? mi : it.recomendacion ? reco : otros).push(it);
+  }
+  if (mi.length) h += '<div class="lbl" style="margin-top:4px">Sobre tus acciones</div>' + mi.slice(0, 15).map(itemMerc).join('');
+  if (reco.length) h += '<div class="lbl" style="margin-top:4px">Recomendaciones de corredoras</div>' + reco.slice(0, 15).map(itemMerc).join('');
+  if (otros.length) h += '<details class="tech"><summary>Otros titulares de Mercurio (' + otros.length + ') ▾</summary><div style="display:flex;flex-direction:column;gap:8px">' + otros.slice(0, 40).map(itemMerc).join('') + '</div></details>';
+  if (!NOT.merc.length) h += '<p class="i">Los titulares del newsletter se suman cada noche.</p>';
+  return h;
 }
 function dividendosDetectados(existentes) {
   var out = [], i, j, vistos = {};
@@ -2069,6 +2102,7 @@ function renderNoticias() {
   h += '<div class="lbl" style="margin-top:6px">Prensa relevante</div>';
   h += imp.length ? imp.slice(0, 25).map(itemNoticia).join('') : '<p class="i">Sin noticias relevantes esta semana.</p>';
   if (otras.length) h += '<details class="tech"><summary>Otras noticias (' + otras.length + ') ▾</summary><div style="display:flex;flex-direction:column;gap:8px">' + otras.slice(0, 40).map(itemNoticia).join('') + '</div></details>';
+  h += seccionMercurio(mias);
   document.getElementById('noticias').innerHTML = h;
 }
 
