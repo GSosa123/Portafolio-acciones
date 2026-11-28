@@ -193,6 +193,17 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .sc-tip{position:absolute;top:-6px;transform:translate(-50%,-100%);pointer-events:none;display:none;white-space:nowrap;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--mut);box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:5}
 .sc-tip b{display:block;font-size:15px;font-weight:900;color:var(--tx)}
 .sc-tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
+.al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
+.emp-vig{margin-top:8px;font-size:13px;line-height:1.45;color:var(--tx);padding-left:10px;border-left:3px solid var(--acc)}
+.rk-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.rk-r{font-size:13px;font-weight:800}
+.rk-f{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;margin-top:6px}
+.rk-f b{white-space:nowrap}.rk-f small,.lim-v small{color:var(--mut);font-weight:600}
+.rk-d summary{margin-top:8px;font-size:12px;font-weight:800;color:var(--mut);cursor:pointer;list-style:none}
+.rk-d summary::-webkit-details-marker{display:none}
+.lim-b i.rk-i{background:var(--gold)}.lim-b i.rk-i.ko{background:var(--dn)}
+.det-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.det-h>b{font-size:15px}
 .hz{padding:18px 18px 14px}
 .hz-top{display:flex;justify-content:space-between;align-items:center;gap:14px}
 .hz-top.a{justify-content:flex-start}
@@ -1485,18 +1496,22 @@ function limites(k, m) {
   return L;
 }
 function htmlLimites(k, m) {
+  /* Riesgo en una línea: lo que está en alerta o peligro arriba; el detalle de cada límite, plegado. */
   var L = limites(k, m), h = '', NOM = { ok: 'Holgado', md: 'Alerta', ko: 'Peligro', nd: 'Sin datos' };
-  var n = { ok: 0, md: 0, ko: 0 };
-  L.forEach(function (x) { if (n[x.s] != null) n[x.s]++; });
-  h += '<div class="w"><h3>Tablero de riesgo <small>Holgado &lt; 70% del límite · Alerta 70–100% · Peligro &gt; 100%</small></h3>' +
-    '<div class="lim-res"><span class="chip up">' + n.ok + ' holgado</span><span class="chip acc">' + n.md + ' alerta</span><span class="chip dn">' + n.ko + ' peligro</span></div>';
+  var malos = L.filter(function (x) { return x.s === 'ko'; }), alerta = L.filter(function (x) { return x.s === 'md'; });
+  var res = malos.length ? malos.length + ' en peligro' + (alerta.length ? ' · ' + alerta.length + ' en alerta' : '') : alerta.length ? alerta.length + ' en alerta' : 'Todo dentro de tus límites';
+  h += '<div class="w rk"><div class="rk-h"><h3 style="margin:0">Riesgo</h3><span class="rk-r ' + (malos.length ? 'dn' : alerta.length ? 'acc' : 'up') + '">' + res + '</span></div>';
+  malos.concat(alerta).forEach(function (x) {
+    h += '<div class="rk-f"><span>' + esc(x.t) + '</span><b class="num ' + (x.s === 'ko' ? 'dn' : '') + '">' + esc(x.val) + ' <small>de ' + esc(x.lim) + '</small></b></div>';
+  });
+  h += '<details class="rk-d"><summary>Ver los ' + L.length + ' límites ▾</summary>';
   L.forEach(function (x) {
     var w = x.uso == null ? 0 : Math.min(x.uso, 1.5) / 1.5 * 100;
-    h += '<div class="lim"><div class="lim-h"><span class="tag ' + x.s + '">' + NOM[x.s] + '</span><b>' + esc(x.t) + '</b><span class="num lim-v">' + esc(x.val) + ' <small>de ' + esc(x.lim) + '</small></span></div>' +
-      '<div class="lim-b"><i class="' + x.s + '" style="width:' + w.toFixed(1) + '%"></i><em style="left:46.67%"></em><em style="left:66.67%"></em></div>' +
-      '<div class="lim-e">' + esc(x.e) + (x.uso != null ? ' Usas el ' + fmtPct(x.uso * 100, 0) + ' del límite.' : '') + '</div></div>';
+    h += '<div class="lim"><div class="lim-h"><b>' + esc(x.t) + '</b><span class="num lim-v ' + (x.s === 'ko' ? 'dn' : '') + '">' + esc(x.val) + ' <small>de ' + esc(x.lim) + '</small></span></div>' +
+      '<div class="lim-b"><i class="rk-i' + (x.s === 'ko' ? ' ko' : '') + '" style="width:' + w.toFixed(1) + '%"></i><em style="left:66.67%"></em></div>' +
+      '<div class="lim-e">' + NOM[x.s] + '. ' + esc(x.e) + (x.uso != null ? ' Usas el ' + fmtPct(x.uso * 100, 0) + ' del límite.' : '') + '</div></div>';
   });
-  h += '<p class="expl">Los límites se cambian en Ajustes. Las marcas de la barra son el 70% y el 100% del límite.</p></div>';
+  h += '<p class="expl">La marca es el 100% del límite. Los límites se cambian en Ajustes.</p></details></div>';
   return h;
 }
 
@@ -1892,7 +1907,7 @@ function htmlValor(D, precio, beta, tk) {
     h += '<div class="val-v ' + R.ver + '"><div><div class="k">Precio hoy</div><b class="num">' + fmtP(precio) + '</b></div><div><div class="k">Valor justo estimado</div><b class="num">' + fmtP(R.justo) + '</b></div>' +
       '<div><span class="tag ' + R.ver + '">' + NV[R.ver] + '</span><div class="num" style="font-size:12px;margin-top:4px">' + (R.margen >= 0 ? 'Margen de seguridad +' : 'Sobreprecio ') + fmtPct(Math.abs(R.margen), 1) + '</div></div></div>';
   }
-  h += '<div class="chk">';
+  h += '<details class="tech" style="margin-top:8px"><summary>Ver múltiplos y cómo se calculó ▾</summary><div class="chk">';
   R.mult.forEach(function (m) {
     var s = m.ref ? (m.v <= m.ref * 0.9 ? 'ok' : m.v <= m.ref * 1.1 ? 'md' : 'ko') : 'nd';
     h += '<div class="chk-r"><div class="ic ' + s + '">' + (s === 'ok' ? '✓' : s === 'md' ? '=' : s === 'ko' ? '↑' : '–') + '</div><div class="tx">' + m.k + '<span>' + m.txt + (m.ref ? ' Sector: ' + fmtDec(m.ref, 1) + 'x.' : '') + '</span></div><div class="vv num">' + fmtDec(m.v, 1) + 'x</div></div>';
@@ -1900,7 +1915,7 @@ function htmlValor(D, precio, beta, tk) {
   if (R.dy !== undefined) h += '<div class="chk-r"><div class="ic ' + (R.dy >= num(S.cfg.tpm) ? 'ok' : 'md') + '">%</div><div class="tx">Rentabilidad por dividendo<span>Dividendo de 12 meses ($' + fmtDec(D.dps, 2) + ') sobre el precio. Verde si supera la TPM (' + fmtPct(num(S.cfg.tpm), 2) + ').</span></div><div class="vv num">' + fmtPct(R.dy, 1) + '</div></div>';
   h += '</div>';
   if (R.met.length) {
-    h += '<details class="tech" style="margin-top:8px"><summary>Cómo se calculó el valor justo ▾</summary><div style="padding:8px 2px">';
+    h += '<div style="padding:8px 2px">';
     R.met.forEach(function (m) { h += '<p class="expl" style="margin-top:6px"><b>' + m.k + ': ' + fmtP(m.v) + '.</b> ' + m.txt + '</p>'; });
     h += '<p class="expl" style="margin-top:6px">Valor justo = promedio de los métodos.' + (D.tipo === 'banco' ? ' Costo de capital (Ke, CAPM) = ' + fmtPct(S.cfg.rf, 1) + ' + β ' + fmtDec(beta || 1, 2) + ' × ' + fmtPct(S.cfg.erp, 1) + ' = ' + fmtPct(R.ke * 100, 1) + '. Crecimiento de largo plazo g = ' + fmtPct(R.g * 100, 1) + ' (nominal, cerca de la inflación).' : ' Los múltiplos objetivo son los típicos de empresas comparables del sector (ver Referencia).') + '</p>' +
       '<p class="expl" style="margin-top:6px">Regla: Barata si el valor justo supera el precio en 15% o más (margen de seguridad); Cara si está 10% o más bajo el precio; entre medio, Precio justo.</p>';
@@ -1908,7 +1923,7 @@ function htmlValor(D, precio, beta, tk) {
     if (D.notas) h += '<p class="expl" style="margin-top:6px"><b>Ojo:</b> ' + esc(D.notas) + '</p>';
     h += '<p class="expl" style="margin-top:6px;font-size:11px">Cifras ' + esc(D.fecha || '') + (D.fuentes ? '. Fuentes: ' + D.fuentes.map(function (f) { return '<a href="' + esc(f[1]) + '" target="_blank" rel="noopener">' + esc(f[0]) + '</a>'; }).join(' · ') : '') + '. No es recomendación de inversión.</p></div></details>';
   }
-  return h + '</div>';
+  return h + '</details></div>';
 }
 
 /* ---------- En estudio: cualquier empresa, con su EEFF ---------- */
@@ -2033,12 +2048,13 @@ function renderEmpresas(k) {
     var w = k.valor ? CALC.valorMercado(p) / k.valor * 100 : 0;
     h += '<div class="w s6 emp" id="emp-' + esc(p.ticker) + '" style="--tc:' + tc + '"><div class="emp-hd"><span class="emp-tk">' + esc(p.ticker) + '</span><b>' + esc(p.nombre || p.ticker) + '</b>' + tagVer(veredictoTk(p.ticker, num(p.precio), num(p.beta) || 1)) + '<small>pesa ' + fmtPct(w, 1) + '</small></div>' +
       '<div class="emp-r"><span class="tag ' + est + '">' + (est === 'ok' ? 'Sólida' : est === 'md' ? 'Con puntos a vigilar' : 'Débil') + '</span><span class="mut" style="font-size:11.5px">' + esc(f.periodo) + '</span></div>' +
-      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p>' + htmlValor(VAL[p.ticker], num(p.precio), num(p.beta) || 1, p.ticker) + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
+      '<p class="expl" style="margin-top:6px">' + esc(f.tipo) + '</p><div class="emp-vig">Vigilar: ' + esc(f.vigilar) + '</div>' + htmlValor(VAL[p.ticker], num(p.precio), num(p.beta) || 1, p.ticker) +
+      '<details class="tech" style="margin-top:4px"><summary>Ver ratios del último reporte (' + f.ratios.length + ') ▾</summary>' + htmlEeff(p.ticker) + '<div class="lbl" style="margin-top:14px">Datos públicos de prensa</div><div class="chk">';
     f.ratios.forEach(function (r) {
       h += '<div class="chk-r"><div class="ic ' + r.s + '" title="' + NOM[r.s] + '">' + (r.s === 'ok' ? '✓' : r.s === 'md' ? '!' : r.s === 'ko' ? '✕' : '–') + '</div><div class="tx">' + esc(r.k) + '<span>' + esc(r.r) + '</span></div><div class="vv num">' + esc(r.v) + '</div></div>';
     });
-    h += '</div><div class="banda md" style="margin-top:10px">Vigilar: ' + esc(f.vigilar) + '</div><p class="expl" style="font-size:11px">Fuentes: ' +
-      f.fuentes.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p></div>';
+    h += '</div><p class="expl" style="font-size:11px">Fuentes: ' +
+      f.fuentes.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p></details></div>';
   }
   h += '</div>';
   document.getElementById('empresas').innerHTML = h;
@@ -2110,6 +2126,9 @@ function renderDash(k) {
     ko: ['Vas mal', 'Hoy la cartera no está pagando su costo. Revisa los puntos en rojo.']
   };
   var malos = sem.lista.filter(function (x) { return x.s === 'ko'; }).map(function (x) { return x.t.charAt(0).toLowerCase() + x.t.slice(1); });
+  var D = {}, marca = 0;
+  function ini() { marca = h.length; }
+  function cortar(id) { D[id] = h.slice(marca); h = h.slice(0, marca); }
   h += '<div class="dash">';
   // Héroe
   h += htmlHero(sem, HC, VER);
@@ -2123,29 +2142,34 @@ function renderDash(k) {
   }
   var vdPct = vdBase ? vd / vdBase * 100 : 0;
   function kpi(t, val, sub, cls) { return '<div class="w kpi s3"><div class="lbl">' + t + '</div><div class="v num">' + val + '</div><div class="s num">' + sub + '</div></div>'; }
+  ini();
   h += kpi('Valor de la cartera', cuenta(k.valor, 'clp'), '<span class="mut">costo real ' + clp(k.costo) + '</span>');
   h += kpi('Ganancia / pérdida', '<span class="' + (k.gp >= 0 ? 'up' : 'dn') + '">' + cuenta(k.gpPct, 'pp') + '</span>', '<span class="chip ' + (k.gp >= 0 ? 'up' : 'dn') + '">' + clpS(k.gp) + '</span>');
   h += kpi('Hoy', vdBase ? '<span class="' + (vd >= 0 ? 'up' : 'dn') + '">' + (vd >= 0 ? '▲ ' : '▼ ') + cuenta(vdPct, 'pp') + '</span>' : '<span class="mut">—</span>',
     vdBase ? '<span class="chip ' + (vd >= 0 ? 'up' : 'dn') + '">' + clpS(vd) + '</span>' : '<span class="mut">sin datos del día</span>');
   h += kpi('Resultado neto', '<span class="' + (k.neto >= 0 ? 'up' : 'dn') + '">' + cuenta(k.neto, 'clpS') + '</span>', '<span class="mut">después de intereses</span>');
+  cortar('kpis');
   if (ALERTAS_H) h += '<div class="w"><h3>Alertas</h3><div id="alertasP">' + ALERTAS_H + '</div></div>';
-  h += htmlGanoCredito(k);
+  ini(); h += htmlGanoCredito(k); cortar('credito');
   h += htmlLimites(k, m);
   // Cartera vs IPSA
   if (m) {
     h += '<div class="w s8"><h3>Tu cartera vs. el mercado chileno <small>base 100 · desde ' + fFecha(m.fechas[0]) + '</small></h3>' + svgLinea(m) +
       '<div class="leg"><span><i style="background:' + '#e3b85c' + '"></i>Tu cartera ' + pp(m.retTot) + '</span><span><i style="background:#a7a7a7"></i>Mercado chileno ' + pp(m.retI) + '</span>' +
       '<span class="chip ' + (m.alfa >= 0 ? 'up' : 'dn') + '">' + (m.alfa >= 0 ? 'Le ganas por ' : 'Pierdes por ') + fmtDec(Math.abs(m.alfa), 2) + ' pp</span></div></div>';
-    h += '<div class="w s4"><h3>Riesgo</h3><div class="minis">' +
+    ini();
+    h += '<div class="w s4"><h3>Riesgo de mercado</h3><div class="minis">' +
       '<div><div class="k">Sharpe</div><div class="v num ' + (m.sharpe >= 0.5 ? 'up' : m.sharpe >= 0 ? 'acc' : 'dn') + '">' + cuenta(m.sharpe, 'dec') + '</div><div class="n">mercado ' + fmtDec(m.sharpeI, 2) + '</div></div>' +
       '<div><div class="k">Volatilidad</div><div class="v num">' + cuenta(m.vol, 'pct1') + '</div><div class="n">anual · mercado ' + fmtPct(m.volI, 1) + '</div></div>' +
       '<div><div class="k">Caída máxima</div><div class="v num ' + (m.mdd < 0 ? 'dn' : 'up') + '">' + cuenta(m.mdd, 'pct1') + '</div><div class="n">hoy ' + fmtPct(m.ddHoy, 1) + ' del máximo</div></div>' +
       '<div><div class="k">Beta real</div><div class="v num">' + cuenta(m.beta, 'dec') + '</div><div class="n">vs mercado · supuesta ' + fmtDec(k.beta, 2) + '</div></div>' +
       '</div></div>';
+    cortar('riesgo');
   } else {
     h += '<div class="w"><h3>Tu cartera vs. el mercado chileno</h3><p class="expl">Faltan los precios históricos. Se cargan solos al actualizar precios (pestaña Papeles → "Actualizar precios ahora").</p></div>';
   }
   // Rentabilidad vs costos
+  ini();
   var barras = [
     { t: 'Tu rentabilidad', v: k.anualizado, c: 'linear-gradient(90deg,#9c7330,#f3d48a)' },
     { t: 'Exigida CAPM', v: k.keCartera, c: '#e8cf93' },
@@ -2162,7 +2186,9 @@ function renderDash(k) {
     ? 'Tu rentabilidad supera el costo del crédito por ' + fmtDec(k.gap, 2) + ' puntos: el préstamo te está ayudando.'
     : 'El crédito cuesta ' + fmtDec(Math.abs(k.gap), 2) + ' puntos más de lo que rinde la cartera. Cada peso prestado hoy resta.') + '</p></div>';
   var items = S.posiciones.map(function (p, ix) { return { t: p.ticker, v: CALC.valorMercado(p), c: colorTk(p.ticker), g: CALC.costoReal(p) ? (CALC.valorMercado(p) / CALC.costoReal(p) - 1) * 100 : 0 }; });
+  cortar('costos');
   // G/P por acción
+  ini();
   var maxG = Math.max.apply(null, items.map(function (x) { return Math.abs(x.g); }).concat([1]));
   h += '<div class="w s6"><h3>Ganancia o pérdida por acción <small>sobre costo real</small></h3><div class="hb">';
   items.forEach(function (it, ix) {
@@ -2170,7 +2196,9 @@ function renderDash(k) {
     h += '<div class="hb-r"><span><b class="tkn">' + dotTk(it.t) + esc(it.t) + '</b></span><div class="t"><span class="mid" style="left:50%"></span><i class="' + (it.g < 0 ? 'neg' : '') + '" style="' + (it.g >= 0 ? 'left:50%' : 'right:50%') + ';width:' + w.toFixed(1) + '%;background:' + (it.g >= 0 ? '#5fd39a' : '#ff6b6b') + ';animation-delay:' + (ix * 0.08) + 's"></i></div><b class="num ' + (it.g >= 0 ? 'up' : 'dn') + '">' + pp(it.g, 1) + '</b></div>';
   });
   h += '</div></div>';
+  cortar('gp');
   // Composición
+  ini();
   h += '<div class="w s6"><h3>Composición <small>peso en la cartera</small></h3><div class="ring comp" style="margin-top:8px">' +
     svgDonut(items, k.valor, '$' + fmtDec(k.valor / 1e6, 1) + ' M', S.posiciones.length + ' acciones') +
     '<div style="flex:1;min-width:0">';
@@ -2179,7 +2207,9 @@ function renderDash(k) {
       '<span class="num"><b>' + fmtPct(k.valor ? it.v / k.valor * 100 : 0, 1) + '</b> <span class="' + (it.g >= 0 ? 'up' : 'dn') + '" style="font-weight:700;margin-left:6px">' + pp(it.g, 1) + '</span></span></div>';
   });
   h += '</div></div>' + (k.maxConc > cfg.topeConc ? '<p class="expl acc">' + k.maxTk + ' pesa ' + fmtPct(k.maxConc, 1) + ', sobre tu tope de ' + fmtPct(cfg.topeConc, 0) + '.</p>' : '') + '</div>';
+  cortar('comp');
   // Préstamo
+  ini();
   var pag = num(cr.pagadas), tot = num(cr.cuotas) || 1;
   h += '<div class="w s6"><h3>Préstamo <small>vence ' + fFecha(cr.vencimiento) + '</small></h3><div class="ring" style="margin-top:8px">' +
     svgAnillo(pag / tot, 'url(#gg)', pag + '/' + tot, 'cuotas') +
@@ -2192,14 +2222,18 @@ function renderDash(k) {
     '<div class="gauge-l"><span>0%</span><span>límite ' + fmtPct(cfg.dpMax, 0) + '</span></div></div>' +
     '<div class="minis"><div><div class="k">Colchón de cuotas</div><div class="v num ' + (k.cuotasCub >= 1 ? 'up' : 'dn') + '">' + fmtDec(k.cuotasCub, 1) + '</div><div class="n">de ' + cr.fondoCuotas + ' objetivo</div></div>' +
     '<div><div class="k">Falta pagar</div><div class="v num">' + clp((tot - pag) * k.cuota) + '</div><div class="n">' + (tot - pag) + ' cuotas</div></div></div></div>';
-  h += htmlDividendos();
+  cortar('prestamo');
+  ini(); h += htmlDividendos(); cortar('divs');
   // Semáforo detalle
+  ini();
   h += '<div class="w"><h3>Indicadores <small>verde bien · amarillo atención · rojo mal</small></h3><div class="chk chk2">';
   sem.lista.forEach(function (x) {
     h += '<div class="chk-r"><div class="ic ' + x.s + '">' + (x.s === 'ok' ? '✓' : x.s === 'md' ? '!' : '✕') + '</div><div class="tx">' + esc(x.t) + '<span>' + esc(x.e) + '</span></div><div class="vv num" style="color:' + HC[x.s] + '">' + esc(x.v) + '</div></div>';
   });
   h += '</div></div>';
+  cortar('ind');
   // Retornos formales
+  ini();
   h += '<div class="w"><h3>Rentabilidad en detalle</h3><div class="minis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
     '<div><div class="k">Anualizada</div><div class="v num">' + fmtPct(k.anualizado) + '</div><div class="n">nominal sobre costo real</div></div>' +
     '<div><div class="k">Real (sin inflación)</div><div class="v num">' + fmtPct(k.real) + '</div><div class="n">Fisher, inflación ' + fmtPct(cfg.inflacion, 1) + '</div></div>' +
@@ -2215,6 +2249,13 @@ function renderDash(k) {
       '<div><div class="k">VaR 95% · 1 mes</div><div class="v num dn">' + clp(m.varM * k.valor / 100) + '</div><div class="n">' + fmtPct(m.varM, 1) + ' · CVaR ' + clp(m.cvarM * k.valor / 100) + '</div></div>' : '') +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
     '</div><p class="expl" style="font-size:11px">Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA. Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
+  cortar('rent');
+  var OPC = [['credito', '¿Le gano al crédito?'], ['riesgo', 'Riesgo de mercado'], ['costos', '¿Rinde más de lo que cuesta?'], ['gp', 'Ganancia por acción'],
+    ['comp', 'Composición'], ['prestamo', 'Préstamo'], ['divs', 'Dividendos cobrados'], ['ind', 'Todos los indicadores'], ['rent', 'Rentabilidad en detalle']].filter(function (o) { return D[o[0]]; });
+  var ver = D[S.dashVer] ? S.dashVer : OPC[0][0];
+  h += '<div class="w det-h"><b>Más detalle</b><div class="tk-dd"><span>' + OPC.filter(function (o) { return o[0] === ver; })[0][1] + '</span><select data-dashver aria-label="Más detalle">' +
+    OPC.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === ver ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div>';
+  h += D[ver];
   h += '</div>';
   var el = document.getElementById('dash');
   el.innerHTML = h;
@@ -2444,7 +2485,7 @@ function renderCredito(k) {
     '<p class="legal">Mínimo por cláusula del pagaré: ' + fmtPct(num(cr.prepagoMinPct), 0) + ' del saldo = ' + clp(minimo) +
     '. La Ley 18.010 Art. 10 solo hace irrenunciable el prepago sobre el 20% del saldo, así que bajo eso manda la cláusula. Confirma con el banco antes de comprometer el monto.</p></div>';
 
-  h += '<div class="sec gris"><div class="lbl">Parámetros del crédito</div><div class="fr">' +
+  h += '<details class="sec gris tech" data-crpar' + (S.crParAb ? ' open' : '') + '><summary>Editar parámetros del crédito ▾</summary><div class="fr" style="margin-top:10px">' +
     inputK('Saldo insoluto', cr.saldo, 'cr.saldo') +
     inputK('Cuota mensual', cr.cuotaMensual, 'cr.cuotaMensual') +
     inputK('Cuotas totales', cr.cuotas, 'cr.cuotas') +
@@ -2453,7 +2494,7 @@ function renderCredito(k) {
     inputK('Capital amortizado', cr.capitalAmortizado, 'cr.capitalAmortizado') +
     inputK('Fondo contingencia', cr.fondo, 'cr.fondo') +
     inputK('Día de débito', cr.diaDebito, 'cr.diaDebito') +
-    '</div></div>';
+    '</div></details>';
   document.getElementById('credito').innerHTML = h;
 }
 
@@ -2653,7 +2694,9 @@ function itemNoticia(it) {
 }
 var NOTF = 'todo';
 var NOTF_OPC = [['todo', 'Todo'], ['cmf', 'Hechos CMF'], ['prensa', 'Prensa'], ['merc', 'Mercurio'], ['reco', 'Recomendaciones']];
+document.addEventListener('toggle', function (ev) { if (ev.target && ev.target.hasAttribute && ev.target.hasAttribute('data-crpar')) S.crParAb = ev.target.open; }, true);
 document.addEventListener('change', function (ev) {
+  if (ev.target && ev.target.hasAttribute && ev.target.hasAttribute('data-dashver')) { var yd = window.scrollY; S.dashVer = ev.target.value; render(); window.scrollTo(0, yd); return; }
   if (ev.target && ev.target.id === 'selTema') { ponerTema(ev.target.value); return; }
   if (ev.target && ev.target.hasAttribute && ev.target.hasAttribute('data-miper')) { var y0 = window.scrollY; S.miPer = ev.target.value; render(); window.scrollTo(0, y0); return; }
   if (!ev.target || ev.target.id !== 'notfSel') return;
