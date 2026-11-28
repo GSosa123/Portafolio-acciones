@@ -186,6 +186,13 @@ html.con-intro body>*:not(#intro):not(script){visibility:hidden}
 @keyframes inP{to{opacity:1;transform:scale(1)}}
 @keyframes inC{to{opacity:1;transform:none}}
 @keyframes in3d{to{transform:perspective(900px) rotateX(14deg) rotateY(-8deg) translate(-34px,4px)}}
+.sc-w{position:relative}
+svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.sc-l{stroke:var(--tx);stroke-opacity:.55;stroke-width:1.5;stroke-dasharray:4 4}
+.sc-p{stroke:var(--bg);stroke-width:3}
+.sc-tip{position:absolute;top:-6px;transform:translate(-50%,-100%);pointer-events:none;display:none;white-space:nowrap;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--mut);box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:5}
+.sc-tip b{display:block;font-size:15px;font-weight:900;color:var(--tx)}
+.sc-tip i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .hz{padding:18px 18px 14px}
 .hz-top{display:flex;justify-content:space-between;align-items:center;gap:14px}
 .hz-top.a{justify-content:flex-start}
@@ -1187,6 +1194,38 @@ function htmlMisInv(k) {
   h += '<p class="expl" style="margin-top:10px">Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale. Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p></div>';
   return h;
 }
+/* ============================================================
+   Deslizar el dedo por un gráfico (estilo iPhone): línea vertical, punto y etiqueta con fecha y valor.
+   Cada gráfico registra sus puntos en SCRUB y su <svg> lleva data-sc.
+   ============================================================ */
+var SCRUB = {}, SCRUB_N = 0;
+function scReg(W, Hh, xs, fechas, series) {
+  var id = 'sc' + (++SCRUB_N);
+  SCRUB[id] = { W: W, H: Hh, xs: xs, f: fechas, s: series };
+  return id;
+}
+function scCapa(id) {
+  var R = SCRUB[id];
+  return '<g class="sc-g" style="display:none"><line class="sc-l" x1="0" x2="0" y1="0" y2="' + R.H + '"/>' +
+    R.s.map(function (q) { return '<circle class="sc-p" r="7" fill="' + q.col + '"/>'; }).join('') + '</g>';
+}
+function svgPrecio(tk) {
+  var h = (S.hist || {})[tk];
+  if (!h || !h.t || h.t.length < 5) return '';
+  var W = 640, Hh = 240, pl = 8, pr = 8, pt = 14, pb = 34, n = h.c.length, i;
+  var mn = Math.min.apply(null, h.c), mx = Math.max.apply(null, h.c), pad = (mx - mn) * 0.12 || 1; mn -= pad; mx += pad;
+  function X(i) { return pl + i / (n - 1) * (W - pl - pr); }
+  function Y(v) { return pt + (1 - (v - mn) / (mx - mn)) * (Hh - pt - pb); }
+  var d = '', xs = [], ys = [], tx = [];
+  for (i = 0; i < n; i++) { d += (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(h.c[i]).toFixed(1); xs.push(X(i)); ys.push(Y(h.c[i])); tx.push('$' + fmtDec(h.c[i], 2)); }
+  var col = colorTk(tk), up = h.c[n - 1] >= h.c[0];
+  var id = scReg(W, Hh, xs, h.t, [{ nom: tk, col: col, ys: ys, tx: tx }]);
+  return '<div class="sc-w"><div class="mini" style="margin-bottom:4px">Precio último año · desliza el dedo <span class="num ' + (up ? 'up' : 'dn') + '" style="float:right">' + pp((h.c[n - 1] / h.c[0] - 1) * 100) + '</span></div>' +
+    '<svg data-sc="' + id + '" viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block">' +
+    '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="3" stroke-linejoin="round"/>' +
+    '<text x="' + pl + '" y="' + (Hh - 8) + '" font-size="21" style="fill:var(--mut)">' + fFecha(h.t[0]) + '</text><text x="' + (W - pr) + '" y="' + (Hh - 8) + '" font-size="21" text-anchor="end" style="fill:var(--mut)">' + fFecha(h.t[n - 1]) + '</text>' +
+    scCapa(id) + '</svg><div class="sc-tip"></div></div>';
+}
 function svgRent(xs, vs) {
   var W = 640, Hh = 300, pl = 78, pr = 10, pt = 14, pb = 40, n = vs.length;
   if (n < 2) return '';
@@ -1204,11 +1243,14 @@ function svgRent(xs, vs) {
   var cada = Math.ceil(marcas.length / 6);
   marcas.forEach(function (ix, q) { if (q % cada === 0 && (n - ix > n * 0.04 || marcas.length === 1)) mes += '<text x="' + Math.max(pl, Math.min(W - 44, X(ix))).toFixed(1) + '" y="' + (Hh - 8) + '" font-size="21" style="fill:var(--mut)">' + MESES[+xs[ix].slice(5, 7) - 1] + '</text>'; });
   if (marcas.length <= 2) { mes = '<text x="' + pl + '" y="' + (Hh - 8) + '" font-size="21" style="fill:var(--mut)">' + fFecha(xs[1]) + '</text>'; } if (marcas.length <= 2) mes += '<text x="' + (W - pr) + '" y="' + (Hh - 8) + '" text-anchor="end" font-size="21" style="fill:var(--mut)">' + fFecha(xs[n - 1]) + '</text>';
-  return '<svg viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block;margin-top:8px" role="img" aria-label="Evolución de rentabilidad">' +
+  var scx = [], scy = [], sct = [];
+  for (i = 0; i < n; i++) { scx.push(X(i)); scy.push(Y(vs[i])); sct.push(pp(vs[i])); }
+  var sid = scReg(W, Hh, scx, xs, [{ nom: 'Rentabilidad', col: '#e3b85c', ys: scy, tx: sct }]);
+  return '<div class="sc-w"><svg data-sc="' + sid + '" viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block;margin-top:8px" role="img" aria-label="Evolución de rentabilidad">' +
     '<defs><linearGradient id="gmi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3b85c" stop-opacity=".22"/><stop offset="1" stop-color="#e3b85c" stop-opacity="0"/></linearGradient></defs>' +
     '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(0).toFixed(1) + '" y2="' + Y(0).toFixed(1) + '" style="stroke:var(--mut2)" stroke-dasharray="4 4"/>' + ej +
     '<path d="' + area + '" fill="url(#gmi)"/><path d="' + d + '" fill="none" stroke="#e3b85c" stroke-width="3" stroke-linejoin="round"/>' +
-    '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(vs[n - 1]).toFixed(1) + '" r="6" fill="' + col + '"/>' + mes + '</svg>';
+    '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(vs[n - 1]).toFixed(1) + '" r="6" fill="' + col + '"/>' + mes + scCapa(sid) + '</svg><div class="sc-tip"></div></div>';
 }
 function svgLinea(m) {
   var W = 640, Hh = 220, pl = 6, pr = 6, pt = 12, pb = 22;
@@ -1224,14 +1266,17 @@ function svgLinea(m) {
   var lbl = '<text x="' + pl + '" y="' + (Hh - 6) + '" style="fill:var(--mut2)" font-size="11">' + fFecha(m.fechas[0]) + '</text>' +
     '<text x="' + (W - pr) + '" y="' + (Hh - 6) + '" style="fill:var(--mut2)" font-size="11" text-anchor="end">' + fFecha(m.fechas[n - 1]) + '</text>';
   var colC = '#e3b85c';
-  return '<svg viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block;margin-top:10px" role="img" aria-label="Cartera vs mercado chileno">' +
+  var scx = [], c1 = [], c2 = [], t1 = [], t2 = [], k;
+  for (k = 0; k < n; k++) { scx.push(X(k)); c1.push(Y(m.idx[k])); c2.push(Y(m.ipx[k])); t1.push(pp(m.idx[k] - 100)); t2.push(pp(m.ipx[k] - 100)); }
+  var sid = scReg(W, Hh, scx, m.fechas, [{ nom: 'Tu cartera', col: colC, ys: c1, tx: t1 }, { nom: 'Mercado', col: '#a7a7a7', ys: c2, tx: t2 }]);
+  return '<div class="sc-w"><svg data-sc="' + sid + '" viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" style="display:block;margin-top:10px" role="img" aria-label="Cartera vs mercado chileno">' +
     '<defs><filter id="glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + colC + '" stop-opacity=".28"/><stop offset="1" stop-color="' + colC + '" stop-opacity="0"/></linearGradient></defs>' +
     '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y100 + '" y2="' + y100 + '" style="stroke:var(--mut2)" stroke-dasharray="4 4"/>' +
     '<path class="fadein" d="' + area + '" fill="url(#ga)"/>' +
     '<path class="draw" style="--len:3000" d="' + pi + '" fill="none" stroke="#a7a7a7" stroke-width="2" stroke-opacity=".85"/>' +
     '<path class="draw" style="--len:3000" d="' + pc + '" fill="none" stroke="' + colC + '" stroke-width="2.6" stroke-linejoin="round" filter="url(#glow)"/>' +
     '<circle class="fadein" cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(m.idx[n - 1]).toFixed(1) + '" r="4.5" fill="' + colC + '"/>' +
-    lbl + '</svg>';
+    lbl + scCapa(sid) + '</svg><div class="sc-tip"></div></div>';
 }
 function svgDonut(items, total, centro, sub) {
   var R = 58, C = 2 * Math.PI * R, off = 0, h = '', i;
@@ -2283,6 +2328,7 @@ function renderPapeles(k) {
 
     h += '<div class="pos-b' + (ab ? ' on' : '') + '" id="body-' + esc(p.ticker) + '">';
     h += movDiaHtml(p);
+    h += svgPrecio(p.ticker);
     var cells = [
       ['Costo real', clp(costo), 'con comisión', ''],
       ['Valor hoy', clp(valor), 'mercado', ''],
@@ -3465,6 +3511,50 @@ cargar();
 if (avanzarCredito() || S.migrado) guardar();
 render();
 if (window.fetch && window.Promise) { actualizarPrecios(false); cargarNoticias(); }
+</script>
+<script>
+/* Deslizar por los gráficos: funciona con dedo o mouse. Vibración suave al cambiar de mes (iPhone con iOS 18+). */
+(function () {
+  var act = null, hap = null, mesUlt = '';
+  function vibra() {
+    try {
+      if (navigator.vibrate) { navigator.vibrate(8); return; }
+      if (!hap) { hap = document.createElement('label'); hap.style.cssText = 'position:fixed;left:-99px;top:0;opacity:0'; var c = document.createElement('input'); c.type = 'checkbox'; c.setAttribute('switch', ''); hap.appendChild(c); document.body.appendChild(hap); }
+      hap.click();
+    } catch (e) {}
+  }
+  function mover(ev) {
+    var sv = act, id = sv.getAttribute('data-sc'), R = SCRUB[id]; if (!R) return;
+    var r = sv.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * R.W, lo = 0, hi = R.xs.length - 1, i;
+    while (hi - lo > 1) { var m = (lo + hi) >> 1; if (R.xs[m] < x) lo = m; else hi = m; }
+    i = Math.abs(R.xs[lo] - x) <= Math.abs(R.xs[hi] - x) ? lo : hi;
+    var g = sv.querySelector('.sc-g'), ln = g.querySelector('.sc-l'), ps = g.querySelectorAll('.sc-p');
+    g.style.display = ''; ln.setAttribute('x1', R.xs[i]); ln.setAttribute('x2', R.xs[i]);
+    R.s.forEach(function (q, k) { ps[k].setAttribute('cx', R.xs[i]); ps[k].setAttribute('cy', q.ys[i]); });
+    var tip = sv.parentNode.querySelector('.sc-tip'), px = R.xs[i] / R.W * r.width, wr = sv.parentNode.getBoundingClientRect();
+    tip.innerHTML = fFecha(R.f[i]) + R.s.map(function (q) { return '<b>' + (R.s.length > 1 ? '<i style="background:' + q.col + '"></i>' : '') + q.tx[i] + (R.s.length > 1 ? ' <small style="font-weight:700;color:var(--mut)">' + q.nom + '</small>' : '') + '</b>'; }).join('');
+    tip.style.display = 'block';
+    var tw = tip.offsetWidth / 2, left = Math.max(tw, Math.min(wr.width - tw, px + (r.left - wr.left)));
+    tip.style.left = left + 'px';
+    tip.style.top = (r.top - wr.top - 6) + 'px';
+    var mes = String(R.f[i]).slice(0, 7); if (mes !== mesUlt) { if (mesUlt) vibra(); mesUlt = mes; }
+  }
+  function soltar() {
+    if (!act) return;
+    var g = act.querySelector('.sc-g'), tip = act.parentNode.querySelector('.sc-tip');
+    if (g) g.style.display = 'none'; if (tip) tip.style.display = 'none';
+    act = null; mesUlt = '';
+  }
+  document.addEventListener('pointerdown', function (ev) {
+    var sv = ev.target.closest && ev.target.closest('svg[data-sc]'); if (!sv) return;
+    act = sv; mesUlt = ''; vibra();
+    try { sv.setPointerCapture(ev.pointerId); } catch (e) {}
+    mover(ev);
+  });
+  document.addEventListener('pointermove', function (ev) { if (act) mover(ev); });
+  document.addEventListener('pointerup', soltar);
+  document.addEventListener('pointercancel', soltar);
+})();
 </script>
 </body>
 </html>
