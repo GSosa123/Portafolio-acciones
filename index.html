@@ -226,6 +226,9 @@ svg[data-sc]{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webki
 .esfsel-todas{display:block;margin:6px auto 0;min-width:150px;min-height:44px;border-radius:22px;border:1px solid rgba(227,178,60,.6);background:transparent;color:var(--acc);font:inherit;font-weight:800}
 .esfsel-todas.on{background:var(--acc);color:#0b0b0b}
 :root[data-tema="claro"] .esfsel-hoja{background:#fbf6ec}
+.nota-i{display:inline-flex;align-items:center;gap:5px;background:none;border:0;padding:4px 0;font:inherit;font-size:12px;color:var(--mut);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nota-i svg{width:14px;height:14px;opacity:.8}
+.nota-txt{margin:12px 0 6px;font-size:14px;line-height:1.5;color:var(--txt);max-height:50vh;overflow:auto}.nota-txt p{margin:0 0 10px}
 .flip-ojo{color:var(--acc);list-style:none;margin-left:-18px;display:flex;gap:8px;align-items:flex-start}.flip-ojo svg{flex:0 0 18px;width:18px;height:18px;margin-top:1px}
 .al.al-alta,.al.al-media,:root[data-tema="claro"] .al.al-alta,:root[data-tema="claro"] .al.al-media{background:transparent;color:var(--tx);border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 0}
 .al-alta .al-n{background:transparent;color:var(--dn);padding:2px 0}.al-media .al-n{background:transparent;color:var(--acc);padding:2px 0}
@@ -1117,12 +1120,38 @@ function limpiarHist() {
     if (fix) S.histFix[t] = fix;
   });
 }
-function avisoHistFix(tk) {
+function avisoHistTxt(tk) {
   var F = S.histFix || {}, ks = tk ? (F[tk] ? [tk] : []) : Object.keys(F);
   if (!ks.length) return '';
-  if (tk) return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó ' + F[tk] + ' días de precio de esta acción (repitió el anterior o trajo un dato malo). En el gráfico se rellenaron entre el último precio real y el siguiente.</p>';
-  return '<p class="expl" style="margin-top:6px">⚠️ Yahoo no entregó precios reales en ' + Object.keys(S.histMalos || {}).length + ' días del último año (repitió el precio anterior o trajo un pico falso). Se rellenaron entre el último precio real y el siguiente, y esos días no se usan para medir el riesgo.</p>';
+  if (tk) return 'En ' + F[tk] + ' días la fuente de precios repitió el precio anterior o trajo un dato malo. Esos días se completaron entre el último precio real y el siguiente.';
+  return 'En ' + Object.keys(S.histMalos || {}).length + ' días del último año la fuente de precios (Yahoo) repitió el precio anterior o trajo un pico falso. Esos días se completaron entre el último precio real y el siguiente, y no se usan para medir el riesgo.';
 }
+function avisoHistFix(tk) {
+  var t = avisoHistTxt(tk);
+  return t ? htmlNota('Precios depurados', 'Precios depurados', '<p>' + t + '</p>') : '';
+}
+/* Nota discreta: una línea gris con ⓘ; al tocarla se abre una hoja estilo iPhone con la explicación completa. */
+var NOTAS = {}, NOTA_N = 0;
+function htmlNota(corto, titulo, cuerpo) {
+  var id = 'n' + (++NOTA_N); NOTAS[id] = { t: titulo, h: cuerpo };
+  return '<button type="button" class="nota-i" data-nota="' + id + '">' + corto + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".6" fill="currentColor"/></svg></button>';
+}
+function abrirNota(id) {
+  var n = NOTAS[id]; if (!n) return;
+  cerrarEsfSel(true);
+  var d = document.createElement('div');
+  d.id = 'esfSel'; d.className = 'esfsel';
+  d.innerHTML = '<div class="esfsel-fondo"></div><div class="esfsel-hoja nota-hoja" role="dialog" aria-label="' + n.t + '"><div class="esfsel-asa"></div><div class="esfsel-t"><b>' + n.t + '</b></div><div class="nota-txt">' + n.h + '</div><button type="button" class="esfsel-todas on">Listo</button></div>';
+  document.body.appendChild(d);
+  d.querySelector('.esfsel-fondo').addEventListener('click', function () { cerrarEsfSel(); });
+  d.querySelector('.esfsel-todas').addEventListener('click', function () { cerrarEsfSel(); });
+  requestAnimationFrame(function () { d.classList.add('ab'); });
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('[data-nota]');
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation(); abrirNota(b.getAttribute('data-nota'));
+}, true);
 /* ============================================================
    Motor de rentabilidad con las tenencias reales de cada día (desde las operaciones):
    r = (valor final + ventas + dividendos − valor inicial − compras) / (valor inicial + compras).
@@ -1382,7 +1411,7 @@ function htmlMisInv(k) {
     function cel(t, r) { return '<div><span>' + t + '</span><b class="num ' + (r >= 0 ? 'up' : 'dn') + '">' + (r >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(r)) + '</b></div>'; }
     h += '<div class="mi-3">' + cel(MESES_L[mesN], rM) + cel(y, rA) + cel('Últimos 12 meses', r12) + '</div>';
   }
-  h += '<p class="expl" style="margin-top:10px">Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale. Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + avisoHistFix() + '</div>';
+  h += '<div style="margin-top:10px">' + htmlNota('Rentabilidad ponderada por tiempo', 'Cómo se calcula', '<p>Rentabilidad real ponderada por tiempo: incluye lo que ya vendiste, todos los dividendos y descuenta las comisiones. No cambia por plata que entra o sale.</p><p>Puede diferir de Banchile porque Banchile no descuenta comisiones y también mide la caja.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   return h;
 }
 /* ============================================================
@@ -2576,7 +2605,7 @@ function renderDash(k) {
       '<div><div class="k">Information ratio</div><div class="v num ' + (m.ir >= 0 ? 'up' : 'dn') + '">' + fmtDec(m.ir, 2) + '</div><div class="n">exceso ÷ tracking error</div></div>' +
       '<div><div class="k">VaR 95% · 1 mes</div><div class="v num dn">' + clp(m.varM * k.valor / 100) + '</div><div class="n">' + fmtPct(m.varM, 1) + ' · CVaR ' + clp(m.cvarM * k.valor / 100) + '</div></div>' : '') +
     (m ? '<div><div class="k">TWR anualizado</div><div class="v num">' + fmtPct(m.retAn) + '</div><div class="n">serie diaria · ' + m.dias + ' ruedas</div></div>' : '') +
-    '</div><p class="expl" style="font-size:11px">Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA. Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel. Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p></div>';
+    '</div><div style="margin-top:8px">' + htmlNota('Cómo se calcula', 'Cómo se calcula', '<p>Mercado chileno = índice MSCI Chile (ETF ECH) en pesos; Yahoo no publica la historia del IPSA.</p><p>Sharpe, volatilidad, caída máxima y beta real se calculan con cierres diarios y las acciones actuales desde la fecha de compra de cada papel.</p><p>Tasa libre de riesgo ' + fmtPct(cfg.rf) + '.</p>' + (avisoHistTxt() ? '<p>' + avisoHistTxt() + '</p>' : '')) + '</div></div>';
   cortar('rent');
   var OPC = [['credito', '¿Le gano al crédito?'], ['riesgo', 'Riesgo de mercado'], ['costos', '¿Rinde más de lo que cuesta?'], ['gp', 'Ganancia por acción'],
     ['comp', 'Composición'], ['prestamo', 'Préstamo'], ['divs', 'Dividendos cobrados'], ['ind', 'Todos los indicadores'], ['rent', 'Rentabilidad en detalle']].filter(function (o) { return D[o[0]]; });
